@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="layout :: head('New Recipe')"></head>
+<body>
+<div th:replace="layout :: nav"></div>
+<div th:replace="layout :: searchbar"></div>
+<div th:replace="layout :: flash"></div>
+<div>
+    <form th:action="@{${action}}" method="post" th:object="${recipe}">
+        <input type="hidden" th:field="*{id}"/>
+        <div>
+            <input type="text" th:field="*{name}" placeholder="Name of Recipe"/>
+        </div>
+        <div>
+            <th:block th:each="ingredient,i : ${recipe.ingredients}">
+                <input type="number" th:field="*{ingredients[__${i.index}__].qty}" style="width: 2rem"/>
+                <input type="text" th:field="*{ingredients[__${i.index}__].measurement}" placeholder="Measurement"
+                       style="width: 5.2rem"/>
+                <input type="text" th:field="*{ingredients[__${i.index}__].name}" placeholder="Ingredient name"/>
+                <button type="submit" name="removeIngredient" th:value="${i.index}">Remove</button>
+                <br/>
+            </th:block>
+        </div>
+        <div>
+            <button type="submit" name="addIngredient">Add Ingredient</button>
+            <br/>
+        </div>
+        <div>
+            <div>
+                <h3>Add Categories:</h3>
+                <th:block th:each="cat,i : ${recipe.categories}">
+                    <input type="text" th:field="*{categories[__${i.index}__].name}"/>
+                    <button type="submit" name="removeCat" th:value="${i.index}">Remove</button>
+                </th:block>
+                <div>
+                    <button type="submit" name="addCategory">New Category</button>
+                </div>
+            </div>
+        </div>
+        <div>
+            <button type="submit">Add Recipe</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>

@@ -15,6 +15,7 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @NotNull
+    @Column(unique = true)
     private String name;
     @ManyToMany(mappedBy = "categories",
             cascade = CascadeType.PERSIST,
@@ -24,8 +25,18 @@ public class Category {
     @Override
     public String toString() {
         return "Category{" +
-                "id=" + id +
                 ", name='" + name + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this)
+            return true;
+        if (!(o instanceof Category))
+            return false;
+        Category c = (Category) o;
+        return name.equals(c.name);
+
     }
 }

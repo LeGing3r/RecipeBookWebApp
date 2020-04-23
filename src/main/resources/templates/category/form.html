@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="layout :: head('Add New Category')"></head>
+<body>
+<div th:replace="layout :: nav"></div>
+<div th:replace="layout :: searchbar"></div>
+<div th:replace="layout :: flash"></div>
+<div class="container">
+    <form th:action="@{${action}}" method="post" th:object="${category}">
+        <input type="hidden" th:field="*{id}"/>
+        <div class="row">
+            <div class="col">
+                <input type="text" th:field="*{name}" placeholder="Name of category"/>
+            </div>
+        </div>
+        <div>
+            <div>
+                <button type="submit">Update</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

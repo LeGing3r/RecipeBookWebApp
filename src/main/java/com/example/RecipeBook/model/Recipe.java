@@ -4,8 +4,9 @@ import com.sun.istack.NotNull;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
+import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Data
@@ -15,17 +16,28 @@ public class Recipe {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @Column(unique = true)
     @NotNull
+    @Size(min = 3)
     private String name;
+
     @OneToMany(mappedBy = "recipe")
-    private Set<Ingredient> ingredients = new HashSet<>();
+    @Size(min = 1)
+    private List<Ingredient> ingredients = new ArrayList<>();
+
+    @Size(min = 1)
     @ManyToMany(fetch = FetchType.EAGER,
             cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "Recipe_Categories",
             joinColumns = {@JoinColumn(name = "recipe_id")},
             inverseJoinColumns = {@JoinColumn(name = "category_id")})
-    private Set<Category> categories = new HashSet<>();
+    private List<Category> categories = new ArrayList<>();
+
+    private boolean chosen;
+    @Size(min = 3)
+    private String method;
 
     @Override
     public String toString() {
