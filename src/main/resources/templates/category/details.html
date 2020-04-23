@@ -3,7 +3,6 @@
 <head th:replace="layout :: head('Details')"></head>
 <body>
 <div th:replace="layout :: nav"></div>
-<div th:replace="layout :: searchbar"></div>
 <div th:replace="layout :: flash"></div>
 <h1 th:text="${category.name}"></h1>
 <ul th:each="recipe : ${category.recipes}">
