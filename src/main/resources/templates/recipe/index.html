@@ -4,14 +4,19 @@
 <body>
 <div th:replace="layout :: nav"></div>
 <div th:replace="layout :: flash"></div>
-<div>
-    <form th:action="@{${action}}">
+<div class="container">
+    <form th:action="@{${action}}" class="cntr" style="width: fit-content">
         <button type="submit" th:text="${switch}">All</button>
     </form>
-</div>
-<div>
-    <div th:each="recipe : ${recipes}">
-        <p th:text="${recipe.name}"></p>
+    <div th:each="recipe : ${recipes}" class="r recipes recipecntnr">
+        <div class="r">
+            <a th:href="@{|/recipes/${recipe.id}|}">
+                <img th:src="@{/shkshka.jpg}" th:alt="${recipe.name}" class="smllimg">
+                <span th:text="${recipe.name}"></span></a>
+        </div>
+        <a th:each="cat : ${recipe.categories}" th:href="@{|/categories/${cat.id}|}" th:text="${cat.name}"
+           class="right" style="color: black;"></a>
+        <div class="separator"></div>
     </div>
 </div>
 </body>

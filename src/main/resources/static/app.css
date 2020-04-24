@@ -5,6 +5,7 @@ nav{
     width: 100%;
     background: black;
     height: 60px;
+    margin-bottom: 2rem;
 }
 
 nav .navbar{
@@ -55,8 +56,89 @@ nav .navbar{
     font-size: 1.9rem;
 }
 
+.smllimg{
+    width:  50px;
+    height: 50px;
+}
+.r{
+    margin: 0 auto;
+    margin-top: 10px;
+}
+
+.r .c{
+  float: left;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  padding: 0 0.75rem;
+}
+
+.c{
+    margin-bottom: 0.75rem;
+    position: relative;
+}
+.recipecntnr{
+    height: 60px;
+}
+.separator{
+    height: 1px;
+    background: black;
+}
+.recipes .categories a{
+    color: black;
+}
+
+.card {
+    box-shadow: none;
+    border-radius: 4px;
+    margin: 0.5rem 0 1rem 0;
+    background-color: #fff;
+    position: relative;
+    padding: 0;
+}
+
+.card .card-content {padding: 0;}
+
+.card .card-title {
+    text-align: center;
+    font-size: 1.3rem;
+}
+
+.card .card-title a {
+    color: #000 !important;
+    display: block;
+    line-height: 2rem;
+    padding: 2rem 0;
+}
+
+.rcpfrm input[type=text]{
+    border-radius: 0.3rem;
+    border: none;
+}
 
 a{
     text-decoration: none;
     color: white;
 }
+
+button{
+    padding: 1rem;
+    border-radius: 0.8rem;
+    background: black;
+    color: white;
+    cursor: pointer;
+}
+
+.container{
+    width: 90%;
+    margin: 0 auto;
+}
+.cntr{margin: 0 auto;}
+.flwth{width: 100%;}
+.nntywth{width: 90%;}
+.sxtwth{width: 66%;}
+.hlfwth{width: 50%}
+.thrtwth{width: 33%;}
+.twntwth{width: 20%;}
+.right{float: right !important;}
+.left{float: left !important;}

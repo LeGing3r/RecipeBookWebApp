@@ -4,11 +4,18 @@
 <body>
 <div th:replace="layout :: nav"></div>
 <div th:replace="layout :: flash"></div>
-<div>
-    <div th:each="cat : ${categories}">
-        <p th:text="${cat.name}"></p>
+<div class="r nntywth">
+    <div th:each="cat : ${categories}" class="c twntwth">
+        <div class="card">
+            <div class="card-content">
+                <div class="card-contents">
+                    <div class="card-title">
+                        <a class="name" th:href="@{|/categories/${cat.id}|}" th:text="${cat.name}">Category Name</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-
 </div>
 
 </body>
