@@ -7,6 +7,7 @@ import com.example.RecipeBook.model.Recipe;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,6 +20,9 @@ public class RecipeService {
     @Autowired
     CategoryRepository categoryRepository;
 
+    @Autowired
+    EntityManager entityManager;
+
     public void setCategories(Recipe recipe) {
         List<Category> temp = new ArrayList<>();
         for (Category cat : recipe.getCategories())
@@ -28,8 +32,7 @@ public class RecipeService {
 
         recipe.getCategories().removeAll(temp);
         recipe.getCategories().addAll(temp);
-        recipe.getCategories().forEach(cat -> categoryRepository.save(cat));
-        recipeRepository.save(recipe);
+        recipeRepository.saveAndFlush(recipe);
     }
 
     public void delete(Integer recipeId) {

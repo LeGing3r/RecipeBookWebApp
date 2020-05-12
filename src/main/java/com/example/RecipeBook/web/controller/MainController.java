@@ -79,8 +79,11 @@ public class MainController {
 
     @RequestMapping("/add")
     public String formNewRecipe(Model model) {
-        if (!model.containsAttribute("recipe"))
-            model.addAttribute("recipe", new Recipe());
+        if (!model.containsAttribute("recipe")) {
+            Recipe recipe = new Recipe();
+            recipe.getIngredients().add(new Ingredient());
+            model.addAttribute("recipe", recipe);
+        }
         model.addAttribute("action", "/recipes");
         model.addAttribute("submit", "Add Recipe");
         return "recipe/form";
@@ -129,7 +132,16 @@ public class MainController {
     @RequestMapping(value = "/recipes", params = {"removeCat"})
     public String deleteCat(Recipe recipe, HttpServletRequest request, BindingResult bindingResult, Model model) {
         int ingId = Integer.parseInt(request.getParameter("removeCat"));
+        recipe.getCategories().remove(ingId);
         return "recipe/form";
+    }
+
+    @RequestMapping("/ingredients/{ingredientId}")
+    public String toggleIngredientNecessity(@PathVariable Integer ingredientId, HttpServletRequest http){
+        Ingredient ingredient = ingredientRepository.findById(ingredientId).isPresent() ? ingredientRepository.findById(ingredientId).get() : null;
+        ingredient.setNeeded(!ingredient.isNeeded());
+        ingredientRepository.save(ingredient);
+        return "redirect:" + http.getHeader("referer");
     }
 
 }

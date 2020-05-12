@@ -4,6 +4,7 @@ import com.sun.istack.NotNull;
 import lombok.Data;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 
 @Data
 @Entity
@@ -12,31 +13,21 @@ public class Ingredient {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     @NotNull
+    @Size(min = 3)
     private String name;
+
     @NotNull
-    private int qty;
+    @Size(min = 1)
+    private String qty;
+
+    private boolean needed = false;
+
     @ManyToOne
     @JoinTable(
             name = "Ingredient_Recipe",
             joinColumns = {@JoinColumn(name = "ingredient_id")},
             inverseJoinColumns = {@JoinColumn(name = "recipe_id")})
     private Recipe recipe;
-    @ManyToOne
-    private ShoppingList todo;
-    private String measurement;
-
-    public String setMeasurement(String measurement) {
-        measurement = measurement.toLowerCase();
-        measurement = measurement.endsWith("s") ? measurement.substring(0, measurement.length() - 1) : measurement;
-        switch (measurement) {
-            case "" -> measurement = "pieces";
-            case "tablespoon" -> measurement = "tbsp";
-            case "teaspoon" -> measurement = "tsp";
-            case "gram" -> measurement = "g";
-            case "kilogram" -> measurement = "kg";
-        }
-        this.measurement = measurement;
-        return this.measurement;
-    }
 }

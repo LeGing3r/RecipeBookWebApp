@@ -5,41 +5,45 @@
 <div th:replace="layout :: nav"></div>
 <div th:replace="layout :: flash"></div>
 <div class="r rcpfrm">
-    <form th:action="@{${action}}" method="post" th:object="${recipe}">
+    <form th:action="@{${action}}" method="post" th:object="${recipe}" class="hlfwth cntr">
         <input type="hidden" th:field="*{id}"/>
-        <div>
-            <input type="text" th:field="*{name}" placeholder="Name of Recipe"/>
+        <div class="flwth cntr" style="text-align: center;">
+            <input type="text" th:field="*{name}" autocomplete="off" placeholder="Name of Recipe"
+                   style="text-align: center;"/>
         </div>
-        <div>
-            <th:block th:each="ingredient,i : ${recipe.ingredients}">
-                <input type="number" th:field="*{ingredients[__${i.index}__].qty}" style="width: 2rem"/>
-                <input type="text" th:field="*{ingredients[__${i.index}__].measurement}" placeholder="Measurement"
-                       style="width: 5.2rem"/>
-                <input type="text" th:field="*{ingredients[__${i.index}__].name}" placeholder="Ingredient name"/>
-                <button type="submit" name="removeIngredient" th:value="${i.index}">Remove</button>
+        <div class="separator"></div>
+        <br/>
+        <div class="flwth cntr">
+            <div th:each="ingredient,i : ${recipe.ingredients}" class="flwth">
+                <input type="hidden" th:field="*{ingredients[__${i.index}__].id}"/>
+                <input type="text" th:field="*{ingredients[__${i.index}__].qty}" autocomplete="off"
+                       placeholder="Amount" style="width: 15%"/>
+                <input type="text" th:field="*{ingredients[__${i.index}__].name}" class="newIngBox"
+                       placeholder="Ingredient name"
+                       style="width: 70%;"/>
+                <button type="submit" id="addIngredientBtn" name="addIngredient"><i class="material-icons">add</i>
+                </button>
+                <button type="submit" name="removeIngredient" th:value="${i.index}"><i class="material-icons">delete</i>
+                </button>
                 <br/>
-            </th:block>
+            </div>
         </div>
-        <div>
-            <button type="submit" name="addIngredient">Add Ingredient</button>
-            <br/>
-        </div>
-        <div>
-            <div>
+        <div class="lnblock">
+            <div class="flwth cntr">
                 <h3>Add Categories:</h3>
-                <th:block th:each="cat,i : ${recipe.categories}">
+                <div th:each="cat,i : ${recipe.categories}">
                     <input type="text" th:field="*{categories[__${i.index}__].name}"/>
-                    <button type="submit" name="removeCat" th:value="${i.index}">Remove</button>
-                </th:block>
+                    <button type="submit" name="removeCat" th:value="${i.index}"><i class="material-icons">delete</i>
+                    </button>
+                </div>
                 <div>
-                    <button type="submit" name="addCategory">New Category</button>
+                    <button type="submit" name="addCategory"><i class="material-icons">add</i></button>
                 </div>
             </div>
         </div>
-        <div>
-            <button type="submit">Add Recipe</button>
-        </div>
+        <button type="submit" style="position: absolute; right: 0; bottom: 0;">Save Recipe</button>
     </form>
 </div>
+<div th:replace="layout :: scripts"></div>
 </body>
 </html>

@@ -54,7 +54,13 @@
             <artifactId>thymeleaf-spring5</artifactId>
             <version>3.0.11.RELEASE</version>
         </dependency>
-    </dependencies>
+		<dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>antlr4-maven-plugin</artifactId>
+			<version>4.8-1</version>
+		</dependency>
+
+	</dependencies>
 
 	<build>
 		<plugins>

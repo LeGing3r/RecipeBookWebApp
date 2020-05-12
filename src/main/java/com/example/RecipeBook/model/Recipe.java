@@ -17,7 +17,6 @@ public class Recipe {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(unique = true)
     @NotNull
     @Size(min = 3)
     private String name;

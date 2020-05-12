@@ -17,15 +17,14 @@ nav .navbar{
 }
 
 .navbar ul{
-    float: right;
     margin: 0;
     overflow: hidden;
     height: 60px;
+    display: inline;
 }
 
 .navbar ul li {
     list-style: none;
-    float: right;
     display: inline-block;
     height: inherit;
 }
@@ -40,9 +39,7 @@ nav .navbar{
 
 .searchbar{
     display: inline-block;
-    width: 40%;
     margin-left: 4rem;
-    float: right;
 }
 .searchbar input[type=text]{
     width:100%;
@@ -54,6 +51,7 @@ nav .navbar{
 .title{
     display: inline-block;
     font-size: 1.9rem;
+    float: left;
 }
 
 .smllimg{
@@ -114,6 +112,8 @@ nav .navbar{
 .rcpfrm input[type=text]{
     border-radius: 0.3rem;
     border: none;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
 }
 
 a{
@@ -122,23 +122,86 @@ a{
 }
 
 button{
-    padding: 1rem;
     border-radius: 0.8rem;
     background: black;
     color: white;
     cursor: pointer;
+    font-size: 1rem;
 }
 
 .container{
     width: 90%;
     margin: 0 auto;
 }
-.cntr{margin: 0 auto;}
+
+.recipeTable tr td p{
+    display: inline;
+}
+
+.chck{
+    width: 13px;
+    height: 13px;
+    display: inline-block;
+}
+
+.mark.chck {
+    background: url(icons/chck.png) no-repeat 0 0;
+}
+
+.unmark.chck {
+    background: url(icons/unchck.png) no-repeat 0 0;
+}
+
+.todoItem{
+}
+
+#todoList li{
+    list-style: none;
+    margin-bottom: 1rem;
+}
+
+#todoList label{
+    border-radius: 0.5rem;
+    background-color: #d7d4d4;
+    border: 2px solid;
+    border-right-color: #eeeeee;
+    border-bottom-color: #eee;
+    border-top-color: #9a9a9a;
+    border-left-color: #9a9a9a;
+    margin-left: 0.5rem;
+    font-size: 2rem;
+    }
+
+.dblchkbx{
+    -ms-transform: scale(2); /* IE */
+    -moz-transform: scale(2); /* FF */
+    -webkit-transform: scale(2); /* Safari and Chrome */
+    -o-transform: scale(2); /* Opera */
+    transform: scale(2);
+}
+
+.strkthrgh{
+    text-decoration: line-through;
+}
+
+#todoList label input[type=text]{
+    height: 1.5rem;
+    background-color: #d7d4d4;
+    border: none;
+    font-size: 2rem;
+}
+
+.lnblock{display: inline-block;}
 .flwth{width: 100%;}
 .nntywth{width: 90%;}
+.svntwth{width: 70%;}
 .sxtwth{width: 66%;}
 .hlfwth{width: 50%}
 .thrtwth{width: 33%;}
 .twntwth{width: 20%;}
 .right{float: right !important;}
 .left{float: left !important;}
+.cntr{
+    margin: 0 auto;
+    position: relative;
+    }

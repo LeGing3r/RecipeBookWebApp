@@ -13,9 +13,6 @@
     <nav>
         <div class="navbar">
             <div class="title"><a th:href="@{|/recipes|}">Recipes 'R' Us</a></div>
-            <div class="searchbar">
-                <input type="text" placeholder="Search for a recipe"/>
-            </div>
             <ul>
                 <li th:classappend="${#httpServletRequest.servletPath.equals('/recipes') ? 'active' : ''}">
                     <a th:href="@{/recipes}">Recipes</a></li>
@@ -26,6 +23,9 @@
                 <li th:classappend="${#httpServletRequest.servletPath.equals('/todo') ? 'active' : ''}">
                     <a th:href="@{/todo}">Shopping List</a></li>
             </ul>
+            <div class="searchbar tnwth">
+                <input type="text" placeholder="Search for a recipe"/>
+            </div>
         </div>
     </nav>
 </div>

@@ -4,28 +4,32 @@
 <body>
 <div th:replace="layout :: nav"></div>
 <div th:replace="layout :: flash"></div>
-<div>
-    <div th:object="${recipe}">
-        <h2 th:text="*{name}"></h2>
-    </div>
-    <div>
-        <h3>Ingredients:</h3>
-        <ul th:each="ingredient : ${recipe.ingredients}" class="ingredients">
-            <li>
+<div class="container">
+    <h2 th:text="${recipe.name}" style="text-align: center;"></h2>
+
+    <table class="recipeTable sxtwth">
+        <tr>
+            <th class="iH" style="width: 80%; text-align: left;">Ingredients</th>
+            <th>Need It</th>
+        </tr>
+        <tr th:each="ingredient : ${recipe.ingredients}">
+            <td>
                 <p th:text="${ingredient.qty}"></p>
-                <p th:text="${ingredient.measurement}"></p>
                 <p th:text="${ingredient.name}"></p>
-            </li>
-        </ul>
-    </div>
+            </td>
+            <td style="text-align: center"><a th:href="@{|/ingredients/${ingredient.id}|}" th:class="(${ingredient.needed} ? '' : 'un') + 'mark chck'"></a></td>
+        </tr>
+    </table>
     <div>
         <h4 th:text="*{method}"></h4>
     </div>
 
+    <h3>Categories:</h3>
+    <div class="separator"></div>
     <div th:each="category : ${categories}">
-        <h4><a th:text="${category.name}" th:href="@{|/category/${category.id}|}"></a></h4>
+        <h4 style="display: inline;"><a th:text="${category.name}" th:href="@{|/category/${category.id}|}"></a></h4>
     </div>
-    <form th:action="@{|/recipes/${recipe.id}/delete|}" method="post">
+    <form th:action="@{|/recipes/${recipe.id}/delete|}" method="post" style="position: fixed; bottom: 0">
         <button type="submit">Delete</button>
     </form>
 </div>

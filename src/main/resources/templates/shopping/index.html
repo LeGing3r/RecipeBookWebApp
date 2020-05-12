@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="layout :: head('Shopping List')"></head>
+<body>
+<div th:replace="layout :: nav"></div>
+<div th:replace="layout :: flash"></div>
+<div class="container">
+    <ul id="todoList">
+        <form th:object=${cart} th:action="@{/todo}" method="post">
+            <li th:each="ingredient, i : *{ingredients}" class="ingredient">
+                <input type="hidden" th:field="${cart.ingredients[__${i.index}__].id}"/>
+                <input type="hidden" th:field="${cart.ingredients[__${i.index}__].qty}"/>
+                <input type="hidden" th:field="${cart.ingredients[__${i.index}__].recipe}"/>
+                <input type="hidden" th:field="${cart.ingredients[__${i.index}__].name}"/>
+                <input type="checkbox" class="dblchkbx" th:id="${__i.index__}" th:checked="${ingredient.needed}"
+                       th:field="${cart.ingredients[__${i.index}__].needed}" th:onchange="'strikeThrough(__${i.index}__)'"/>
+                <label th:for="${__i.index__}" th:text="${cart.ingredients[__${i.index}__].name}"></label>
+            </li>
+            <button type="submit">Refresh</button>
+        </form>
+        <li>
+            <form th:object="${newIngredient}" th:action="@{/todo/add}" method="post" style="margin: 2rem 0;">
+                <label><input type="text" th:field="*{name}" placeholder="New Item" autocomplete="off"
+                              class="hlfwth todoItem"
+                              autofocus="autofocus" onfocus="this.select()"/></label>
+            </form>
+        </li>
+    </ul>
+</div>
+<script type="text/javascript">
+    function strikeThrough(i){
+        var ing = document.getElementsByClassName("ingredient")[i];
+        ing.classList.toggle("strkthrgh");
+    }
+</script>
+</body>
+</html>

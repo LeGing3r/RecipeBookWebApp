@@ -4,8 +4,8 @@ import com.sun.istack.NotNull;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -15,12 +15,11 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @NotNull
-    @Column(unique = true)
     private String name;
     @ManyToMany(mappedBy = "categories",
             cascade = CascadeType.PERSIST,
             fetch = FetchType.EAGER)
-    private Set<Recipe> recipes = new HashSet<>();
+    private List<Recipe> recipes = new ArrayList<>();
 
     @Override
     public String toString() {
