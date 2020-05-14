@@ -5,33 +5,56 @@
 <div th:replace="layout :: nav"></div>
 <div th:replace="layout :: flash"></div>
 <div class="container">
-    <h2 th:text="${recipe.name}" style="text-align: center;"></h2>
-
-    <table class="recipeTable sxtwth">
-        <tr>
-            <th class="iH" style="width: 80%; text-align: left;">Ingredients</th>
-            <th>Need It</th>
-        </tr>
-        <tr th:each="ingredient : ${recipe.ingredients}">
-            <td>
-                <p th:text="${ingredient.qty}"></p>
-                <p th:text="${ingredient.name}"></p>
-            </td>
-            <td style="text-align: center"><a th:href="@{|/ingredients/${ingredient.id}|}" th:class="(${ingredient.needed} ? '' : 'un') + 'mark chck'"></a></td>
-        </tr>
-    </table>
-    <div>
-        <h4 th:text="*{method}"></h4>
-    </div>
-
-    <h3>Categories:</h3>
+    <h2 th:text="${recipe.name}" style="text-align: center; font-size: 2.5rem;" class="lnblock"></h2>
+    <a th:href="@{|/recipes/${recipe.id}/edit|}" class="lnblock"><i class="material-icons">edit</i></a>
     <div class="separator"></div>
-    <div th:each="category : ${categories}">
-        <h4 style="display: inline;"><a th:text="${category.name}" th:href="@{|/category/${category.id}|}"></a></h4>
+    <div>
+        <table class="recipeTable flwth">
+            <tr>
+                <th class="iH" style="width: 80%; border-bottom: black solid 1px; font-size: 2rem;">Ingredients</th>
+                <th style="border-bottom: black solid 1px; font-size: 2rem;">Need It</th>
+            </tr>
+            <tr th:each="ingredient, i : ${recipe.ingredients}">
+                <td>
+                    <p th:text="${ingredient.qty}"></p>
+                    <p th:text="${ingredient.name}"></p>
+                </td>
+                <!--TODO: CHANGE THIS SECTION SO THAT WHEN YOU NEED THE INGREDIENT, IT DOESN'T CHANGE ANYTHING ABOUT THE RECIPE, SIMPLY INCREMENTS THE ITEM IN THE SHOPPING LIST-->
+                <td>
+                    <form th:object="${recipe.ingredients[__${i.index}__]}"
+                          th:action="@{|/todo/add/${recipe.ingredients[__${i.index}__].id}|}"
+                          method="post">
+                        <input type="hidden" th:field="*{id}"/>
+                        <input type="hidden" th:field="*{name}"/>
+                        <input type="hidden" th:field="*{qty}"/>
+                        <input type="text" th:field="*{singleName}"/>
+                        <input class="tnwth" type="number" th:field="*{neededQty}"/>
+                        <button type="submit"><i class="material-icons">add</i></button>
+                    </form>
+                </td>
+            </tr>
+        </table>
+        <div class="flwth">
+            <div class="separator" style="margin-top: 2rem;"></div>
+            <h1 style="text-align: center; margin: 0 0 1rem 0;">Instructions</h1>
+            <h2 th:text="${recipe.method}"></h2>
+        </div>
     </div>
-    <form th:action="@{|/recipes/${recipe.id}/delete|}" method="post" style="position: fixed; bottom: 0">
-        <button type="submit">Delete</button>
-    </form>
+
+    <div style="margin-top: 5rem;">
+        <h3>Categories:</h3>
+        <div class="separator"></div>
+        <div class="flwth">
+            <h4 style="display: inline;" th:each="category : ${categories}"><a th:text="${category.name}"
+                                                                               th:href="@{|/category/${category.id}|}"></a>
+            </h4>
+        </div>
+        <form th:action="@{|/recipes/${recipe.id}/delete|}" method="post"
+              style="position: absolute; bottom: -1rem; right: 0;">
+            <button type="submit" onclick="javascript:alert('Are you sure you want to delete this recipe??')"><i
+                    class="material-icons">delete</i></button>
+        </form>
+    </div>
 </div>
 </body>
 </html>

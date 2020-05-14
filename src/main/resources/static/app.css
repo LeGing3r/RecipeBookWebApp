@@ -132,15 +132,17 @@ button{
 .container{
     width: 90%;
     margin: 0 auto;
+    position: relative;
 }
 
 .recipeTable tr td p{
     display: inline;
+    font-size: 1.6rem;
 }
 
 .chck{
-    width: 13px;
-    height: 13px;
+    width: 20px;
+    height: 20px;
     display: inline-block;
 }
 
@@ -191,14 +193,23 @@ button{
     font-size: 2rem;
 }
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+.invisible{display: none;}
+
 .lnblock{display: inline-block;}
 .flwth{width: 100%;}
 .nntywth{width: 90%;}
 .svntwth{width: 70%;}
 .sxtwth{width: 66%;}
 .hlfwth{width: 50%}
+.frtwth{width: 40%;}
 .thrtwth{width: 33%;}
 .twntwth{width: 20%;}
+.tnwth{width: 10%;}
 .right{float: right !important;}
 .left{float: left !important;}
 .cntr{

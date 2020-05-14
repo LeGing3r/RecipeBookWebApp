@@ -12,7 +12,7 @@
         <div class="r">
             <a th:href="@{|/recipes/${recipe.id}|}">
                 <img th:src="@{/shkshka.jpg}" th:alt="${recipe.name}" class="smllimg">
-                <span th:text="${recipe.name}"></span></a>
+                <span th:text="${recipe.name}" style="font-size: 3.5rem; color: #666"></span></a>
         </div>
         <a th:each="cat : ${recipe.categories}" th:href="@{|/categories/${cat.id}|}" th:text="${cat.name}"
            class="right" style="color: black;"></a>

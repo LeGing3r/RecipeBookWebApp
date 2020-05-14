@@ -22,7 +22,10 @@ public class Ingredient {
     @Size(min = 1)
     private String qty;
 
-    private boolean needed = false;
+    private boolean needed = true;
+
+    private String singleName;
+    private int neededQty;
 
     @ManyToOne
     @JoinTable(

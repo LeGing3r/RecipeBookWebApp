@@ -13,14 +13,21 @@
         </div>
         <div class="separator"></div>
         <br/>
+        <!--Ingredient creation and updating-->
         <div class="flwth cntr">
             <div th:each="ingredient,i : ${recipe.ingredients}" class="flwth">
                 <input type="hidden" th:field="*{ingredients[__${i.index}__].id}"/>
+
                 <input type="text" th:field="*{ingredients[__${i.index}__].qty}" autocomplete="off"
                        placeholder="Amount" style="width: 15%"/>
+
                 <input type="text" th:field="*{ingredients[__${i.index}__].name}" class="newIngBox"
-                       placeholder="Ingredient name"
-                       style="width: 70%;"/>
+                       placeholder="Ingredient" style="width: 70%;"/>
+
+                <input type="text" th:field="*{ingredients[__${i.index}__].singleName}"
+                       placeholder="Name of ingredient"/>
+
+                <input type="hidden" th:field="*{ingredients[__${i.index}__].neededQty}"/>
                 <button type="submit" id="addIngredientBtn" name="addIngredient"><i class="material-icons">add</i>
                 </button>
                 <button type="submit" name="removeIngredient" th:value="${i.index}"><i class="material-icons">delete</i>
@@ -28,6 +35,8 @@
                 <br/>
             </div>
         </div>
+        <textarea name="Instructions" id="Instructions" cols="30" rows="5" th:field="*{method}"
+                  placeholder="Enter instructions here..." class="flwth"></textarea>
         <div class="lnblock">
             <div class="flwth cntr">
                 <h3>Add Categories:</h3>

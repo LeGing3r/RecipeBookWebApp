@@ -6,7 +6,7 @@
 <div th:replace="layout :: flash"></div>
 <h1 th:text="${category.name}"></h1>
 <ul th:each="recipe : ${category.recipes}">
-    <li th:text="${recipe.name}"></li>
+    <li><a th:href="@{|/recipes/${recipe.id}|}" th:text="${recipe.name}"></a></li>
 </ul>
 <div>
     <form th:action="@{|/category/${category.id}/delete|}" method="post">

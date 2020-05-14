@@ -35,7 +35,9 @@ public class Recipe {
     private List<Category> categories = new ArrayList<>();
 
     private boolean chosen;
+    @Lob
     @Size(min = 3)
+    @Column(length = 100000)
     private String method;
 
     @Override

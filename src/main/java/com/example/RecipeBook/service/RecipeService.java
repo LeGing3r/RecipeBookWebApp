@@ -32,6 +32,7 @@ public class RecipeService {
 
         recipe.getCategories().removeAll(temp);
         recipe.getCategories().addAll(temp);
+        categoryRepository.saveAll(recipe.getCategories());
         recipeRepository.saveAndFlush(recipe);
     }
 

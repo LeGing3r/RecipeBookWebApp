@@ -69,4 +69,5 @@ public class CategoryController {
         model.addAttribute("category", category);
         return "category/details";
     }
+
 }
