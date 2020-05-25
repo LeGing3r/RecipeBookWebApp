@@ -24,7 +24,8 @@ public class Category {
     @Override
     public String toString() {
         return "Category{" +
-                ", name='" + name + '\'' +
+                "name='" + name + '\'' +
+                ", recipe qty=" + recipes.size() +
                 '}';
     }
 

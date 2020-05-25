@@ -2,7 +2,8 @@
 <html lang="en">
 <head th:fragment="head(page_title)" lang="en">
     <meta charset="UTF-8"/>
-    <meta description="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="viewport" content="width=device-width, height=device-height,
+    initial-scale=1.0, minimum-scale=1.0"/>
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/>
     <link rel="stylesheet" th:href="@{/app.css}"/>
@@ -10,10 +11,15 @@
 </head>
 <body>
 <div th:fragment="nav">
-    <nav>
+    <nav id="nav">
         <div class="navbar">
-            <div class="title"><a th:href="@{|/recipes|}">Recipes 'R' Us</a></div>
-            <ul>
+            <div class="title">
+                <a th:href="@{|/recipes|}">Recipes 'R' Us</a>
+                <button onclick="toggleMenu()" class="menuButton">
+                    <i id="menuButtonIcon" class="material-icons" style="color: white">menu</i>
+                </button>
+            </div>
+            <ul id="menu" class="menu">
                 <li th:classappend="${#httpServletRequest.servletPath.equals('/recipes') ? 'active' : ''}">
                     <a th:href="@{/recipes}">Recipes</a></li>
                 <li th:classappend="${#httpServletRequest.servletPath.equals('/categories') ? 'active' : ''}">
@@ -23,8 +29,16 @@
                 <li th:classappend="${#httpServletRequest.servletPath.equals('/todo') ? 'active' : ''}">
                     <a th:href="@{/todo}">Shopping List</a></li>
             </ul>
-            <div class="searchbar twntwth right">
-                <input type="text" placeholder="Search for a recipe"/>
+            <div class="searchbar frtwth right">
+                <form th:action="@{/search}" method="get">
+                    <input name="query" type="text" placeholder="Search for a recipe" required="required"
+                           autocomplete="off" style="width: 60%;"/>
+                    <select name="searchType" id="searchType">
+                        <option value="recipe">Recipe</option>
+                        <option value="category">Category</option>
+                        <option value="ingredient">Ingredient</option>
+                    </select>
+                </form>
             </div>
         </div>
     </nav>

@@ -4,26 +4,27 @@ import com.example.RecipeBook.dao.CategoryRepository;
 import com.example.RecipeBook.dao.IngredientRepository;
 import com.example.RecipeBook.dao.RecipeRepository;
 import com.example.RecipeBook.model.Category;
+import com.example.RecipeBook.model.ConversionObj;
 import com.example.RecipeBook.model.Ingredient;
 import com.example.RecipeBook.model.Recipe;
+import com.example.RecipeBook.service.ConversionObjService;
 import com.example.RecipeBook.service.RecipeService;
 import com.example.RecipeBook.web.FlashMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
-public class MainController {
+public class RecipeController {
     @Autowired
     private RecipeRepository recipeRepository;
 
@@ -35,6 +36,9 @@ public class MainController {
 
     @Autowired
     private RecipeService recipeService;
+
+    @Autowired
+    private ConversionObjService conversionObjService;
 
     @RequestMapping("")
     public String toMainSite() {
@@ -48,7 +52,7 @@ public class MainController {
 
     @RequestMapping("/recipes/{recipeId}")
     public String showRecipeDetails(@PathVariable Integer recipeId, Model model) {
-        Recipe recipe = recipeRepository.findById(recipeId).isPresent() ? recipeRepository.findById(recipeId).get() : null;
+        Recipe recipe = recipeRepository.findRecipeById(recipeId);
         model.addAttribute("recipe", recipe);
         model.addAttribute("categories", recipe.getCategories());
         return "recipe/details";
@@ -91,7 +95,7 @@ public class MainController {
 
     @RequestMapping("/recipes/{recipeId}/edit")
     public String formEditRecipe(@PathVariable Integer recipeId, Model model) {
-        Recipe recipe = recipeRepository.findById(recipeId).isPresent() ? recipeRepository.findById(recipeId).get() : new Recipe();
+        Recipe recipe = recipeRepository.findRecipeById(recipeId);
         model.addAttribute("recipe", recipe);
         model.addAttribute("submit", "Edit Rcipe");
         model.addAttribute("action", "/recipes/" + recipeId);
@@ -103,6 +107,7 @@ public class MainController {
         if (result.hasErrors()) {
             attributes.addFlashAttribute("recipe", recipe);
             attributes.addFlashAttribute("submit", "Edit Rcipe");
+            attributes.addFlashAttribute("flash", new FlashMessage("org.springframework.validation.BindingResult.recipe", FlashMessage.Status.FAILURE));
             attributes.addFlashAttribute("action", "/recipes/" + recipe.getId());
             return String.format("redirect:/recipes/{%s}/edit", recipe.getId());
         }
@@ -169,4 +174,54 @@ public class MainController {
         return "redirect:" + http.getHeader("referer");
     }
 
+    @RequestMapping("/recipes/choose/{recipeId}")
+    public String toggleRecipeChosen(@PathVariable Integer recipeId, HttpServletRequest http) {
+        recipeService.toggleChosen(recipeId);
+        return "redirect:" + http.getHeader("referer");
+    }
+
+    @RequestMapping("/recipes/copy")
+    public String copyRecipeFromSite(Model model) {
+        model.addAttribute("content", new ConversionObj());
+        return "recipe/copy-form";
+    }
+
+    @PostMapping("/recipes/copy")
+    public String sendCopiedForm(ConversionObj contents, RedirectAttributes attributes) {
+        Recipe recipe = conversionObjService.getRecipeFromConversion(contents);
+        attributes.addFlashAttribute("recipe", recipe);
+        return "redirect:/add";
+    }
+
+    @GetMapping("/search")
+    public String filterRecipes(@RequestParam String query, @RequestParam String searchType, Model model) {
+        List<Recipe> recipes = new ArrayList<>();
+        switch (searchType) {
+            case "recipe":
+                recipes = recipeRepository.findAll()
+                        .stream()
+                        .filter(r -> r.getName().toLowerCase().contains(query.toLowerCase()))
+                        .collect(Collectors.toList());
+                break;
+            case "category":
+                for (Category cat : categoryRepository.findByCatName(query.toLowerCase().trim()))
+                    recipes.addAll(cat.getRecipes());
+                break;
+            case "ingredient":
+                recipes.addAll(recipeService.findRecipesByIngredientName(query));
+                break;
+            default:
+                System.out.println("HOW????!!!!");
+                return "redirect:/recipes";
+        }
+
+        model.addAttribute("action", "/chosen");
+        model.addAttribute("switch", "Recipes To Make");
+        model.addAttribute("recipes", recipes);
+        return "/recipe/index";
+    }
+
 }
+
+
+

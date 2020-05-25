@@ -20,7 +20,7 @@ public class Item {
     private boolean needed = true;
 
     @ManyToOne
-    private TodoItemsDto todoItemsDto;
+    private ItemsDto itemsDto;
 
     public void increaseQty(int amt){
         this.qty += amt;

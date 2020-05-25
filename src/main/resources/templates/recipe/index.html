@@ -6,18 +6,23 @@
 <div th:replace="layout :: flash"></div>
 <div class="container">
     <form th:action="@{${action}}" class="cntr" style="width: fit-content">
-        <button type="submit" th:text="${switch}">All</button>
+        <button type="submit" th:text="${switch}" class="scaling-button">All</button>
     </form>
     <div th:each="recipe : ${recipes}" class="r recipes recipecntnr">
-        <div class="r">
+        <div class="r" style="display: inline-block; font-size: 2rem;">
             <a th:href="@{|/recipes/${recipe.id}|}">
-                <img th:src="@{/shkshka.jpg}" th:alt="${recipe.name}" class="smllimg">
-                <span th:text="${recipe.name}" style="font-size: 3.5rem; color: #666"></span></a>
+                <img th:src="@{/shkshka.jpg}" th:alt="${recipe.name}" class="smllimg"></a>
+            <a th:href="@{|/recipes/${recipe.id}|}" th:text="${recipe.name}"></a>
+            <a th:href="@{|/recipes/choose/${recipe.id}|}"
+               th:classappend="${recipe.chosen} ? 'mark' : 'unmark'" class=" chck"></a>
         </div>
-        <a th:each="cat : ${recipe.categories}" th:href="@{|/categories/${cat.id}|}" th:text="${cat.name}"
-           class="right" style="color: black;"></a>
         <div class="separator"></div>
+        <div class="right" id="recipe-cats">
+            <a th:each="cat : ${recipe.categories}" th:href="@{|/categories/${cat.id}|}" th:text="${cat.name}"
+               style="color: black;"></a>
+        </div>
     </div>
 </div>
+<div th:replace="layout :: scripts"></div>
 </body>
 </html>

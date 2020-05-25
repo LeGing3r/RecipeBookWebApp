@@ -7,9 +7,14 @@
 <div class="r rcpfrm">
     <form th:action="@{${action}}" method="post" th:object="${recipe}" class="hlfwth cntr">
         <input type="hidden" th:field="*{id}"/>
-        <div class="flwth cntr" style="text-align: center;">
+        <div class="flwth cntr" th:classappend="${#fields.hasErrors('name')} ? 'error' : ''"
+             style="text-align: center;">
             <input type="text" th:field="*{name}" autocomplete="off" placeholder="Name of Recipe"
                    style="text-align: center;"/>
+            <div class="error-message" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+            <a th:if="${recipe.id == null}"
+               style="padding: 0.7rem; background: black; border-radius: 0.8rem; display: inline-block; "
+               th:href="@{/recipes/copy}">Copy From Site</a>
         </div>
         <div class="separator"></div>
         <br/>
@@ -18,9 +23,6 @@
             <div th:each="ingredient,i : ${recipe.ingredients}" class="flwth">
                 <input type="hidden" th:field="*{ingredients[__${i.index}__].id}"/>
 
-                <input type="text" th:field="*{ingredients[__${i.index}__].qty}" autocomplete="off"
-                       placeholder="Amount" style="width: 15%"/>
-
                 <input type="text" th:field="*{ingredients[__${i.index}__].name}" class="newIngBox"
                        placeholder="Ingredient" style="width: 70%;"/>
 
@@ -28,7 +30,8 @@
                        placeholder="Name of ingredient"/>
 
                 <input type="hidden" th:field="*{ingredients[__${i.index}__].neededQty}"/>
-                <button type="submit" id="addIngredientBtn" name="addIngredient"><i class="material-icons">add</i>
+                <button type="submit" id="addIngredientBtn" name="addIngredient" class="addIngredientBtn">
+                    <i class="material-icons">add</i>
                 </button>
                 <button type="submit" name="removeIngredient" th:value="${i.index}"><i class="material-icons">delete</i>
                 </button>
@@ -36,7 +39,7 @@
             </div>
         </div>
         <textarea name="Instructions" id="Instructions" cols="30" rows="5" th:field="*{method}"
-                  placeholder="Enter instructions here..." class="flwth"></textarea>
+                  placeholder="Enter instructions here..." class="nntywth"></textarea>
         <div class="lnblock">
             <div class="flwth cntr">
                 <h3>Add Categories:</h3>

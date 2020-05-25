@@ -15,9 +15,10 @@
                        th:checked="${cart.items[__${i.index}__].needed}"
                        th:field="${cart.items[__${i.index}__].needed}" th:onchange="'strikeThrough(__${i.index}__)'"/>
                 <input type="text" th:field="${cart.items[__${i.index}__].name}"/>
-                <input style="width: 4%; text-align: center;" type="number" th:field="*{items[__${i.index}__].qty}"/>
+                <input style="width: 10%; min-width: 30px; text-align: center;" type="number"
+                       th:field="*{items[__${i.index}__].qty}"/>
             </li>
-            <button type="submit">Refresh</button>
+            <button class="scaling-button" type="submit">Refresh</button>
         </form>
         <li>
             <form th:object="${newItem}" th:action="@{/todo/add}" method="post" style="margin: 2rem 0;">
@@ -28,19 +29,6 @@
         </li>
     </ul>
 </div>
-<script type="text/javascript">
-    function strikeThrough(i){
-        var ing = document.getElementsByClassName("item")[i];
-        ing.classList.toggle("strkthrgh");
-    }
-
-
-
-
-
-
-
-
-</script>
+<div th:replace="layout :: scripts"></div>
 </body>
 </html>

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="layout :: head('Recipe Details')"></head>
+<body>
+<div th:replace="layout :: nav"></div>
+<div th:replace="layout :: flash"></div>
+<div class="nntywth">
+    <form th:action="@{/recipes/copy}" method="post" th:object="${content}" >
+        <textarea th:field="*{contents}" name="something" id="copyText" cols="30" rows="10"></textarea>
+        <button type="submit">Submit</button>
+    </form>
+</div>
+<div th:replace="layout :: scripts"></div>
+</body>
+</html>

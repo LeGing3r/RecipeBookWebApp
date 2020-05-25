@@ -1,12 +1,13 @@
 package com.example.RecipeBook.web.controller;
 
+import com.example.RecipeBook.dao.IngredientRepository;
 import com.example.RecipeBook.dao.ItemRepository;
-import com.example.RecipeBook.dao.TodoRepository;
+import com.example.RecipeBook.dao.ItemDtoRepository;
 import com.example.RecipeBook.model.Ingredient;
 import com.example.RecipeBook.model.Item;
 import com.example.RecipeBook.model.Recipe;
-import com.example.RecipeBook.model.TodoItemsDto;
-import com.example.RecipeBook.service.TodoItemService;
+import com.example.RecipeBook.model.ItemsDto;
+import com.example.RecipeBook.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,26 +22,28 @@ import javax.validation.Valid;
 import java.util.List;
 
 @Controller
-public class TodoItemController {
+public class ItemController {
     @Autowired
     ItemRepository itemRepository;
 
     @Autowired
-    TodoRepository todoRepository;
+    ItemDtoRepository itemDtoRepository;
 
     @Autowired
-    TodoItemService itemService;
+    ItemService itemService;
+
+    @Autowired
+    IngredientRepository ingredientRepository;
 
     @RequestMapping("/items")
     public String findAllItems() {
-        TodoItemsDto itemsDto = todoRepository.findTodoDto();
-        System.out.println(itemsDto.getItems().get(0).getName());
+        ingredientRepository.findAll().forEach(System.out::println);
         return "redirect:/recipes";
     }
 
     @RequestMapping("/todo")
     public String displayShoppingList(Model model) {
-        TodoItemsDto itemsDto = todoRepository.findTodoDto();
+        ItemsDto itemsDto = itemDtoRepository.findFirstItemDto();
         itemsDto.getItems();
         model.addAttribute("cart", itemsDto);
         model.addAttribute("newItem", new Item());
@@ -49,14 +52,9 @@ public class TodoItemController {
 
     //TODO: CLEAN UP CODE SIMPLIFY NAMES, ONLY DISPLAY ITEMS WITH NO CHECK MARKS AFTER REFRESH, AND FINALLY ADD A WAY TO DELETE ITEMS
     @PostMapping("/todo")
-    public String updateTodoList(TodoItemsDto itemsDto) {
+    public String updateTodoList(ItemsDto itemsDto) {
         List<Item> items = itemsDto.getItems();
-        for (Item i : items)
-            if (!i.isNeeded())
-                i.setQty(0);
-        items.forEach(item -> item.setTodoItemsDto(itemsDto));
-        itemRepository.saveAll(items);
-        todoRepository.save(itemsDto);
+        itemService.updateTodoDto(items);
         return "redirect:/todo";
     }
 
@@ -66,22 +64,7 @@ public class TodoItemController {
             attributes.addFlashAttribute("org.springframework.validation.binding.item", result);
             return "redirect:/todo";
         }
-        TodoItemsDto itemsDto = todoRepository.findTodoDto();
-        List<Item> items = itemsDto.getItems();
-        for (Item i : items) {
-            if (i.getName().equals(item.getName())) {
-                i.increaseQty(item.getQty());
-                i.setNeeded(true);
-                i.setTodoItemsDto(todoRepository.findTodoDto());
-                itemRepository.save(i);
-                return "redirect:/todo";
-            }
-        }
-        item.setTodoItemsDto(todoRepository.findTodoDto());
-        item.setNeeded(true);
-        itemRepository.save(item);
-        todoRepository.save(todoRepository.findTodoDto());
-
+        itemService.saveToItemDto(item);
         return "redirect:/todo";
     }
 
@@ -92,7 +75,7 @@ public class TodoItemController {
             if ((i.getId() != null) && (i.getId().equals(ingredientId)))
                 ingredient = i;
         }
-        itemService.addToTodo(ingredient);
+        itemService.addToItemDto(ingredient);
         return "redirect:" + request.getHeader("referer");
     }
 }

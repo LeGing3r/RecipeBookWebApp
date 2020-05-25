@@ -21,7 +21,7 @@ public class Recipe {
     @Size(min = 3)
     private String name;
 
-    @OneToMany(mappedBy = "recipe")
+    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
     @Size(min = 1)
     private List<Ingredient> ingredients = new ArrayList<>();
 
@@ -34,11 +34,17 @@ public class Recipe {
             inverseJoinColumns = {@JoinColumn(name = "category_id")})
     private List<Category> categories = new ArrayList<>();
 
-    private boolean chosen;
+    private boolean chosen = false;
     @Lob
     @Size(min = 3)
     @Column(length = 100000)
     private String method;
+
+    public boolean containsIngredient(List<Ingredient> ingredients) {
+        int originalSize = ingredients.size();
+        ingredients.removeAll(this.getIngredients());
+        return ingredients.size() < originalSize;
+    }
 
     @Override
     public String toString() {

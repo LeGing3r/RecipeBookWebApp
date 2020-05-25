@@ -1,13 +1,14 @@
 package com.example.RecipeBook.service;
 
 import com.example.RecipeBook.dao.CategoryRepository;
+import com.example.RecipeBook.dao.IngredientRepository;
 import com.example.RecipeBook.dao.RecipeRepository;
 import com.example.RecipeBook.model.Category;
+import com.example.RecipeBook.model.Ingredient;
 import com.example.RecipeBook.model.Recipe;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,7 +22,7 @@ public class RecipeService {
     CategoryRepository categoryRepository;
 
     @Autowired
-    EntityManager entityManager;
+    IngredientRepository ingredientRepository;
 
     public void setCategories(Recipe recipe) {
         List<Category> temp = new ArrayList<>();
@@ -50,4 +51,20 @@ public class RecipeService {
         }
         recipeRepository.delete(recipe);
     }
+
+    public void toggleChosen(Integer recipeId) {
+        Recipe r = recipeRepository.findRecipeById(recipeId);
+        r.setChosen(!(r.isChosen()));
+        recipeRepository.save(r);
+    }
+
+    public List<Recipe> findRecipesByIngredientName(String name) {
+        List<Ingredient> ingredients = ingredientRepository.findByName(name);
+        return recipeRepository.findAll()
+                .stream()
+                .filter(r -> r.containsIngredient(ingredients))
+                .collect(Collectors.toList());
+    }
+
+
 }

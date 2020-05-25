@@ -18,10 +18,6 @@ public class Ingredient {
     @Size(min = 3)
     private String name;
 
-    @NotNull
-    @Size(min = 1)
-    private String qty;
-
     private boolean needed = true;
 
     private String singleName;
@@ -33,4 +29,13 @@ public class Ingredient {
             joinColumns = {@JoinColumn(name = "ingredient_id")},
             inverseJoinColumns = {@JoinColumn(name = "recipe_id")})
     private Recipe recipe;
+
+    @Override
+    public String toString() {
+        return "Ingredient{" +
+                "name='" + name + '\'' +
+                ",recipe='" + recipe.getName() + '\''
+                + ", singleName='" + singleName + '\''
+                + '}';
+    }
 }

@@ -1,11 +1,14 @@
 html{background-color: #cdcdcd;}
-body{margin: 0;}
+body{margin: 70px 0 0 0;}
 
-nav{
+#nav{
     width: 100%;
     background: black;
-    height: 60px;
     margin-bottom: 2rem;
+    position: fixed;
+    top: -1px;
+    transition: top 0.3s;
+    z-index: 999;
 }
 
 nav .navbar{
@@ -18,12 +21,10 @@ nav .navbar{
 
 .navbar ul{
     margin: 0;
-    overflow: hidden;
-    height: 60px;
-    display: inline;
+    height: 61px;
 }
 
-.navbar ul li {
+.navbar ul li, .category li {
     list-style: none;
     display: inline-block;
     height: inherit;
@@ -37,10 +38,8 @@ nav .navbar{
 }
 .navbar ul li a:hover{background-color: #393535}
 
-.searchbar{
-    display: inline-block;
-    margin-left: 4rem;
-}
+.searchbar{display: inline-block;}
+
 .searchbar input[type=text]{
     width:100%;
     height: 30px;
@@ -75,9 +74,7 @@ nav .navbar{
     margin-bottom: 0.75rem;
     position: relative;
 }
-.recipecntnr{
-    height: 60px;
-}
+
 .separator{
     height: 1px;
     background: black;
@@ -85,6 +82,8 @@ nav .navbar{
 .recipes .categories a{
     color: black;
 }
+#recipe-cats a:after{content: ", ";}
+#recipe-cats a:last-child:after{content: " ";}
 
 .card {
     box-shadow: none;
@@ -112,7 +111,7 @@ nav .navbar{
 .rcpfrm input[type=text]{
     border-radius: 0.3rem;
     border: none;
-    font-size: 2rem;
+    font-size: 1.3rem;
     margin-bottom: 0.5rem;
 }
 
@@ -129,15 +128,12 @@ button{
     font-size: 1rem;
 }
 
+button:focus{outline: 0;}
+
 .container{
     width: 90%;
     margin: 0 auto;
     position: relative;
-}
-
-.recipeTable tr td p{
-    display: inline;
-    font-size: 1.6rem;
 }
 
 .chck{
@@ -184,6 +180,7 @@ button{
 
 .strkthrgh{
     text-decoration: line-through;
+    background: inherit;
 }
 
 #todoList label input[type=text]{
@@ -194,11 +191,41 @@ button{
 }
 
 input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-}
+input::-webkit-inner-spin-button {-webkit-appearance: none;}
+
+input:focus{outline: 0;}
+
+.row{
+    position: relative;
+    width: 100%;
+    }
+
+.recipeTable tr td p{
+    display: inline;
+    font-size: 1.6rem !important;
+    }
+
+.recipeTable {
+    width: 100%;
+    position: relative;
+    border-collapse: collapse;
+    }
+
+.recipeTable thead tr{
+        background: black !important;
+        color: white;
+        }
+
+.recipeTable tr:nth-of-type(odd){background: #cdcdcd;}
+
+.recipeTable tr{background: #acacac;}
+
+.menuButton{display: none;}
+
+#todoList input{font-size: 2rem;}
 
 .invisible{display: none;}
+.visible{display: contents !important;}
 
 .lnblock{display: inline-block;}
 .flwth{width: 100%;}
@@ -215,4 +242,83 @@ input::-webkit-inner-spin-button {
 .cntr{
     margin: 0 auto;
     position: relative;
+    }
+.error{background: red;}
+/*Beginning of responsive design*/
+@media only screen and (min-device-width: 760px){
+    .menu{display: contents;}
+}
+@media only screen and (max-device-width: 1239px)
+and
+(min-device-width: 760px){
+    .searchbar{width: 80%;}
+    body{margin: 120px 0 0 0;}
+}
+
+@media only screen and (max-device-width: 760px){
+
+    body{margin: 150px 0 0 0}
+    .navbar{line-height: initial;}
+    .title{margin-top: 1rem;}
+
+    .recipeTable, thead, tbody, th, td, tr {
+		display: block;
+	}
+
+    .recipeTable thead tr{
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+    .recipeTable td{
+        border: none;
+        position: relative;
+        padding-left: 50%;
+    }
+
+    .recipeTable td:before{
+        font-size: 2rem;
+        position: absolute;
+        top: 0;
+        left: 0px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+    }
+
+    .recipeTable tbody tr td input {
+        font-size: 1rem;
+        max-width: 90%;
+    }
+
+    td:nth-of-type(1):before { content: "Ingredient"; }
+    td:nth-of-type(2):before { content: "Missing It"; }
+
+    .menu li{
+       width: 100%;
+       text-align: center;
+       background: black;
+    }
+
+    .menu{display: none;}
+
+    .title{
+       width: 100%;
+       text-align: center;
+       font-size: 2.5rem;
+    }
+
+    .title i{font-size: 2rem;}
+    .searchbar input[type=text]{text-align: center;}
+    .menuButton{display: inline-block;}
+
+    #todoList input{
+    font-size: 1.6rem !important;
+    max-width: 100%;
+    }
+
+    .twntwth{width: 100%;}
+    .frtwth{width: 100%;}
+    .hlfwth{width: 95%;}
+
     }

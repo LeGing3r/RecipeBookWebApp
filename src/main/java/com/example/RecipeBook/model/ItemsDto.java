@@ -8,12 +8,12 @@ import java.util.List;
 
 @Entity
 @Data
-public class TodoItemsDto {
+public class ItemsDto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @OneToMany(mappedBy = "todoItemsDto", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "itemsDto", fetch = FetchType.EAGER)
     private List<Item> items = new ArrayList<>();
 
 }
