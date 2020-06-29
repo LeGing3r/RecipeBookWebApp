@@ -23,6 +23,7 @@ public class ItemService {
         List<Item> items = itemDtoRepository.findFirstItemDto().getItems();
         for (Item item : items) {
             if (item.getName().equalsIgnoreCase(i.getSingleName())) {
+                item.increaseQty(i.getNeededQty());
                 saveToItemDto(item);
                 return;
             }
@@ -38,7 +39,6 @@ public class ItemService {
         List<Item> items = itemsDto.getItems();
         for (Item i : items) {
             if (i.getName().equals(item.getName())) {
-                i.increaseQty(item.getQty());
                 i.setNeeded(true);
                 i.setItemsDto(itemDtoRepository.findFirstItemDto());
                 itemRepository.save(i);

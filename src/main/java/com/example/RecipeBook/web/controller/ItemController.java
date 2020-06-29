@@ -50,7 +50,6 @@ public class ItemController {
         return "shopping/index";
     }
 
-    //TODO: CLEAN UP CODE SIMPLIFY NAMES, ONLY DISPLAY ITEMS WITH NO CHECK MARKS AFTER REFRESH, AND FINALLY ADD A WAY TO DELETE ITEMS
     @PostMapping("/todo")
     public String updateTodoList(ItemsDto itemsDto) {
         List<Item> items = itemsDto.getItems();

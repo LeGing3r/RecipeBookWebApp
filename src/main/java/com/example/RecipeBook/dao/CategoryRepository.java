@@ -12,4 +12,5 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
 
     @Query("SELECT c from Category c WHERE lower(c.name) like %?1%")
     List<Category> findByCatName(String name);
+
 }

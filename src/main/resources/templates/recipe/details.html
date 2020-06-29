@@ -2,7 +2,7 @@
 <html lang="en">
 <head th:replace="layout :: head('Recipe Details')"></head>
 <body>
-<div th:replace="layout :: nav"></div>
+<div th:replace="layout :: nav('Recipe')"></div>
 <div th:replace="layout :: flash"></div>
 <div class="container">
     <div class="row">
@@ -13,6 +13,23 @@
     </div>
 
     <div class="separator"></div>
+    <div>
+        <img th:src="@{${recipe.imgLoc}}" th:alt="${recipe.name}" class="lrgimg brdrd" style="margin: 20px auto;">
+        <ul>
+            <li>
+                <input type="radio" name="scale" id="one" value="one"/>
+                <label for="one">1x</label>
+                <input type="radio" name="scale" id="two" value="three"/>
+                <label for="one">2x</label>
+                <input type="radio" name="scale" id="three" value="three"/>
+                <label for="one">3x</label>
+                <input type="radio" name="scale" id="custom" value="custom"/>
+                <label for="custom">Custom</label>
+            </li>
+            <li><h3>Prep time:</h3></li>
+            <li><h3>Cook time:</h3></li>
+        </ul>
+    </div>
     <div>
         <table class="recipeTable flwth">
             <thead>
@@ -25,7 +42,6 @@
                 <td>
                     <p th:text="${ingredient.name}"></p>
                 </td>
-                <!--TODO: CHANGE THIS SECTION SO THAT WHEN YOU NEED THE INGREDIENT, IT DOESN'T CHANGE ANYTHING ABOUT THE RECIPE, SIMPLY INCREMENTS THE ITEM IN THE SHOPPING LIST-->
                 <td>
                     <form th:object="${recipe.ingredients[__${i.index}__]}"
                           th:action="@{|/todo/add/${recipe.ingredients[__${i.index}__].id}|}"
@@ -33,10 +49,15 @@
                         <input type="hidden" th:field="*{id}"/>
                         <input type="hidden" th:field="*{name}"/>
                         <input type="text" th:field="*{singleName}"/>
-                        <input class="tnwth" type="number" th:field="*{neededQty}"/>
+                        <input class="tnwth" type="number" th:field="*{neededQty}" th:placeholder="*{neededQty}"/>
                         <button type="submit"><i class="material-icons">add</i></button>
                     </form>
                 </td>
+            </tr>
+            <tr>
+                <form action="">
+
+                </form>
             </tr>
         </table>
         <div class="flwth">

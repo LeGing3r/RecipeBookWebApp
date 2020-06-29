@@ -2,10 +2,11 @@
 <html lang="en">
 <head th:replace="layout :: head('New Recipe')"></head>
 <body>
-<div th:replace="layout :: nav"></div>
+<div th:replace="layout :: nav('Recipe')"></div>
 <div th:replace="layout :: flash"></div>
 <div class="r rcpfrm">
-    <form th:action="@{${action}}" method="post" th:object="${recipe}" class="hlfwth cntr">
+    <form th:action="@{${action}}" method="post" th:object="${recipe}" class="hlfwth cntr"
+          enctype="multipart/form-data">
         <input type="hidden" th:field="*{id}"/>
         <div class="flwth cntr" th:classappend="${#fields.hasErrors('name')} ? 'error' : ''"
              style="text-align: center;">
@@ -18,13 +19,19 @@
         </div>
         <div class="separator"></div>
         <br/>
+        <img th:if="${recipe.imgPath != null}" th:src="@{*{imgLoc}}" id="recipeImg" class="medimg cntr">
+        <div style="border: solid gray 1px; margin: 10px; border-radius: 1em; width: fit-content; background: white;">
+            <input type="file" id="file" name="file" th:value="*{imgPath}" accept="image/*" onchange="changeImg(event)"
+                   style="padding: 2rem 0"/>
+            <label for="file" style="padding: 2rem">Picture for Recipe</label>
+        </div>
         <!--Ingredient creation and updating-->
         <div class="flwth cntr">
             <div th:each="ingredient,i : ${recipe.ingredients}" class="flwth">
                 <input type="hidden" th:field="*{ingredients[__${i.index}__].id}"/>
 
                 <input type="text" th:field="*{ingredients[__${i.index}__].name}" class="newIngBox"
-                       placeholder="Ingredient" style="width: 70%;"/>
+                       placeholder="Ingredient" autocomplete="off" style="width: 70%;"/>
 
                 <input type="text" th:field="*{ingredients[__${i.index}__].singleName}"
                        placeholder="Name of ingredient"/>
@@ -33,7 +40,7 @@
                 <button type="submit" id="addIngredientBtn" name="addIngredient" class="addIngredientBtn">
                     <i class="material-icons">add</i>
                 </button>
-                <button type="submit" name="removeIngredient" th:value="${i.index}"><i class="material-icons">delete</i>
+                <button th:if="${#lists.size(recipe.ingredients) gt 1}" type="submit" name="removeIngredient" th:value="${i.index}"><i class="material-icons">delete</i>
                 </button>
                 <br/>
             </div>
@@ -53,6 +60,7 @@
                 </div>
             </div>
         </div>
+
         <button type="submit" style="position: absolute; right: 0; bottom: 0;">Save Recipe</button>
     </form>
 </div>

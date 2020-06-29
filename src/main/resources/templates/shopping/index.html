@@ -2,10 +2,17 @@
 <html lang="en">
 <head th:replace="layout :: head('Shopping List')"></head>
 <body>
-<div th:replace="layout :: nav"></div>
+<div th:replace="layout :: nav('Ingredient')"></div>
 <div th:replace="layout :: flash"></div>
 <div class="container">
-    <ul id="todoList">
+    <ul id="todoList" style="width: 100%; padding: 0;">
+        <li>
+            <form th:object="${newItem}" th:action="@{/todo/add}" method="post" style="margin: 2rem 0;">
+                <label><input type="text" th:field="*{name}" placeholder="New Item" autocomplete="off"
+                              class="hlfwth todoItem"
+                              autofocus="autofocus" onfocus="this.select()"/></label>
+            </form>
+        </li>
         <form th:object=${cart} th:action="@{/todo}" method="post">
             <input type="hidden" th:field="*{id}"/>
             <li th:each="item, i : ${cart.items}"
@@ -20,13 +27,6 @@
             </li>
             <button class="scaling-button" type="submit">Refresh</button>
         </form>
-        <li>
-            <form th:object="${newItem}" th:action="@{/todo/add}" method="post" style="margin: 2rem 0;">
-                <label><input type="text" th:field="*{name}" placeholder="New Item" autocomplete="off"
-                              class="hlfwth todoItem"
-                              autofocus="autofocus" onfocus="this.select()"/></label>
-            </form>
-        </li>
     </ul>
 </div>
 <div th:replace="layout :: scripts"></div>

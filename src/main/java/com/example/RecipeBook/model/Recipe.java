@@ -21,6 +21,10 @@ public class Recipe {
     @Size(min = 3)
     private String name;
 
+    private String imgLoc;
+
+    private String imgPath;
+
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
     @Size(min = 1)
     private List<Ingredient> ingredients = new ArrayList<>();

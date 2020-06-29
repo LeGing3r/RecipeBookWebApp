@@ -2,11 +2,14 @@
 <html lang="en">
 <head th:replace="layout :: head('Recipe Details')"></head>
 <body>
-<div th:replace="layout :: nav"></div>
+<div th:replace="layout :: nav('Recipe')"></div>
 <div th:replace="layout :: flash"></div>
 <div class="nntywth">
-    <form th:action="@{/recipes/copy}" method="post" th:object="${content}" >
-        <textarea th:field="*{contents}" name="something" id="copyText" cols="30" rows="10"></textarea>
+    <form th:action="@{/recipes/copy}" method="post" th:object="${content}">
+        <input style="display: block; margin: 0 auto; font-size: 1.5rem;" type="text" autocomplete="off" th:field="*{name}" id="name"
+               placeholder="Recipe Name"/>
+        <h2>Ingredients and Instructions:</h2>
+        <textarea th:field="*{contents}" name="something" id="copyText" style="width: 80%; height: 20em;"></textarea>
         <button type="submit">Submit</button>
     </form>
 </div>

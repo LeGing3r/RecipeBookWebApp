@@ -1,4 +1,6 @@
-html{background-color: #cdcdcd;}
+html{
+    background-color: #cdcdcd;
+    margin-bottom: 20rem;}
 body{margin: 70px 0 0 0;}
 
 #nav{
@@ -21,7 +23,7 @@ nav .navbar{
 
 .navbar ul{
     margin: 0;
-    height: 61px;
+    height: 60px;
 }
 
 .navbar ul li, .category li {
@@ -51,11 +53,41 @@ nav .navbar{
     display: inline-block;
     font-size: 1.9rem;
     float: left;
+     margin-right: 5px;
 }
 
+.category-dropdown{
+    position: absolute;
+    top: 60px;
+    padding: 0;
+    background: black;
+    width: min-content;
+    height: fit-content !important;
+    display: none;
+}
+
+#nav-cat:hover #cat-dropdown{display: block;}
+
 .smllimg{
-    width:  50px;
-    height: 50px;
+    width:  75px;
+    height: 75px;
+    border-radius: 1em;
+}
+
+.medimg{
+    width: 150px;
+    height: 150px;
+    display: block;
+}
+
+.lrgimg{
+    width: 300px;
+    height: 300px;
+    display: block;
+}
+
+.brdrd{
+    border: solid 1px black;
 }
 .r{
     margin: 0 auto;
@@ -63,7 +95,7 @@ nav .navbar{
 }
 
 .r .c{
-  float: left;
+  display: inline-block;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -82,6 +114,15 @@ nav .navbar{
 .recipes .categories a{
     color: black;
 }
+
+.r.recipes.recipecntnr:nth-child(even){
+    background: white;
+    margin-top: 20px;
+}
+
+.r.recipes.recipecntnr:nth-child(odd){background: darkgray; margin-top: 20px;}
+.r.recipes.recipecntnr:nth-child(even) a{color: #716f6f;}
+
 #recipe-cats a:after{content: ", ";}
 #recipe-cats a:last-child:after{content: " ";}
 
@@ -128,7 +169,10 @@ button{
     font-size: 1rem;
 }
 
-button:focus{outline: 0;}
+button:focus{
+    outline: 0;
+    -webkit-tap-highlight-color: transparent;
+    }
 
 .container{
     width: 90%;
@@ -227,6 +271,10 @@ input:focus{outline: 0;}
 .invisible{display: none;}
 .visible{display: contents !important;}
 
+li a.active{text-decoration: underline;}
+
+#menu li.active{background: #393939}
+
 .lnblock{display: inline-block;}
 .flwth{width: 100%;}
 .nntywth{width: 90%;}
@@ -306,6 +354,7 @@ and
        width: 100%;
        text-align: center;
        font-size: 2.5rem;
+
     }
 
     .title i{font-size: 2rem;}
@@ -314,11 +363,16 @@ and
 
     #todoList input{
     font-size: 1.6rem !important;
-    max-width: 100%;
+    max-width: 75%;
     }
 
     .twntwth{width: 100%;}
+    .thrtwth{width: 100%;}
     .frtwth{width: 100%;}
     .hlfwth{width: 95%;}
 
+    #nav-cat:hover #cat-dropdown{display: none;}
+
     }
+
+

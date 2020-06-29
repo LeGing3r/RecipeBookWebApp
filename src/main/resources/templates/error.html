@@ -11,7 +11,7 @@
         border-radius: 6px;
     }
 </style>
-<div th:replace="layout :: nav"></div>
+<div th:replace="layout :: nav('Recipe')"></div>
 <div class="container">
     <h2 th:text="|${#httpServletRequest.getAttribute('javax.servlet.error.status_code')} Error|">500
         Error</h2>
