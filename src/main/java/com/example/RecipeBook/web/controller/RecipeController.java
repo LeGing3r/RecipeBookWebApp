@@ -1,22 +1,26 @@
 package com.example.RecipeBook.web.controller;
 
-import com.example.RecipeBook.dao.CategoryRepository;
-import com.example.RecipeBook.dao.IngredientRepository;
-import com.example.RecipeBook.dao.RecipeRepository;
 import com.example.RecipeBook.model.Category;
 import com.example.RecipeBook.model.ConversionObj;
 import com.example.RecipeBook.model.Ingredient;
 import com.example.RecipeBook.model.Recipe;
+import com.example.RecipeBook.service.CategoryService;
 import com.example.RecipeBook.service.ConversionObjService;
+import com.example.RecipeBook.service.IngredientService;
 import com.example.RecipeBook.service.RecipeService;
 import com.example.RecipeBook.web.FlashMessage;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -31,22 +35,15 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+//TODO Sort pages alphabetically
 @Controller
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class RecipeController {
-    @Autowired
-    private RecipeRepository recipeRepository;
-
-    @Autowired
-    private IngredientRepository ingredientRepository;
-
-    @Autowired
-    private CategoryRepository categoryRepository;
-
-    @Autowired
+    private CategoryService categoryService;
     private RecipeService recipeService;
-
-    @Autowired
     private ConversionObjService conversionObjService;
+    private IngredientService ingredientService;
 
 
     @RequestMapping("")
@@ -61,7 +58,7 @@ public class RecipeController {
 
     @RequestMapping("/recipes/{recipeId}")
     public String showRecipeDetails(@PathVariable Integer recipeId, Model model) {
-        Recipe recipe = recipeRepository.findRecipeById(recipeId);
+        Recipe recipe = recipeService.findRecipeById(recipeId);
         model.addAttribute("recipe", recipe);
         model.addAttribute("categories", recipe.getCategories());
         return "recipe/details";
@@ -72,8 +69,7 @@ public class RecipeController {
                                  @RequestParam("page") Optional<Integer> page,
                                  @RequestParam("size") Optional<Integer> size) {
 
-        Page<Recipe> recipePage = getRecipes(model, page.orElse(1), size.orElse(6), recipeRepository.findAll());
-
+        Page<Recipe> recipePage = getRecipes(model, page.orElse(1), size.orElse(6), recipeService.findAll());
 
         model.addAttribute("link", "/recipes");
         model.addAttribute("action", "/chosen");
@@ -86,10 +82,7 @@ public class RecipeController {
     public String listChosenRecipes(Model model,
                                     @RequestParam("page") Optional<Integer> page,
                                     @RequestParam("size") Optional<Integer> size) {
-        List<Recipe> recipes = recipeRepository.findAll()
-                .stream()
-                .filter(Recipe::isChosen)
-                .collect(Collectors.toList());
+        List<Recipe> recipes = recipeService.findChosen();
         Page<Recipe> recipePage = getRecipes(model, page.orElse(1), size.orElse(6), recipes);
 
         model.addAttribute("link", "/chosen");
@@ -105,6 +98,8 @@ public class RecipeController {
 
         int totalPages = recipePage.getTotalPages();
         if (totalPages > 0) {
+            //TODO: Heap - Java memory model
+
             List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
                     .boxed()
                     .collect(Collectors.toList());
@@ -129,7 +124,7 @@ public class RecipeController {
     @RequestMapping(value = "/add", params = "withCategory")
     public String formNewRecipeWithCat(Model model, Category cat) {
         Recipe recipe = new Recipe();
-        recipe.getCategories().add(categoryRepository.findById(cat.getId()).get());
+        recipe.getCategories().add(categoryService.findById(cat.getId()));
         recipe.getIngredients().add(new Ingredient());
 
         model.addAttribute("recipe", recipe);
@@ -140,7 +135,7 @@ public class RecipeController {
 
     @RequestMapping("/recipes/{recipeId}/edit")
     public String formEditRecipe(@PathVariable Integer recipeId, Model model) {
-        Recipe recipe = recipeRepository.findRecipeById(recipeId);
+        Recipe recipe = recipeService.findRecipeById(recipeId);
         model.addAttribute("recipe", recipe);
         model.addAttribute("submit", "Edit Rcipe");
         model.addAttribute("action", "/recipes/" + recipeId);
@@ -154,18 +149,13 @@ public class RecipeController {
 
     @PostMapping("/recipes/{recipeId}")
     public String updateRecipe(@Valid Recipe recipe, RedirectAttributes attributes, BindingResult result, MultipartFile file) {
-        if (result.hasErrors()) {
+        if (result.hasErrors() || !recipeService.updateRecipe(recipe, file)) {
             attributes.addFlashAttribute("recipe", recipe);
             attributes.addFlashAttribute("submit", "Edit Rcipe");
             attributes.addFlashAttribute("flash", new FlashMessage("org.springframework.validation.BindingResult.recipe", FlashMessage.Status.FAILURE));
             attributes.addFlashAttribute("action", "/recipes/" + recipe.getId());
             return String.format("redirect:/recipes/{%s}/edit", recipe.getId());
         }
-
-        recipe.getIngredients().forEach(r -> r.setRecipe(recipe));
-        recipeService.setCategories(recipe);
-        ingredientRepository.saveAll(recipe.getIngredients());
-        recipeService.saveImgLoc(recipe, file);
         return "redirect:/recipes/" + recipe.getId();
     }
 
@@ -187,8 +177,8 @@ public class RecipeController {
 
         recipe.getIngredients().forEach(ingredient -> ingredient.setRecipe(recipe));
         recipeService.setCategories(recipe);
-        ingredientRepository.saveAll(recipe.getIngredients());
-        recipeService.saveImgLoc(recipe, file);
+        ingredientService.saveAll(recipe);
+        recipeService.setImgLoc(recipe, file);
 
         redirectAttributes.addFlashAttribute("flash", new FlashMessage("Recipe successfully added!", FlashMessage.Status.SUCCESS));
         return "redirect:/recipes";
@@ -222,9 +212,7 @@ public class RecipeController {
 
     @RequestMapping("/ingredients/{ingredientId}")
     public String toggleIngredientNecessity(@PathVariable Integer ingredientId, HttpServletRequest http) {
-        Ingredient ingredient = ingredientRepository.findById(ingredientId).isPresent() ? ingredientRepository.findById(ingredientId).get() : null;
-        ingredient.setNeeded(!ingredient.isNeeded());
-        ingredientRepository.save(ingredient);
+        ingredientService.changeNeeded(ingredientId);
         return "redirect:" + http.getHeader("referer");
     }
 
@@ -249,34 +237,28 @@ public class RecipeController {
         return "redirect:/add";
     }
 
-    @GetMapping("/search")
+    @RequestMapping("/search")
     public String filterRecipes(@RequestParam String query, @RequestParam String searchType, Model model) {
         List<Recipe> recipes = new ArrayList<>();
         List<Category> categories = new ArrayList<>();
         String addedText = ":";
         switch (searchType.toLowerCase()) {
-            case "recipe":
-                recipes = recipeRepository.findAll()
-                        .stream()
-                        .filter(r -> r.getName().toLowerCase().contains(query.toLowerCase()))
-                        .collect(Collectors.toList());
-                break;
-            case "category":
-                for (Category cat : categoryRepository.findByCatName(query.toLowerCase().trim())) {
-                    recipes.addAll(cat.getRecipes());
-                    categories.add(cat);
-                }
+            case "recipe" -> recipes = recipeService.findAllByQuery(query);
+            case "category" -> {
+                recipes.addAll(recipeService.findAllRecipesByCatName(query));
+                categories.addAll(categoryService.findAllCatsByName(query));
                 addedText = " as a category: ";
                 model.addAttribute("categories", categories);
-                break;
-            case "ingredient":
+            }
+            case "ingredient" -> {
                 recipes.addAll(recipeService.findRecipesByIngredientName(query));
                 addedText = " as an ingredient: ";
-                break;
-            default:
+            }
+            default -> {
                 System.out.println("HOW????!!!!");
                 System.out.println(searchType);
                 return "redirect:/recipes";
+            }
         }
         Page<Recipe> recipePage = getRecipes(model, 1, recipes.size(), recipes);
 

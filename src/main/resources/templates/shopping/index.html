@@ -15,8 +15,7 @@
         </li>
         <form th:object=${cart} th:action="@{/todo}" method="post">
             <input type="hidden" th:field="*{id}"/>
-            <li th:each="item, i : ${cart.items}"
-                th:classappend="*{items[__${i.index}__].needed} ? '' : 'invisible'" class="item">
+            <li th:each="item, i : ${cart.items}" class="item">
                 <input type="hidden" th:field="*{items[__${i.index}__].id}"/>
                 <input type="checkbox" class="dblchkbx" th:id=" ${__i.index__}"
                        th:checked="${cart.items[__${i.index}__].needed}"

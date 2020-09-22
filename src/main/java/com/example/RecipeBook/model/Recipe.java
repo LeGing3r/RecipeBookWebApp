@@ -50,6 +50,10 @@ public class Recipe {
         return ingredients.size() < originalSize;
     }
 
+    public void switchChosen(){
+        chosen = !chosen;
+    }
+
     @Override
     public String toString() {
         return "Recipe{" +

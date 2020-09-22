@@ -1,14 +1,12 @@
 package com.example.RecipeBook.web.controller;
 
-import com.example.RecipeBook.dao.IngredientRepository;
-import com.example.RecipeBook.dao.ItemRepository;
-import com.example.RecipeBook.dao.ItemDtoRepository;
-import com.example.RecipeBook.model.Ingredient;
 import com.example.RecipeBook.model.Item;
-import com.example.RecipeBook.model.Recipe;
 import com.example.RecipeBook.model.ItemsDto;
+import com.example.RecipeBook.model.Recipe;
 import com.example.RecipeBook.service.ItemService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -19,42 +17,45 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.List;
+import java.util.Optional;
 
 @Controller
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ItemController {
-    @Autowired
-    ItemRepository itemRepository;
-
-    @Autowired
-    ItemDtoRepository itemDtoRepository;
-
-    @Autowired
     ItemService itemService;
-
-    @Autowired
-    IngredientRepository ingredientRepository;
-
-    @RequestMapping("/items")
-    public String findAllItems() {
-        ingredientRepository.findAll().forEach(System.out::println);
-        return "redirect:/recipes";
-    }
 
     @RequestMapping("/todo")
     public String displayShoppingList(Model model) {
-        ItemsDto itemsDto = itemDtoRepository.findFirstItemDto();
-        itemsDto.getItems();
-        model.addAttribute("cart", itemsDto);
+        model.addAttribute("cart", itemService.listOfNeededItems());
         model.addAttribute("newItem", new Item());
         return "shopping/index";
     }
 
     @PostMapping("/todo")
     public String updateTodoList(ItemsDto itemsDto) {
-        List<Item> items = itemsDto.getItems();
-        itemService.updateTodoDto(items);
+        if (itemsDto == null) {
+            throw new IllegalStateException("itemsDto is mandatory, please provide it");
+        }
+        Optional.of(itemsDto)
+                .map(ItemsDto::getItems)
+                .filter(list -> !list.isEmpty())
+                .ifPresent(itemService::updateTodoDto);
         return "redirect:/todo";
+/*        Optional<ItemsDto> otherOptional = Optional.of(itemsDto);
+
+        List<Item> allItems = Stream.of(itemsDto, itemsDto)
+                .map(ItemsDto::getItems)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+        itemService.updateTodoDto(allItems);
+
+
+        Optional.of(itemsDto)
+                .flatMap(thisDto -> otherOptional.filter(opt -> opt.getItems().isEmpty()))
+                .map(ItemsDto::getItems)
+                .filter(list -> !list.isEmpty())
+                .ifPresent(itemService::updateTodoDto);*/
     }
 
     @PostMapping("/todo/add")
@@ -69,12 +70,13 @@ public class ItemController {
 
     @PostMapping("/todo/add/{ingredientId}")
     public String incrementQtyToList(Recipe recipe, HttpServletRequest request, @PathVariable Integer ingredientId) {
-        Ingredient ingredient = null;
-        for (Ingredient i : recipe.getIngredients()) {
-            if ((i.getId() != null) && (i.getId().equals(ingredientId)))
-                ingredient = i;
+        if(recipe == null){
+            throw new IllegalStateException("Recipe cannot be null, please use a valid recipe");
         }
-        itemService.addToItemDto(ingredient);
+        if(ingredientId < 0){
+            throw  new IllegalStateException("Ingredient Id cannot be negative");
+        }
+        itemService.addToItemDto(recipe, ingredientId);
         return "redirect:" + request.getHeader("referer");
     }
 }

@@ -29,3 +29,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### images ###
+src/main/resources/images/*.png

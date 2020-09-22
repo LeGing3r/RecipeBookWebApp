@@ -6,8 +6,9 @@ import com.example.RecipeBook.dao.RecipeRepository;
 import com.example.RecipeBook.model.Category;
 import com.example.RecipeBook.model.Ingredient;
 import com.example.RecipeBook.model.Recipe;
-import edu.emory.mathcs.backport.java.util.Collections;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -26,15 +27,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class RecipeService {
-    @Autowired
     RecipeRepository recipeRepository;
-
-    @Autowired
     CategoryRepository categoryRepository;
-
-    @Autowired
     IngredientRepository ingredientRepository;
+    IngredientService ingredientService;
 
     public void setCategories(Recipe recipe) {
         List<Category> temp = new ArrayList<>();
@@ -46,13 +45,17 @@ public class RecipeService {
         recipe.getCategories().removeAll(temp);
         recipe.getCategories().addAll(temp);
         categoryRepository.saveAll(recipe.getCategories());
+        saveRecipe(recipe);
+    }
+
+    private void saveRecipe(Recipe recipe) {
         recipeRepository.saveAndFlush(recipe);
     }
 
     public void delete(Integer recipeId) {
         Recipe recipe = recipeRepository.findById(recipeId).isPresent() ? recipeRepository.findById(recipeId).get() : null;
         if (recipe == null)
-            return;
+            throw new IllegalStateException("No recipe with given id");
         List<Category> categories = categoryRepository.findAll()
                 .stream()
                 .filter(category -> category.getRecipes().contains(recipe))
@@ -68,8 +71,8 @@ public class RecipeService {
 
     public void toggleChosen(Integer recipeId) {
         Recipe r = recipeRepository.findRecipeById(recipeId);
-        r.setChosen(!(r.isChosen()));
-        recipeRepository.save(r);
+        r.switchChosen();
+        saveRecipe(r);
     }
 
     public List<Recipe> findRecipesByIngredientName(String name) {
@@ -80,24 +83,25 @@ public class RecipeService {
                 .collect(Collectors.toList());
     }
 
-
-    public void saveImgLoc(Recipe recipe, MultipartFile file) {
+    public boolean setImgLoc(Recipe recipe, MultipartFile file) {
         try {
-            String path = "D:\\Projects\\RecipeBook\\src\\main\\resources\\images\\" + recipe.getId() + ".png";
+            String path = "D:\\Projects\\RecipeBookWebApp\\src\\main\\resources\\images\\" + recipe.getId() + ".png";
             File ogFile = Paths.get(path).toFile();
             if (ogFile.exists())
                 ogFile.delete();
             file.transferTo(new File(path));
+//            ImageIO.write(ImageIO.read(Paths.get(path).toFile()), "png", new File(path));
 
-            Path tempPath = Paths.get(String.format("D:\\Projects\\RecipeBook\\target\\classes\\images\\%d.png", recipe.getId()));
+            Path tempPath = Paths.get(String.format("D:\\Projects\\RecipeBookWebApp\\target\\classes\\images\\%d.png", recipe.getId()));
             Files.copy(Paths.get(path), tempPath, StandardCopyOption.REPLACE_EXISTING);
 
             recipe.setImgPath(path);
             recipe.setImgLoc("/images/" + recipe.getId() + ".png");
-            recipeRepository.saveAndFlush(recipe);
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
+        return true;
     }
 
     public Page<Recipe> findPages(Pageable pageable, List<Recipe> recipes) {
@@ -106,13 +110,58 @@ public class RecipeService {
         int startItem = currentPage * pageSize;
         List<Recipe> newList;
         if (recipes.size() < startItem)
-            newList = Collections.emptyList();
+            newList = new ArrayList<>();
         else {
             int toIndex = Math.min(startItem + pageSize, recipes.size());
             newList = recipes.subList(startItem, toIndex);
         }
-        Page<Recipe> recipePage =
-                new PageImpl<Recipe>(newList, PageRequest.of(currentPage, pageSize), recipes.size());
-        return recipePage;
+        return new PageImpl<>(newList, PageRequest.of(currentPage, pageSize), recipes.size());
+    }
+
+    public Recipe findRecipeById(Integer recipeId) {
+        return recipeRepository.findRecipeById(recipeId);
+    }
+
+    public List<Recipe> findAll() {
+        return recipeRepository.findAll();
+    }
+
+    public List<Recipe> findChosen() {
+        return recipeRepository.findAll()
+                .stream()
+                .filter(Recipe::isChosen)
+                .collect(Collectors.toList());
+    }
+
+    public List<Recipe> findAllByQuery(String query) {
+        return recipeRepository.findAll()
+                .stream()
+                .filter(r -> r.getName().toLowerCase().contains(query.toLowerCase()))
+                .collect(Collectors.toList());
+    }
+
+    public List<Recipe> findAllRecipesByCatName(String query) {
+        query = query.toLowerCase().trim();
+        String finalQuery = query;
+        List<Recipe> recipes = new ArrayList<>();
+        categoryRepository.findAll()
+                .stream()
+                .filter(category -> category.getName().equalsIgnoreCase(finalQuery))
+                .forEach(category -> recipes.addAll(category.getRecipes()));
+        return recipes;
+    }
+
+    public boolean updateRecipe(Recipe recipe,
+                                MultipartFile file) {
+        try {
+            ingredientService.setIngredients(recipe);
+            setCategories(recipe);
+            ingredientService.saveAll(recipe.getIngredients());
+            setImgLoc(recipe, file);
+            saveRecipe(recipe);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
     }
 }
