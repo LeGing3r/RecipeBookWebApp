@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.example.RecipeBook.StaticStrings.*;
+
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -83,25 +85,21 @@ public class RecipeService {
                 .collect(Collectors.toList());
     }
 
-    public boolean setImgLoc(Recipe recipe, MultipartFile file) {
-        try {
-            String path = "D:\\Projects\\RecipeBookWebApp\\src\\main\\resources\\images\\" + recipe.getId() + ".png";
-            File ogFile = Paths.get(path).toFile();
-            if (ogFile.exists())
-                ogFile.delete();
-            file.transferTo(new File(path));
+    public void setImgLoc(Recipe recipe, MultipartFile file) throws IOException {
+
+        String path = IMG_LOC + recipe.getId() + PNG;
+        File ogFile = Paths.get(path).toFile();
+        if (ogFile.exists())
+            ogFile.delete();
+        file.transferTo(new File(path));
 //            ImageIO.write(ImageIO.read(Paths.get(path).toFile()), "png", new File(path));
 
-            Path tempPath = Paths.get(String.format("D:\\Projects\\RecipeBookWebApp\\target\\classes\\images\\%d.png", recipe.getId()));
-            Files.copy(Paths.get(path), tempPath, StandardCopyOption.REPLACE_EXISTING);
+        Path tempPath = Paths.get(IMG_TEMP_LOC + recipe.getId() + PNG);
+        Files.copy(Paths.get(path), tempPath, StandardCopyOption.REPLACE_EXISTING);
 
-            recipe.setImgPath(path);
-            recipe.setImgLoc("/images/" + recipe.getId() + ".png");
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
+        recipe.setImgLoc("/images/" + recipe.getId() + PNG);
+        recipe.setImgPath(path);
+
     }
 
     public Page<Recipe> findPages(Pageable pageable, List<Recipe> recipes) {
@@ -158,10 +156,24 @@ public class RecipeService {
             setCategories(recipe);
             ingredientService.saveAll(recipe.getIngredients());
             setImgLoc(recipe, file);
-            saveRecipe(recipe);
         } catch (Exception e) {
             return false;
         }
+        saveRecipe(recipe);
+        return true;
+    }
+
+    public boolean addRecipe(Recipe recipe, MultipartFile file) {
+        try {
+            recipe.getIngredients().forEach(ingredient -> ingredient.setRecipe(recipe));
+            setCategories(recipe);
+            ingredientService.saveAll(recipe);
+            setImgLoc(recipe, file);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        saveRecipe(recipe);
         return true;
     }
 }

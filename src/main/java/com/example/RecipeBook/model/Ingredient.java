@@ -1,25 +1,23 @@
 package com.example.RecipeBook.model;
 
-import com.sun.istack.NotNull;
 import lombok.Data;
 
 import javax.persistence.*;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.NotNull;
 
 @Data
 @Entity
 @Table(name = "INGREDIENT")
 public class Ingredient {
+
+    //TODO: add measurement back to ingredients
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @NotNull
-    @Size(min = 3)
     private String name;
-
     private boolean needed = true;
-
     private String singleName;
     private int neededQty;
 

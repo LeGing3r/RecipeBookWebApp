@@ -98,8 +98,6 @@ public class RecipeController {
 
         int totalPages = recipePage.getTotalPages();
         if (totalPages > 0) {
-            //TODO: Heap - Java memory model
-
             List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
                     .boxed()
                     .collect(Collectors.toList());
@@ -167,18 +165,12 @@ public class RecipeController {
 
     @PostMapping("/recipes")
     public String addRecipe(@Valid Recipe recipe, @RequestParam MultipartFile file, BindingResult result,
-                            RedirectAttributes redirectAttributes, HttpServletRequest request) {
-        if (result.hasErrors()) {
+                            RedirectAttributes redirectAttributes) {
+        if (result.hasErrors() || !recipeService.addRecipe(recipe, file)) {
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.recipe", result);
             redirectAttributes.addFlashAttribute("recipe", recipe);
             return "redirect:/add";
         }
-        recipe.setImgLoc(System.getProperty("user.dir"));
-
-        recipe.getIngredients().forEach(ingredient -> ingredient.setRecipe(recipe));
-        recipeService.setCategories(recipe);
-        ingredientService.saveAll(recipe);
-        recipeService.setImgLoc(recipe, file);
 
         redirectAttributes.addFlashAttribute("flash", new FlashMessage("Recipe successfully added!", FlashMessage.Status.SUCCESS));
         return "redirect:/recipes";

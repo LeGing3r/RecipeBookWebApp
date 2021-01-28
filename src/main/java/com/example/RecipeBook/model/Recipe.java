@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 @Entity
 @Table(name = "RECIPE")
 public class Recipe {
+    //TODO: add nutritional info along with time to make
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -20,10 +21,9 @@ public class Recipe {
     @NotNull
     @Size(min = 3)
     private String name;
-
     private String imgLoc;
-
     private String imgPath;
+    private boolean chosen = false;
 
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
     @Size(min = 1)
@@ -38,7 +38,6 @@ public class Recipe {
             inverseJoinColumns = {@JoinColumn(name = "category_id")})
     private List<Category> categories = new ArrayList<>();
 
-    private boolean chosen = false;
     @Lob
     @Size(min = 3)
     @Column(length = 100000)
