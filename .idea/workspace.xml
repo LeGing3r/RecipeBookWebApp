@@ -1,0 +1,454 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="bdda3d5a-fa74-4c89-bc3c-9f82cc4a271f" name="Default Changelist" comment="Major changes made to application, future commits more detailed">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.mvn/wrapper/MavenWrapperDownloader.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.mvn/wrapper/maven-wrapper.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mvnw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mvnw.cmd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/RecipeBookApplication.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/StaticStrings.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/config/Server.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/config/TemplateConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/dao/CategoryRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/dao/IngredientRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/dao/ItemDtoRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/dao/ItemRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/dao/RecipeRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/model/Category.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/model/ConversionObj.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/model/Ingredient.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/model/Item.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/model/ItemsDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/model/Recipe.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/service/CategoryService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/service/ConversionObjService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/service/IngredientService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/service/ItemService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/service/RecipeService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/web/FlashMessage.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/web/controller/CategoryController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/web/controller/ItemController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/web/controller/RecipeController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/app.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/app.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/dropzone/CONTRIBUTING.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/dropzone/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/dropzone/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/dropzone/bower.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/dropzone/component.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/dropzone/composer.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/dropzone/dist/basic.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/dropzone/dist/dropzone-amd-module.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/dropzone/dist/dropzone.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/dropzone/dist/dropzone.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/dropzone/dist/dropzone.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/dropzone/dist/min/basic.min.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/dropzone/dist/min/dropzone-amd-module.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/dropzone/dist/min/dropzone.min.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/dropzone/dist/min/dropzone.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/dropzone/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/dropzone/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/icons/chck.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/icons/unchck.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/jquery-1.11.3.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/shkshka.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/category/details.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/category/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/error.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/layout.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/recipe/copy-form.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/recipe/details.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/recipe/form.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/recipe/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/shopping/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/shopping/ingredients.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/example/RecipeBook/RecipeBookApplicationTests.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/example/RecipeBook/service/CategoryServiceTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/example/RecipeBook/service/RecipeServiceTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/example/RecipeBook/web/controller/ItemControllerTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/example/RecipeBook/web/controller/ItemControllerWebTest.java" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CodeInsightWorkspaceSettings">
+    <option name="optimizeImportsOnTheFly" value="true" />
+  </component>
+  <component name="CompilerWorkspaceConfiguration">
+    <option name="MAKE_PROJECT_ON_SAVE" value="true" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JUnit5 Test Class" />
+        <option value="Enum" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="backend" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
+  </component>
+  <component name="InvalidFacetManager">
+    <ignored-facets>
+      <facet id="RecipeBook/invalid/JPA" />
+      <facet id="RecipeBook/invalid/Spring" />
+      <facet id="RecipeBook/invalid/Web" />
+    </ignored-facets>
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHome" value="C:\Users\babw0\.m2\wrapper\dists\apache-maven-3.6.3-bin\1iopthnavndlasol9gbrbg6bf2\apache-maven-3.6.3" />
+        <option name="usePluginRegistry" value="true" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectId" id="1gP1k19nD5YCmQ76EYhelYboICp" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RequestMappingsPanelOrder0" value="0" />
+    <property name="RequestMappingsPanelOrder1" value="1" />
+    <property name="RequestMappingsPanelWidth0" value="75" />
+    <property name="RequestMappingsPanelWidth1" value="75" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary" value="JUnit5" />
+    <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5" value="" />
+    <property name="extract.method.default.visibility" value="private" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/RecipeBookBackend" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="project.structure.last.edited" value="Project" />
+    <property name="project.structure.proportion" value="0.0" />
+    <property name="project.structure.side.proportion" value="0.0" />
+    <property name="settings.editor.selected.configurable" value="project.propCompiler" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Projects\RecipeBookWebApp\target\classes\images" />
+      <recent name="D:\Projects\RecipeBookWebApp\src\main\resources" />
+    </key>
+    <key name="CreateTestDialog.Recents.Supers">
+      <recent name="" />
+    </key>
+    <key name="CreateTestDialog.RecentsKey">
+      <recent name="com.example.RecipeBook.service" />
+      <recent name="com.example.RecipeBook.web.controller" />
+    </key>
+  </component>
+  <component name="RunManager" selected="JUnit.CategoryServiceTest.givenBadOrNullCatId_delete_illegalStateExceptionIsThrown">
+    <configuration name="CategoryServiceTest.givenBadOrNullCatId_delete_illegalStateExceptionIsThrown" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="RecipeBook" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.example.RecipeBook.service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.example.RecipeBook.service" />
+      <option name="MAIN_CLASS_NAME" value="com.example.RecipeBook.service.CategoryServiceTest" />
+      <option name="METHOD_NAME" value="givenBadOrNullCatId_delete_illegalStateExceptionIsThrown" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="CategoryServiceTest.givenCatId_delete_categoryRepositoryCallsDelete" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="RecipeBook" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.example.RecipeBook.service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.example.RecipeBook.service" />
+      <option name="MAIN_CLASS_NAME" value="com.example.RecipeBook.service.CategoryServiceTest" />
+      <option name="METHOD_NAME" value="givenCatId_delete_categoryRepositoryCallsDelete" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ItemControllerTest.givenListOfItems_updateTodoList_itemServiceIsCalled" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="RecipeBook" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.example.RecipeBook.web.controller.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.example.RecipeBook.web.controller" />
+      <option name="MAIN_CLASS_NAME" value="com.example.RecipeBook.web.controller.ItemControllerTest" />
+      <option name="METHOD_NAME" value="givenListOfItems_updateTodoList_itemServiceIsCalled" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ItemControllerWebTest.givenItemsDto_postTodo_callsItemService" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="RecipeBook" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.example.RecipeBook.web.controller.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.example.RecipeBook.web.controller" />
+      <option name="MAIN_CLASS_NAME" value="com.example.RecipeBook.web.controller.ItemControllerWebTest" />
+      <option name="METHOD_NAME" value="givenItemsDto_postTodo_callsItemService" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="RecipeControllerTest.givenRecipeIdAndModel_showRecipeDetails_callsRecipeRepository" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="RecipeBook" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.example.RecipeBook.web.controller.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.example.RecipeBook.web.controller" />
+      <option name="MAIN_CLASS_NAME" value="com.example.RecipeBook.web.controller.RecipeControllerTest" />
+      <option name="METHOD_NAME" value="givenRecipeIdAndModel_showRecipeDetails_callsRecipeRepository" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="RecipeBookApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+      <module name="RecipeBook" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.RecipeBook.RecipeBookApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.RecipeControllerTest.givenRecipeIdAndModel_showRecipeDetails_callsRecipeRepository" />
+        <item itemvalue="JUnit.ItemControllerWebTest.givenItemsDto_postTodo_callsItemService" />
+        <item itemvalue="JUnit.ItemControllerTest.givenListOfItems_updateTodoList_itemServiceIsCalled" />
+        <item itemvalue="JUnit.CategoryServiceTest.givenCatId_delete_categoryRepositoryCallsDelete" />
+        <item itemvalue="JUnit.CategoryServiceTest.givenBadOrNullCatId_delete_illegalStateExceptionIsThrown" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="bdda3d5a-fa74-4c89-bc3c-9f82cc4a271f" name="Default Changelist" comment="" />
+      <created>1598001555417</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1598001555417</updated>
+      <workItem from="1598001556552" duration="1601000" />
+      <workItem from="1598004867484" duration="4560000" />
+      <workItem from="1598099060584" duration="8626000" />
+      <workItem from="1598108218780" duration="1528000" />
+      <workItem from="1598109783790" duration="3959000" />
+      <workItem from="1598215379350" duration="12491000" />
+      <workItem from="1598338210729" duration="8672000" />
+      <workItem from="1598424561720" duration="1124000" />
+      <workItem from="1598425854598" duration="3117000" />
+      <workItem from="1598432129926" duration="2318000" />
+      <workItem from="1598448156554" duration="612000" />
+      <workItem from="1598519870359" duration="5898000" />
+      <workItem from="1598531561782" duration="403000" />
+      <workItem from="1598858526277" duration="764000" />
+      <workItem from="1598872854575" duration="56000" />
+      <workItem from="1598954217900" duration="1511000" />
+      <workItem from="1599121584624" duration="2567000" />
+      <workItem from="1599427070264" duration="753000" />
+      <workItem from="1599488763480" duration="657000" />
+      <workItem from="1599508643479" duration="12000" />
+      <workItem from="1599904287614" duration="1669000" />
+      <workItem from="1600022903187" duration="21000" />
+      <workItem from="1600090167074" duration="2103000" />
+      <workItem from="1600162111551" duration="726000" />
+      <workItem from="1600774938239" duration="3501000" />
+      <workItem from="1600778908379" duration="3676000" />
+      <workItem from="1600786549148" duration="69000" />
+      <workItem from="1601034383212" duration="658000" />
+      <workItem from="1601381385929" duration="638000" />
+      <workItem from="1601638491830" duration="3139000" />
+      <workItem from="1601740525012" duration="467000" />
+      <workItem from="1601886405422" duration="3142000" />
+      <workItem from="1602008323650" duration="206000" />
+      <workItem from="1602008658109" duration="136000" />
+      <workItem from="1602142471125" duration="311000" />
+      <workItem from="1602142910062" duration="97000" />
+      <workItem from="1602143033964" duration="1607000" />
+      <workItem from="1602145512061" duration="919000" />
+      <workItem from="1602220470755" duration="86000" />
+      <workItem from="1602254038823" duration="3013000" />
+      <workItem from="1602787228165" duration="241000" />
+      <workItem from="1602793127983" duration="4394000" />
+      <workItem from="1604231565365" duration="2186000" />
+      <workItem from="1604398289532" duration="169000" />
+      <workItem from="1604400228816" duration="17000" />
+      <workItem from="1605265257942" duration="2740000" />
+      <workItem from="1605684781218" duration="1713000" />
+      <workItem from="1605687674878" duration="189000" />
+      <workItem from="1605856236270" duration="669000" />
+      <workItem from="1606509423729" duration="744000" />
+      <workItem from="1607498304390" duration="696000" />
+      <workItem from="1608499728661" duration="1549000" />
+      <workItem from="1608547176515" duration="44000" />
+      <workItem from="1609238472934" duration="3494000" />
+      <workItem from="1609242530225" duration="34000" />
+      <workItem from="1609414399352" duration="5743000" />
+      <workItem from="1609682071797" duration="2866000" />
+      <workItem from="1609745864248" duration="4452000" />
+      <workItem from="1609852260864" duration="617000" />
+      <workItem from="1609858897977" duration="302000" />
+      <workItem from="1611501939994" duration="144000" />
+      <workItem from="1611502285500" duration="1342000" />
+      <workItem from="1611862405995" duration="1485000" />
+      <workItem from="1611865090085" duration="4488000" />
+      <workItem from="1611916137943" duration="1607000" />
+      <workItem from="1611927952692" duration="4836000" />
+      <workItem from="1612038621156" duration="164000" />
+      <workItem from="1612432547869" duration="3000" />
+      <workItem from="1612512823619" duration="592000" />
+      <workItem from="1612693790065" duration="30000" />
+      <workItem from="1614112497634" duration="174000" />
+      <workItem from="1614409698723" duration="59000" />
+      <workItem from="1614426101824" duration="1680000" />
+      <workItem from="1614428039158" duration="1735000" />
+      <workItem from="1615135638952" duration="712000" />
+      <workItem from="1615136425460" duration="1914000" />
+      <workItem from="1615139189187" duration="5562000" />
+      <workItem from="1615147348488" duration="616000" />
+      <workItem from="1615286314055" duration="411000" />
+      <workItem from="1615286804150" duration="117000" />
+      <workItem from="1615289396175" duration="606000" />
+      <workItem from="1615404542031" duration="769000" />
+      <workItem from="1615406226935" duration="45000" />
+      <workItem from="1615485951224" duration="1412000" />
+      <workItem from="1615543306422" duration="292000" />
+      <workItem from="1615544207882" duration="9849000" />
+      <workItem from="1615642691569" duration="1288000" />
+      <workItem from="1615730648817" duration="4207000" />
+      <workItem from="1615754402295" duration="597000" />
+      <workItem from="1616250151384" duration="915000" />
+      <workItem from="1616255367097" duration="13000" />
+      <workItem from="1617279054546" duration="901000" />
+      <workItem from="1618137777709" duration="175000" />
+      <workItem from="1618138238415" duration="52000" />
+      <workItem from="1620582029905" duration="63000" />
+      <workItem from="1620582403917" duration="108000" />
+    </task>
+    <task id="LOCAL-00001" summary="Broken project backup to prevent worse damages">
+      <created>1600780721218</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1600780721218</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Major changes made to application, future commits more detailed">
+      <created>1611863822496</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1611863822496</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Broken project backup to prevent worse damages" />
+    <MESSAGE value="Major changes made to application, future commits more detailed" />
+    <option name="LAST_COMMIT_MESSAGE" value="Major changes made to application, future commits more detailed" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/RecipeBook/service/ItemService.java</url>
+          <line>45</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <breakpoint type="java-exception">
+          <properties class="java.lang.IllegalArgumentException" package="java.lang" />
+          <option name="timeStamp" value="8" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>
