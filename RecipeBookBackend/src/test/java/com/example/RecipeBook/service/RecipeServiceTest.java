@@ -1,7 +1,8 @@
 package com.example.RecipeBook.service;
 
-import com.example.RecipeBook.dao.RecipeRepository;
-import com.example.RecipeBook.model.Recipe;
+import com.example.RecipeBook.recipe.RecipeRepository;
+import com.example.RecipeBook.recipe.Recipe;
+import com.example.RecipeBook.recipe.RecipeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -1,8 +1,9 @@
 package com.example.RecipeBook.service;
 
-import com.example.RecipeBook.dao.CategoryRepository;
-import com.example.RecipeBook.dao.RecipeRepository;
-import com.example.RecipeBook.model.Category;
+import com.example.RecipeBook.category.CategoryRepository;
+import com.example.RecipeBook.category.CategoryService;
+import com.example.RecipeBook.recipe.RecipeRepository;
+import com.example.RecipeBook.category.Category;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
