@@ -1,7 +1,7 @@
 package com.example.RecipeBook.shoppinglist;
 
-import com.example.RecipeBook.ingredient.ingredients.Ingredient;
-import com.example.RecipeBook.recipe.Recipe;
+import com.example.RecipeBook.ingredient.model.Ingredient;
+import com.example.RecipeBook.recipe.model.Recipe;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,15 +30,14 @@ public class ItemService {
 
         List<Item> items = itemDtoRepository.returnItemDto().getItems();
         for (Item item : items) {
-            if (item.getName().equalsIgnoreCase(ingredientTemp.getSingleName())) {
-                item.increaseQty(ingredientTemp.getNeededQty());
+            if (item.getName().equalsIgnoreCase(ingredientTemp.getName())) {
+                item.increaseQty((int) ingredientTemp.getMeasurementObject().getAmount());
                 saveToItemDto(item);
                 return;
             }
         }
         Item item = new Item();
-        item.setName(ingredientTemp.getSingleName());
-        item.setQty(ingredientTemp.getNeededQty());
+        item.setName(ingredientTemp.getName());
         saveToItemDto(item);
     }
 

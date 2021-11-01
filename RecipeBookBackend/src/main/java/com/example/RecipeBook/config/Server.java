@@ -20,8 +20,7 @@ public class Server {
             socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
             return socket.getLocalAddress().getHostAddress();
         } catch (UnknownHostException | SocketException e) {
-            e.printStackTrace();
+            return "192.168.0.8";
         }
-        return "192.168.0.8";
     }
 }

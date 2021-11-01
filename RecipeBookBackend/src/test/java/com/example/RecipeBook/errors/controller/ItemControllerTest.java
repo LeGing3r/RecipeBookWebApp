@@ -1,6 +1,5 @@
 package com.example.RecipeBook.errors.controller;
 
-import com.example.RecipeBook.ingredient.IngredientRepository;
 import com.example.RecipeBook.shoppinglist.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

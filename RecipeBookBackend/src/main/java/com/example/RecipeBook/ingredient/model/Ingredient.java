@@ -1,6 +1,6 @@
-package com.example.RecipeBook.ingredient.ingredients;
+package com.example.RecipeBook.ingredient.model;
 
-import com.example.RecipeBook.recipe.Recipe;
+import com.example.RecipeBook.recipe.model.Recipe;
 import lombok.Data;
 
 import javax.persistence.*;

@@ -1,4 +1,4 @@
-package com.example.RecipeBook.ingredient.ingredients;
+package com.example.RecipeBook.ingredient.model;
 
 public enum Measurement {
     TEASPOON(0.0208),
@@ -21,5 +21,9 @@ public enum Measurement {
 
     private double scale(double amount) {
         return (amount / this.toBase) / this.toBase;
+    }
+
+    public double getAmount() {
+        return amount;
     }
 }

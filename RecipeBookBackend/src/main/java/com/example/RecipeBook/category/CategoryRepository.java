@@ -1,15 +1,25 @@
 package com.example.RecipeBook.category;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
+import com.example.RecipeBook.category.model.Category;
+import com.example.RecipeBook.category.model.CategoryPage;
 
-import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
-public interface CategoryRepository extends JpaRepository<Category, Integer> {
-    @Query("SELECT c FROM Category c")
-    List<Category> findAll();
+public interface CategoryRepository {
 
-    @Query("SELECT c from Category c WHERE lower(c.name) like %?1%")
-    List<Category> findByCatName(String name);
+    Set<Category> findByCatName(String name);
 
+    int findAmountOfPages(Integer size);
+
+    Optional<CategoryPage> findCategoriesPage(Integer page, Integer size);
+
+    boolean deleteCategory(UUID catId);
+
+    boolean updateCategory(UUID catId, Category category);
+
+    Optional<Category> findCategoryById(UUID catId);
+
+    void saveCategory(Category category);
 }

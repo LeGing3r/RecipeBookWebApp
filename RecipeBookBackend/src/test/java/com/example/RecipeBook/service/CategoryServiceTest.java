@@ -1,21 +1,16 @@
 package com.example.RecipeBook.service;
 
 import com.example.RecipeBook.category.CategoryRepository;
-import com.example.RecipeBook.category.CategoryService;
+import com.example.RecipeBook.category.impl.DefaultCategoryService;
+import com.example.RecipeBook.category.model.Category;
 import com.example.RecipeBook.recipe.RecipeRepository;
-import com.example.RecipeBook.category.Category;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
-import java.util.Optional;
-
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class CategoryServiceTest {
@@ -26,13 +21,13 @@ class CategoryServiceTest {
     @Mock
     RecipeRepository recipeRepository;
 
-    CategoryService categoryService;
+    DefaultCategoryService categoryService;
 
     Category category;
 
     @BeforeEach
     void setUp() {
-        categoryService = new CategoryService(categoryRepository, recipeRepository);
+        categoryService = new DefaultCategoryService(categoryRepository);
         category = new Category();
         category.setId(1);
     }
@@ -41,11 +36,6 @@ class CategoryServiceTest {
     void givenCatId_delete_categoryRepositoryCallsDelete() {
         int catId = 1;
 
-        when(categoryRepository.findById(catId)).thenReturn(Optional.of(category));
-        when(recipeRepository.findAll()).thenReturn(new ArrayList<>());
-        categoryService.delete(catId);
-
-        verify(categoryRepository).deleteById(catId);
     }
 
     @Test

@@ -1,6 +1,6 @@
 package com.example.RecipeBook.shoppinglist;
 
-import com.example.RecipeBook.recipe.Recipe;
+import com.example.RecipeBook.recipe.model.Recipe;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;

@@ -1,4 +1,4 @@
-package com.example.RecipeBook.ingredient;
+package com.example.RecipeBook.ingredient.model;
 
 import lombok.Data;
 

@@ -1,6 +1,6 @@
-package com.example.RecipeBook.category;
+package com.example.RecipeBook.category.model;
 
-import com.example.RecipeBook.recipe.Recipe;
+import com.example.RecipeBook.recipe.model.Recipe;
 import com.sun.istack.NotNull;
 import lombok.Data;
 
@@ -39,5 +39,9 @@ public class Category {
         Category c = (Category) o;
         return name.equals(c.name);
 
+    }
+
+    public void addRecipe(Recipe recipe) {
+        recipes.add(recipe);
     }
 }
