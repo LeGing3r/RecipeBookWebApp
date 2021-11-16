@@ -1,13 +1,16 @@
 package com.example.RecipeBook.recipe.model;
 
 import com.example.RecipeBook.category.model.Category;
-import com.example.RecipeBook.ingredient.model.Ingredient;
-import com.example.RecipeBook.ingredient.model.nutiritional.NutritionalInfo;
+import com.example.RecipeBook.item.model.Item;
+import com.example.RecipeBook.recipe.model.nutiritional.NutritionalInfo;
 import com.sun.istack.NotNull;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.*;
+
+import static javax.persistence.CascadeType.*;
+import static javax.persistence.FetchType.*;
 
 /**
  * Class wrapping all data necessary for a single recipe
@@ -15,7 +18,7 @@ import java.util.*;
  * @author Brendan Williams
  */
 @Entity
-@Table(name = "RECIPE")
+@Table(name = "Recipe")
 public class Recipe {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,18 +29,18 @@ public class Recipe {
     private String name;
     private String imageLocation;
     private boolean chosen = false;
+    @OneToOne
     private CookingTime cookingTime;
+    @Convert(converter = NutritionalInfo.NutritionConverter.class)
     private NutritionalInfo nutritionalInfo;
     private UUID publicId;
 
-    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
-    @Size(min = 1)
-    private final List<Ingredient> ingredients = new ArrayList<>();
+    @OneToMany(mappedBy = "recipe", cascade = ALL)
+    private final Set<Item> items = new HashSet<>();
 
-    @Size(min = 1)
     @ManyToMany(
-            fetch = FetchType.EAGER,
-            cascade = CascadeType.PERSIST)
+            fetch = EAGER,
+            cascade = {PERSIST, REMOVE})
     @JoinTable(
             name = "Recipe_Categories",
             joinColumns = {@JoinColumn(name = "recipe_id")},
@@ -45,9 +48,9 @@ public class Recipe {
     private final Set<Category> categories = new HashSet<>();
 
     @Lob
-    @Size(min = 3)
     @Column(length = 100000)
     private String instructions;
+
 
     public void switchChosen() {
         chosen = !chosen;
@@ -97,16 +100,16 @@ public class Recipe {
         this.cookingTime = cookingTime;
     }
 
-    public List<Ingredient> getIngredients() {
-        return Collections.unmodifiableList(ingredients);
+    public Set<Item> getIngredients() {
+        return Collections.unmodifiableSet(items);
     }
 
-    public boolean addIngredients(List<Ingredient> ingredients) {
-        return this.ingredients.addAll(ingredients);
+    public boolean addIngredients(List<Item> items) {
+        return this.items.addAll(items);
     }
 
-    public boolean removeIngredients(List<Ingredient> ingredients) {
-        return this.ingredients.removeAll(ingredients);
+    public boolean removeIngredients(List<Item> items) {
+        return this.items.removeAll(items);
     }
 
     public Set<Category> getCategories() {

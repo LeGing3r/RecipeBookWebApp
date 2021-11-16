@@ -1,7 +1,7 @@
 package com.example.RecipeBook.recipe;
 
 import com.example.RecipeBook.category.model.Category;
-import com.example.RecipeBook.ingredient.model.Ingredient;
+import com.example.RecipeBook.item.model.Item;
 import com.example.RecipeBook.recipe.model.Recipe;
 import com.example.RecipeBook.recipe.model.RecipePage;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,11 +28,12 @@ public interface RecipeService {
 
     void toggleChosen(UUID recipeId)  throws SQLException ;
 
-    boolean addIngredient(Recipe recipe, Ingredient ingredient);
+    boolean addIngredient(Recipe recipe, Item item);
 
-    boolean removeIngredient(Recipe recipe, Ingredient ingredient);
+    boolean removeIngredient(Recipe recipe, Item item);
 
     boolean removeCategory(Recipe recipe, Category category);
 
     boolean addCategory(Recipe recipe, Category category);
+
 }

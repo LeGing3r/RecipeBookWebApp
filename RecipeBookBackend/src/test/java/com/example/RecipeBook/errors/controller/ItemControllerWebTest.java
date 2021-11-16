@@ -1,23 +1,13 @@
 package com.example.RecipeBook.errors.controller;
 
-import com.example.RecipeBook.shoppinglist.Item;
-import com.example.RecipeBook.shoppinglist.ItemController;
-import com.example.RecipeBook.shoppinglist.ItemsDto;
-import com.example.RecipeBook.shoppinglist.ItemService;
-import io.florianlopes.spring.test.web.servlet.request.MockMvcRequestBuilderUtils;
+import com.example.RecipeBook.item.ItemService;
+import com.example.RecipeBook.item.impl.ItemController;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import java.util.List;
-
-import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
 class ItemControllerWebTest {
@@ -30,22 +20,9 @@ class ItemControllerWebTest {
 
     @BeforeEach
     void setUp() {
-        itemController = new ItemController( itemService);
+        itemController = new ItemController(itemService);
 
         mockMvc = MockMvcBuilders.standaloneSetup(itemController)
                 .build();
-    }
-
-    @Test
-    void givenItemsDto_postTodo_callsItemService() throws Exception {
-        ItemsDto itemsDto = new ItemsDto();
-        itemsDto.setId(1);
-        itemsDto.setItems(List.of(new Item()));
-
-        mockMvc.perform(MockMvcRequestBuilderUtils.postForm("/todo",itemsDto))
-                .andExpect(MockMvcResultMatchers.model().attribute("itemsDto",itemsDto))
-                .andExpect(status().is(302));
-
-        verify(itemService).updateTodoDto(itemsDto.getItems());
     }
 }

@@ -1,7 +1,7 @@
 package com.example.RecipeBook.recipe.impl;
 
 import com.example.RecipeBook.category.model.Category;
-import com.example.RecipeBook.ingredient.model.Ingredient;
+import com.example.RecipeBook.item.model.Item;
 import com.example.RecipeBook.recipe.RecipeService;
 import com.example.RecipeBook.recipe.model.Recipe;
 import com.example.RecipeBook.recipe.model.RecipePage;
@@ -23,6 +23,14 @@ public class RecipeController {
         this.recipeService = recipeService;
     }
 
+    @PostMapping("/")
+    public HttpEntity<Recipe> addRecipe(Recipe recipe, @RequestParam MultipartFile file) {
+        if (recipeService.addRecipe(recipe, file)) {
+            return new ResponseEntity<>(OK);
+        }
+        return new ResponseEntity<>(BAD_REQUEST);
+    }
+
     @RequestMapping("/{recipeId}")
     public HttpEntity<Recipe> showRecipeDetails(@PathVariable UUID recipeId) {
         try {
@@ -30,6 +38,25 @@ public class RecipeController {
             return new ResponseEntity<>(recipe, OK);
         } catch (SQLException e) {
             return new ResponseEntity<>(NOT_FOUND);
+        }
+    }
+
+    @PostMapping("/{recipeId}")
+    public HttpEntity<Recipe> updateRecipe(Recipe recipe, MultipartFile file) {
+        if (recipeService.updateRecipe(recipe, file)) {
+            return new ResponseEntity<>(recipe, OK);
+        }
+        return new ResponseEntity<>(NOT_ACCEPTABLE);
+    }
+
+    @DeleteMapping("/{recipeId}")
+    public HttpEntity<Recipe> deleteRecipe(@PathVariable UUID recipeId) {
+        try {
+            recipeService.delete(recipeId);
+            return new ResponseEntity<>(OK);
+
+        } catch (SQLException e) {
+            return new ResponseEntity<>(NOT_ACCEPTABLE);
         }
     }
 
@@ -44,9 +71,8 @@ public class RecipeController {
     }
 
     @RequestMapping("/chosen")
-    public HttpEntity<RecipePage> listChosenRecipes(
-            @RequestParam("page") int page,
-            @RequestParam("size") int size) {
+    public HttpEntity<RecipePage> listChosenRecipes(@RequestParam("page") int page,
+                                                    @RequestParam("size") int size) {
         RecipePage recipePage = recipeService.findPages(page, size, true);
         if (recipePage.getRecipes() == null || recipePage.getRecipes().isEmpty()) {
             return new ResponseEntity<>(NOT_FOUND);
@@ -54,7 +80,78 @@ public class RecipeController {
         return new ResponseEntity<>(recipePage, OK);
     }
 
-   /*
+
+    @PostMapping("/addIngredient")
+    public HttpEntity<Recipe> addIngredient(Recipe recipe, Item item) {
+        if (recipeService.addIngredient(recipe, item)) {
+            return new ResponseEntity<>(OK);
+        }
+        return new ResponseEntity<>(NOT_ACCEPTABLE);
+    }
+
+    @PostMapping("/removeIngredient")
+    public HttpEntity<Recipe> deleteIngredient(Recipe recipe, Item item) {
+        if (recipeService.removeIngredient(recipe, item)) {
+            return new ResponseEntity<>(OK);
+        }
+        return new ResponseEntity<>(NOT_FOUND);
+    }
+
+    @PostMapping("/addCategory")
+    public HttpEntity<Recipe> addCategory(Recipe recipe, Category category) {
+        if (recipeService.addCategory(recipe, category)) {
+            return new ResponseEntity<>(OK);
+        }
+        return new ResponseEntity<>(NOT_ACCEPTABLE);
+    }
+
+    @PostMapping("/removeCategory")
+    public HttpEntity<Recipe> deleteCategory(Recipe recipe, Category category) {
+        if (recipeService.removeCategory(recipe, category)) {
+            return new ResponseEntity<>(OK);
+        }
+        return new ResponseEntity<>(NOT_FOUND);
+    }
+
+    @RequestMapping("/search")
+    public HttpEntity<RecipePage> filterRecipes(@RequestParam String query, @RequestParam String searchType) {
+        return switch (searchType.toLowerCase()) {
+            case "recipe" -> new ResponseEntity<>(recipeService.findRecipesByName(query), OK);
+            case "category" -> new ResponseEntity<>(recipeService.findRecipesByCategoryName(query), OK);
+            case "ingredient" -> new ResponseEntity<>(recipeService.findRecipesByIngredientName(query), OK);
+            default -> new ResponseEntity<>(NOT_FOUND);
+        };
+    }
+
+    /*
+    TODO: HANDLE IN FRONT END WHY DO YOU NEED TO TALK TO THE API
+    @RequestMapping("/{id}/nutrition")
+    public HttpEntity<NutritionalInfo> getRecipeNutrition(@RequestParam UUID id) {
+        try {
+            return new ResponseEntity<>(recipeService.getNutritionalInfo(id), OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(NOT_FOUND);
+        }
+    }*/
+
+       /*
+    TODO MOVE TO FRONTEND
+    @RequestMapping("/copy")
+    public HttpEntity<Recipe> copyRecipeFromSite(Recipe recipe) {
+
+        return "recipe/copy-form";
+    }
+
+    @PostMapping("/copy")
+    public HttpEntity<Recipe> sendCopiedForm(ConversionObj contents, RedirectAttributes attributes) {
+        Recipe recipe = conversionObjService.getRecipeFromConversion(contents);
+        if (contents.getName() != null)
+            recipe.setName(contents.getName());
+        attributes.addFlashAttribute("recipe", recipe);
+        return "redirect:/add";
+    }*/
+
+      /*
     TODO MOVE THIS TO FRONTEND
     @RequestMapping("/add")
     public String newRecipeForm(Recipe recipe) {
@@ -98,111 +195,6 @@ public class RecipeController {
         return "recipe/form";
     }
     */
-
-    @PostMapping("/{recipeId}")
-    public HttpEntity<Recipe> updateRecipe(Recipe recipe, MultipartFile file) {
-        if (recipeService.updateRecipe(recipe, file)) {
-            return new ResponseEntity<>(recipe, OK);
-        }
-        return new ResponseEntity<>(NOT_ACCEPTABLE);
-    }
-
-    @PostMapping(value = "recipes/{recipeId}/delete")
-    public HttpEntity<Recipe> deleteRecipe(@PathVariable UUID recipeId) {
-        try {
-            recipeService.delete(recipeId);
-            return new ResponseEntity<>(OK);
-
-        } catch (SQLException e) {
-            return new ResponseEntity<>(NOT_ACCEPTABLE);
-        }
-    }
-
-    @PostMapping("")
-    public HttpEntity<Recipe> addRecipe(Recipe recipe, @RequestParam MultipartFile file) {
-        if (recipeService.addRecipe(recipe, file)) {
-            return new ResponseEntity<>(OK);
-        }
-        return new ResponseEntity<>(BAD_REQUEST);
-    }
-
-    @PostMapping("/addIngredient")
-    public HttpEntity<Recipe> addIngredient(Recipe recipe, Ingredient ingredient) {
-        if (recipeService.addIngredient(recipe, ingredient)) {
-            return new ResponseEntity<>(OK);
-        }
-        return new ResponseEntity<>(NOT_ACCEPTABLE);
-    }
-
-    @PostMapping("/removeIngredient")
-    public HttpEntity<Recipe> deleteIngredient(Recipe recipe, Ingredient ingredient) {
-        if (recipeService.removeIngredient(recipe, ingredient)) {
-            return new ResponseEntity<>(OK);
-        }
-        return new ResponseEntity<>(NOT_FOUND);
-    }
-
-    @PostMapping("/addCategory")
-    public HttpEntity<Recipe> addCategory(Recipe recipe, Category category) {
-        if (recipeService.addCategory(recipe, category)) {
-            return new ResponseEntity<>(OK);
-        }
-        return new ResponseEntity<>(NOT_ACCEPTABLE);
-    }
-
-    @PostMapping("/removeCategory")
-    public HttpEntity<Recipe> deleteCategory(Recipe recipe, Category category) {
-        if (recipeService.removeCategory(recipe, category)) {
-            return new ResponseEntity<>(OK);
-        }
-        return new ResponseEntity<>(NOT_FOUND);
-    }
-
-  /*
-    TODO MOVE TO INGREDIENT CONTROLLER
-    @RequestMapping("/ingredients/{ingredientId}")
-    public HttpEntity<Recipe> toggleIngredientNecessity(@PathVariable Integer ingredientId, HttpServletRequest http) {
-        ingredientService.changeNeeded(ingredientId);
-        return "redirect:" + http.getHeader("referer");
-    }*/
-
-    @RequestMapping("/choose/{recipeId}")
-    public HttpEntity<Recipe> toggleRecipeChosen(@PathVariable UUID recipeId) {
-        try {
-            recipeService.toggleChosen(recipeId);
-            return new ResponseEntity<>(OK);
-        } catch (SQLException e) {
-            return new ResponseEntity<>(NOT_FOUND);
-        }
-    }
-
-   /*
-    TODO MOVE TO FRONTEND
-    @RequestMapping("/copy")
-    public HttpEntity<Recipe> copyRecipeFromSite(Recipe recipe) {
-
-        return "recipe/copy-form";
-    }
-
-    @PostMapping("/copy")
-    public HttpEntity<Recipe> sendCopiedForm(ConversionObj contents, RedirectAttributes attributes) {
-        Recipe recipe = conversionObjService.getRecipeFromConversion(contents);
-        if (contents.getName() != null)
-            recipe.setName(contents.getName());
-        attributes.addFlashAttribute("recipe", recipe);
-        return "redirect:/add";
-    }*/
-
-    @RequestMapping("/search")
-    public HttpEntity<RecipePage> filterRecipes(@RequestParam String query, @RequestParam String searchType) {
-        return switch (searchType.toLowerCase()) {
-            case "recipe" -> new ResponseEntity<>(recipeService.findRecipesByName(query), OK);
-            case "category" -> new ResponseEntity<>(recipeService.findRecipesByCategoryName(query), OK);
-            case "ingredient" -> new ResponseEntity<>(recipeService.findRecipesByIngredientName(query), OK);
-            default -> new ResponseEntity<>(NOT_FOUND);
-        };
-    }
-
 }
 
 

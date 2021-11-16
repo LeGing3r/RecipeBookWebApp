@@ -38,13 +38,13 @@
                 <th style="border-bottom: black solid 1px; font-size: 2rem;">Need It</th>
             </tr>
             </thead>
-            <tr th:each="ingredient, i : ${recipe.ingredients}">
+            <tr th:each="item, i : ${recipe.items}">
                 <td>
-                    <p th:text="${ingredient.name}"></p>
+                    <p th:text="${item.name}"></p>
                 </td>
                 <td>
-                    <form th:object="${recipe.ingredients[__${i.index}__]}"
-                          th:action="@{|/todo/add/${recipe.ingredients[__${i.index}__].id}|}"
+                    <form th:object="${recipe.items[__${i.index}__]}"
+                          th:action="@{|/todo/add/${recipe.items[__${i.index}__].id}|}"
                           method="post">
                         <input type="hidden" th:field="*{id}"/>
                         <input type="hidden" th:field="*{name}"/>

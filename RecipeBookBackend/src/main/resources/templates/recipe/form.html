@@ -27,20 +27,20 @@
         </div>
         <!--Ingredient creation and updating-->
         <div class="flwth cntr">
-            <div th:each="ingredient,i : ${recipe.ingredients}" class="flwth">
-                <input type="hidden" th:field="*{ingredients[__${i.index}__].id}"/>
+            <div th:each="item,i : ${recipe.items}" class="flwth">
+                <input type="hidden" th:field="*{items[__${i.index}__].id}"/>
 
-                <input type="text" th:field="*{ingredients[__${i.index}__].name}" class="newIngBox"
+                <input type="text" th:field="*{items[__${i.index}__].name}" class="newIngBox"
                        placeholder="Ingredient" autocomplete="off" style="width: 70%;"/>
 
-                <input type="text" th:field="*{ingredients[__${i.index}__].singleName}"
-                       placeholder="Name of ingredient"/>
+                <input type="text" th:field="*{items[__${i.index}__].singleName}"
+                       placeholder="Name of item"/>
 
-                <input type="hidden" th:field="*{ingredients[__${i.index}__].neededQty}"/>
+                <input type="hidden" th:field="*{items[__${i.index}__].neededQty}"/>
                 <button type="submit" id="addIngredientBtn" name="addIngredient" class="addIngredientBtn">
                     <i class="material-icons">add</i>
                 </button>
-                <button th:if="${#lists.size(recipe.ingredients) gt 1}" type="submit" name="removeIngredient" th:value="${i.index}"><i class="material-icons">delete</i>
+                <button th:if="${#lists.size(recipe.items) gt 1}" type="submit" name="removeIngredient" th:value="${i.index}"><i class="material-icons">delete</i>
                 </button>
                 <br/>
             </div>

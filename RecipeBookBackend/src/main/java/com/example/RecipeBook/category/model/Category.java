@@ -1,47 +1,74 @@
 package com.example.RecipeBook.category.model;
 
 import com.example.RecipeBook.recipe.model.Recipe;
-import com.sun.istack.NotNull;
-import lombok.Data;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-@Data
+import static javax.persistence.CascadeType.*;
+import static javax.persistence.FetchType.*;
+
 @Entity
 @Table(name = "CATEGORY")
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @NotNull
     private String name;
+    private UUID publicId;
     @ManyToMany(mappedBy = "categories",
-            cascade = CascadeType.PERSIST,
-            fetch = FetchType.EAGER)
-    private List<Recipe> recipes = new ArrayList<>();
-
-    @Override
-    public String toString() {
-        return "Category{" +
-                "name='" + name + '\'' +
-                ", recipe qty=" + recipes.size() +
-                '}';
-    }
+            cascade = {PERSIST, REMOVE},
+            fetch = EAGER)
+    private final Set<Recipe> recipes = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {
-        if (o == this)
+        if (o == this || !(o instanceof Category)) {
             return true;
-        if (!(o instanceof Category))
-            return false;
-        Category c = (Category) o;
-        return name.equals(c.name);
+        }
+        return id.equals(((Category) o).id);
 
     }
 
-    public void addRecipe(Recipe recipe) {
-        recipes.add(recipe);
+    public String getName() {
+        return name;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public UUID getPublicId() {
+        return publicId;
+    }
+
+    public void setPublicId(UUID publicId) {
+        this.publicId = publicId;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public Set<Recipe> getRecipes() {
+        return Collections.unmodifiableSet(recipes);
+    }
+
+    public boolean addRecipe(Recipe recipe) {
+        return recipes.add(recipe);
+    }
+
+    public boolean removeRecipe(Recipe recipe) {
+        return recipes.remove(recipe);
+    }
+
+    public boolean removeRecipes(Collection<Recipe> recipes) {
+        return this.recipes.removeAll(recipes);
+    }
+
+    public boolean addRecipes(Collection<Recipe> recipes) {
+        return this.recipes.addAll(recipes);
+    }
+
+
 }

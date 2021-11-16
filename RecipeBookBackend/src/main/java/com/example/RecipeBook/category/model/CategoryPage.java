@@ -3,14 +3,16 @@ package com.example.RecipeBook.category.model;
 import java.util.Set;
 
 public class CategoryPage {
-    private Set<Category> categories;
-    private int pageAmount;
-    private int currentPage;
+    private final Set<Category> categories;
+    private final int pageAmount;
+    private final int currentPage;
+    private final int pageSize;
 
-    public CategoryPage(Set<Category> categories, int pageAmount, int currentPage) {
+    public CategoryPage(Set<Category> categories, int pageAmount, int currentPage, int pageSize) {
         this.categories = categories;
         this.pageAmount = pageAmount;
         this.currentPage = currentPage;
+        this.pageSize = pageSize;
     }
 
     public Set<Category> getCategories() {
@@ -23,5 +25,9 @@ public class CategoryPage {
 
     public int getCurrentPage() {
         return currentPage;
+    }
+
+    public int getPageSize() {
+        return pageSize;
     }
 }
