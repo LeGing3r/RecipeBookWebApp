@@ -2,8 +2,8 @@ package com.example.RecipeBook.errors.controller;
 
 import com.example.RecipeBook.item.ItemRepository;
 import com.example.RecipeBook.item.ItemService;
-import com.example.RecipeBook.item.impl.ShoppingItemController;
-import com.example.RecipeBook.item.model.item.Item;
+import com.example.RecipeBook.item.impl.DefaultItemController;
+import com.example.RecipeBook.item.model.Item;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -21,7 +21,7 @@ public class ItemControllerTest {
     @Mock
     Item item;
 
-    ShoppingItemController itemController;
+    DefaultItemController itemController;
     List<Item> itemList;
 
 }

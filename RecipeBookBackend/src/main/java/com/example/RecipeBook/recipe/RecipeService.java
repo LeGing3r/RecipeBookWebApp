@@ -1,7 +1,7 @@
 package com.example.RecipeBook.recipe;
 
 import com.example.RecipeBook.category.model.Category;
-import com.example.RecipeBook.item.model.item.IngredientItem;
+import com.example.RecipeBook.item.model.Item;
 import com.example.RecipeBook.recipe.model.Recipe;
 import com.example.RecipeBook.recipe.model.RecipePage;
 
@@ -27,9 +27,9 @@ public interface RecipeService {
 
     void toggleChosen(UUID recipeId) throws SQLException;
 
-    boolean addIngredient(Recipe recipe, IngredientItem ingredient);
+    boolean addIngredient(Recipe recipe, Item ingredient);
 
-    boolean removeIngredient(Recipe recipe, IngredientItem ingredient);
+    boolean removeIngredient(Recipe recipe, Item ingredient);
 
     boolean removeCategory(Recipe recipe, Category category);
 

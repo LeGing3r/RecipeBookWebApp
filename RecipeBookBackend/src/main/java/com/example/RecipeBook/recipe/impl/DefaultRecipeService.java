@@ -4,8 +4,7 @@ import com.example.RecipeBook.category.CategoryService;
 import com.example.RecipeBook.category.model.Category;
 import com.example.RecipeBook.errors.RecipeNotFoundException;
 import com.example.RecipeBook.item.ItemService;
-import com.example.RecipeBook.item.model.item.IngredientItem;
-import com.example.RecipeBook.item.model.item.Item;
+import com.example.RecipeBook.item.model.Item;
 import com.example.RecipeBook.recipe.RecipeRepository;
 import com.example.RecipeBook.recipe.RecipeService;
 import com.example.RecipeBook.recipe.model.Recipe;
@@ -90,8 +89,6 @@ public class DefaultRecipeService implements RecipeService {
     }
 
     public boolean addRecipe(Recipe recipe) {
-        ingredientService.setItems(recipe);
-        categoryService.setCategories(recipe);
         return recipeRepository.addRecipe(recipe);
     }
 
@@ -113,11 +110,11 @@ public class DefaultRecipeService implements RecipeService {
         recipeRepository.addRecipe(r);
     }
 
-    public boolean addIngredient(Recipe recipe, IngredientItem ingredient) {
+    public boolean addIngredient(Recipe recipe, Item ingredient) {
         return recipe.addIngredients(List.of(ingredient)) && recipeRepository.addRecipe(recipe);
     }
 
-    public boolean removeIngredient(Recipe recipe, IngredientItem ingredient) {
+    public boolean removeIngredient(Recipe recipe, Item ingredient) {
         if (recipe.removeIngredients(List.of(ingredient)))
             return recipeRepository.addRecipe(recipe);
         return false;

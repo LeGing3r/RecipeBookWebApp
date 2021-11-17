@@ -1,15 +1,13 @@
 package com.example.RecipeBook.recipe.model;
 
 import com.example.RecipeBook.category.model.Category;
-import com.example.RecipeBook.item.model.item.IngredientItem;
+import com.example.RecipeBook.item.model.Item;
 import com.example.RecipeBook.recipe.model.nutiritional.NutritionalInfo;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.*;
 
-import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.CascadeType.PERSIST;
 
 /**
@@ -31,18 +29,14 @@ public class Recipe {
     @Convert(converter = NutritionalInfo.NutritionConverter.class)
     private NutritionalInfo nutritionalInfo;
     @Type(type = "uuid-char")
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-            name = "UUID",
-            strategy = "org.hibernate.id.UUIDGenerator"
-    )
     private UUID publicId;
     @Lob
     @Column(length = 100000)
     private String instructions;
 
-    @OneToMany(mappedBy = "recipe", cascade = ALL)
-    private final Set<IngredientItem> ingredients = new HashSet<>();
+    @ElementCollection
+    @Convert(converter = Item.IngredientConverter.class)
+    private final Set<Item> ingredients = new HashSet<>();
 
     @ManyToMany(cascade = PERSIST)
     @JoinTable(
@@ -91,15 +85,15 @@ public class Recipe {
         this.cookingTime = cookingTime;
     }
 
-    public Set<IngredientItem> getIngredients() {
+    public Set<Item> getIngredients() {
         return Collections.unmodifiableSet(ingredients);
     }
 
-    public boolean addIngredients(Collection<IngredientItem> ingredients) {
+    public boolean addIngredients(Collection<Item> ingredients) {
         return this.ingredients.addAll(ingredients);
     }
 
-    public boolean removeIngredients(Collection<IngredientItem> ingredients) {
+    public boolean removeIngredients(Collection<Item> ingredients) {
         return this.ingredients.removeAll(ingredients);
     }
 

@@ -1,8 +1,7 @@
 package com.example.RecipeBook.item.impl;
 
 import com.example.RecipeBook.item.ItemRepository;
-import com.example.RecipeBook.item.model.item.Item;
-import com.example.RecipeBook.item.model.item.ShoppingItem;
+import com.example.RecipeBook.item.model.Item;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -13,12 +12,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
-public class ShoppingItemRepository implements ItemRepository {
+public class DefaultItemRepository implements ItemRepository {
     @PersistenceUnit
     private final EntityManagerFactory entityManagerFactory;
     private final EntityManager entityManager;
 
-    public ShoppingItemRepository(EntityManagerFactory entityManagerFactory) {
+    public DefaultItemRepository(EntityManagerFactory entityManagerFactory) {
         this.entityManagerFactory = entityManagerFactory;
         entityManager = entityManagerFactory.createEntityManager();
     }
@@ -27,7 +26,7 @@ public class ShoppingItemRepository implements ItemRepository {
     public Set<Item> getTodoItems() {
         try {
             return entityManager
-                    .createQuery("from ShoppingItem", ShoppingItem.class)
+                    .createQuery("from ShoppingItem", Item.class)
                     .getResultStream()
                     .collect(Collectors.toSet());
         } catch (Exception e) {
@@ -63,12 +62,10 @@ public class ShoppingItemRepository implements ItemRepository {
     }
 
     private void updateItem(Item item) {
-        if (item instanceof ShoppingItem s) {
-            if (s.isNeeded()) {
-                entityManager.persist(item);
-            } else {
-                entityManager.remove(item);
-            }
+        if (item.isNeeded()) {
+            entityManager.persist(item);
+        } else {
+            entityManager.remove(item);
         }
     }
 }

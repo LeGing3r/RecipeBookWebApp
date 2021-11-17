@@ -1,6 +1,6 @@
 package com.example.RecipeBook.item;
 
-import com.example.RecipeBook.item.model.item.Item;
+import com.example.RecipeBook.item.model.Item;
 
 import java.util.Collection;
 

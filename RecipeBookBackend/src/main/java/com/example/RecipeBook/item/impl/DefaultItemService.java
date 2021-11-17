@@ -1,17 +1,17 @@
 package com.example.RecipeBook.item.impl;
 
 import com.example.RecipeBook.item.ItemService;
-import com.example.RecipeBook.item.model.item.Item;
+import com.example.RecipeBook.item.model.Item;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 
 @Service
-public class ShoppingItemService implements ItemService {
+public class DefaultItemService implements ItemService {
 
-    private final ShoppingItemRepository repository;
+    private final DefaultItemRepository repository;
 
-    public ShoppingItemService(ShoppingItemRepository repository) {
+    public DefaultItemService(DefaultItemRepository repository) {
         this.repository = repository;
     }
 
