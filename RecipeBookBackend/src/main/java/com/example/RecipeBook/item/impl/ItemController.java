@@ -1,7 +1,7 @@
 package com.example.RecipeBook.item.impl;
 
 import com.example.RecipeBook.item.ItemService;
-import com.example.RecipeBook.item.model.Item;
+import com.example.RecipeBook.item.model.item.Item;
 import edu.emory.mathcs.backport.java.util.Collections;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;

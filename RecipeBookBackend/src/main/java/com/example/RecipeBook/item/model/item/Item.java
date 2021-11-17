@@ -1,11 +1,9 @@
-package com.example.RecipeBook.item.model;
+package com.example.RecipeBook.item.model.item;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import com.example.RecipeBook.item.model.Measurement;
+
+import javax.persistence.*;
 import java.util.Objects;
-import java.util.UUID;
 
 @MappedSuperclass
 public class Item {
@@ -13,19 +11,10 @@ public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private UUID publicId;
     private String name;
     private int amount;
+    @Enumerated(EnumType.STRING)
     private Measurement measurement;
-    private Measurement defaultMeasurement;
-
-    public UUID getPublicId() {
-        return publicId;
-    }
-
-    public void setPublicId(UUID publicId) {
-        this.publicId = publicId;
-    }
 
     public String getName() {
         return name;

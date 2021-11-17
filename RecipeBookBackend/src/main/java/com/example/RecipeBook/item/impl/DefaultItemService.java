@@ -2,7 +2,7 @@ package com.example.RecipeBook.item.impl;
 
 import com.example.RecipeBook.item.ItemRepository;
 import com.example.RecipeBook.item.ItemService;
-import com.example.RecipeBook.item.model.Item;
+import com.example.RecipeBook.item.model.item.Item;
 import com.example.RecipeBook.recipe.model.Recipe;
 import org.springframework.stereotype.Service;
 

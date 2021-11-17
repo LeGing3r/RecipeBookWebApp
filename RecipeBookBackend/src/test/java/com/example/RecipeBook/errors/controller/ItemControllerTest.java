@@ -3,7 +3,7 @@ package com.example.RecipeBook.errors.controller;
 import com.example.RecipeBook.item.ItemRepository;
 import com.example.RecipeBook.item.ItemService;
 import com.example.RecipeBook.item.impl.ItemController;
-import com.example.RecipeBook.item.model.Item;
+import com.example.RecipeBook.item.model.item.Item;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;

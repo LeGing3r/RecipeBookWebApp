@@ -1,7 +1,7 @@
 package com.example.RecipeBook.item.impl;
 
 import com.example.RecipeBook.item.ItemRepository;
-import com.example.RecipeBook.item.model.Item;
+import com.example.RecipeBook.item.model.item.Item;
 import org.springframework.stereotype.Repository;
 
 import java.util.Set;

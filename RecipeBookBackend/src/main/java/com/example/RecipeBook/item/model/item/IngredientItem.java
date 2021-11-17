@@ -1,12 +1,14 @@
-package com.example.RecipeBook.item.model;
+package com.example.RecipeBook.item.model.item;
 
 import com.example.RecipeBook.recipe.model.Recipe;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "Ingredient")
 public class IngredientItem extends Item{
+    @JsonIgnore
     @ManyToOne
     @JoinTable(
             name = "Ingredient_Recipe",

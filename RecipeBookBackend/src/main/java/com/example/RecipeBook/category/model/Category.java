@@ -1,6 +1,8 @@
 package com.example.RecipeBook.category.model;
 
 import com.example.RecipeBook.recipe.model.Recipe;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.*;
@@ -15,7 +17,9 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
+    @Type(type = "uuid-char")
     private UUID publicId;
+    @JsonIgnore
     @ManyToMany(mappedBy = "categories",
             cascade = {PERSIST, REMOVE},
             fetch = EAGER)
@@ -44,10 +48,6 @@ public class Category {
 
     public void setPublicId(UUID publicId) {
         this.publicId = publicId;
-    }
-
-    public Integer getId() {
-        return id;
     }
 
     public Set<Recipe> getRecipes() {
