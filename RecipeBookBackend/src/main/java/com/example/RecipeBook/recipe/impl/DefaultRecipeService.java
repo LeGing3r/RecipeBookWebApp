@@ -4,7 +4,8 @@ import com.example.RecipeBook.category.CategoryService;
 import com.example.RecipeBook.category.model.Category;
 import com.example.RecipeBook.errors.RecipeNotFoundException;
 import com.example.RecipeBook.item.ItemService;
-import com.example.RecipeBook.item.model.Item;
+import com.example.RecipeBook.item.model.item.IngredientItem;
+import com.example.RecipeBook.item.model.item.Item;
 import com.example.RecipeBook.recipe.RecipeRepository;
 import com.example.RecipeBook.recipe.RecipeService;
 import com.example.RecipeBook.recipe.model.Recipe;
@@ -53,12 +54,14 @@ public class DefaultRecipeService implements RecipeService {
     public RecipePage findPages(int pageSize, int currentPage, boolean chosenRecipes) {
 
         Set<Recipe> newList;
+        int startPoint = (currentPage - 1) * pageSize;
         if (chosenRecipes) {
-            newList = recipeRepository.findRecipePage(currentPage, pageSize).orElseThrow(RecipeNotFoundException::new);
+            newList = recipeRepository.findChosen(startPoint, pageSize).orElseThrow(RecipeNotFoundException::new);
         } else {
-            newList = recipeRepository.findChosen(currentPage, pageSize).orElseThrow(RecipeNotFoundException::new);
+            newList = recipeRepository.findRecipePage(startPoint, pageSize).orElseThrow(RecipeNotFoundException::new);
         }
-        return new RecipePage(newList, pageSize, currentPage, pageSize);
+        int pageAmount = recipeRepository.getPageAmount();
+        return new RecipePage(newList, pageAmount, currentPage, pageSize);
     }
 
     public Recipe findRecipeById(UUID recipeId) throws SQLException {
@@ -86,77 +89,61 @@ public class DefaultRecipeService implements RecipeService {
         return new RecipePage(recipes, 1, 1, 8);
     }
 
-    public boolean addRecipe(Recipe recipe, MultipartFile file) {
-        try {
-            ingredientService.setIngredients(recipe);
-            categoryService.setCategories(recipe);
-            setImgLoc(recipe, file);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return recipeRepository.saveAndFlush(recipe);
+    public boolean addRecipe(Recipe recipe) {
+        ingredientService.setIngredients(recipe);
+        categoryService.setCategories(recipe);
+        return recipeRepository.addRecipe(recipe);
     }
 
-    public boolean updateRecipe(Recipe recipe,
-                                MultipartFile file) {
+    public boolean updateRecipe(UUID publicId, Recipe recipe) {
         try {
-            ingredientService.setIngredients(recipe);
-            categoryService.setCategories(recipe);
-            setImgLoc(recipe, file);
+            return recipeRepository.updateRecipe(publicId, recipe);
         } catch (Exception e) {
             return false;
         }
-        return recipeRepository.saveAndFlush(recipe);
     }
 
     public boolean delete(UUID recipeId) throws SQLException {
-        Recipe recipe = recipeRepository
-                .findRecipeById(recipeId)
-                .orElseThrow(RecipeNotFoundException::new);
-        categoryService.findCategoryByRecipeName(recipe.getName())
-                .forEach(cat -> categoryService.deleteRecipeFromCategory(recipe, cat));
-        deleteRecipeImage(recipe.getImageLocation());
-        return recipeRepository.delete(recipe);
+        return recipeRepository.delete(recipeId);
     }
 
     public void toggleChosen(UUID recipeId) throws SQLException {
         Recipe r = recipeRepository.findRecipeById(recipeId).orElseThrow(RecipeNotFoundException::new);
         r.switchChosen();
-        recipeRepository.saveAndFlush(r);
+        recipeRepository.addRecipe(r);
     }
 
-    public boolean addIngredient(Recipe recipe, Item item) {
-        return recipe.addIngredients(List.of(item)) && recipeRepository.saveAndFlush(recipe);
+    public boolean addIngredient(Recipe recipe, IngredientItem ingredient) {
+        return recipe.addIngredients(List.of(ingredient)) && recipeRepository.addRecipe(recipe);
     }
 
-    public boolean removeIngredient(Recipe recipe, Item item) {
-        if (recipe.removeIngredients(List.of(item)))
-            return recipeRepository.saveAndFlush(recipe);
+    public boolean removeIngredient(Recipe recipe, IngredientItem ingredient) {
+        if (recipe.removeIngredients(List.of(ingredient)))
+            return recipeRepository.addRecipe(recipe);
         return false;
     }
 
     public boolean addCategory(Recipe recipe, Category category) {
-        return recipe.addCategories(List.of(category)) && recipeRepository.saveAndFlush(recipe);
+        return recipe.addCategories(List.of(category)) && recipeRepository.addRecipe(recipe);
     }
 
     public boolean removeCategory(Recipe recipe, Category category) {
-        return recipe.removeCategories(List.of(category)) && recipeRepository.saveAndFlush(recipe);
+        return recipe.removeCategories(List.of(category)) && recipeRepository.addRecipe(recipe);
     }
 
     private void setImgLoc(Recipe recipe, MultipartFile file) throws IOException {
 
-        String path = "D:\\Projects\\RecipeBookWebApp\\src\\main\\resources\\images\\" + recipe.getId() + ".png";
+        String path = "D:\\Projects\\RecipeBookWebApp\\src\\main\\resources\\images\\" + recipe.getPublicId() + ".png";
         File ogFile = Paths.get(path).toFile();
         if (ogFile.exists()) {
             ogFile.delete();
         }
         file.transferTo(new File(path));
 
-        Path tempPath = Paths.get("D:\\Projects\\RecipeBookWebApp\\target\\classes\\images\\" + recipe.getId() + ".png");
+        Path tempPath = Paths.get("D:\\Projects\\RecipeBookWebApp\\target\\classes\\images\\" + recipe.getPublicId() + ".png");
         Files.copy(Paths.get(path), tempPath, StandardCopyOption.REPLACE_EXISTING);
 
-        recipe.setImageLocation("/images/" + recipe.getId() + ".png");
+        recipe.setImageLocation("/images/" + recipe.getPublicId() + ".png");
         recipe.setImageLocation(path);
 
     }

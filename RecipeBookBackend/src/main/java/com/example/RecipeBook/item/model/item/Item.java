@@ -1,14 +1,13 @@
 package com.example.RecipeBook.item.model;
 
-import com.example.RecipeBook.recipe.model.Recipe;
-
-import javax.persistence.*;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 import java.util.Objects;
 import java.util.UUID;
 
-@Entity
-@Table(name = "Item")
-@SecondaryTable(name = "Ingredient")
+@MappedSuperclass
 public class Item {
 
     @Id
@@ -19,13 +18,6 @@ public class Item {
     private int amount;
     private Measurement measurement;
     private Measurement defaultMeasurement;
-    @ManyToOne
-    @JoinTable(
-            name = "Item_Recipe",
-            joinColumns = {@JoinColumn(name = "Item_id")},
-            inverseJoinColumns = {@JoinColumn(name = "recipe_id")})
-    private Recipe recipe;
-    private boolean needed = true;
 
     public UUID getPublicId() {
         return publicId;
@@ -41,14 +33,6 @@ public class Item {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public boolean isNeeded() {
-        return needed;
-    }
-
-    public void setNeeded(boolean needed) {
-        this.needed = needed;
     }
 
     public int getAmount() {
@@ -67,14 +51,6 @@ public class Item {
         this.measurement = measurement;
     }
 
-    public Recipe getRecipe() {
-        return recipe;
-    }
-
-    public void setRecipe(Recipe recipe) {
-        this.recipe = recipe;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -91,8 +67,6 @@ public class Item {
     @Override
     public String toString() {
         return "Ingredient{" +
-                "name='" + name + '\'' +
-                ",recipe='" + recipe.getName() + '\''
-                + '}';
+                "name='" + name + "'}";
     }
 }

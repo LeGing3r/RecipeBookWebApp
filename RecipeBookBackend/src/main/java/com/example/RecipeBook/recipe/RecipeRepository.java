@@ -12,9 +12,11 @@ public interface RecipeRepository {
 
     Optional<Set<Recipe>> findRecipePage(int startPoint, int numberOfRecipes);
 
-    boolean saveAndFlush(Recipe recipe);
+    boolean addRecipe(Recipe recipe);
 
-    boolean delete(Recipe recipe);
+    boolean delete(UUID recipeId);
+
+    boolean updateRecipe(UUID publicId, Recipe recipe);
 
     Optional<Set<Recipe>> findRecipesByIngredient(String name);
 
@@ -23,4 +25,6 @@ public interface RecipeRepository {
     Optional<Set<Recipe>> findRecipesByName(String query);
 
     Optional<Set<Recipe>> findRecipesByCategory(String categoryName);
+
+    int getPageAmount();
 }

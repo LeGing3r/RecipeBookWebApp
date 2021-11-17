@@ -1,16 +1,16 @@
 package com.example.RecipeBook.recipe.model;
 
 import com.example.RecipeBook.category.model.Category;
-import com.example.RecipeBook.item.model.Item;
+import com.example.RecipeBook.item.model.item.IngredientItem;
 import com.example.RecipeBook.recipe.model.nutiritional.NutritionalInfo;
-import com.sun.istack.NotNull;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import javax.validation.constraints.Size;
 import java.util.*;
 
-import static javax.persistence.CascadeType.*;
-import static javax.persistence.FetchType.*;
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.CascadeType.PERSIST;
 
 /**
  * Class wrapping all data necessary for a single recipe
@@ -18,39 +18,38 @@ import static javax.persistence.FetchType.*;
  * @author Brendan Williams
  */
 @Entity
-@Table(name = "Recipe")
 public class Recipe {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @NotNull
-    @Size(min = 3)
     private String name;
     private String imageLocation;
     private boolean chosen = false;
-    @OneToOne
+    @Convert(converter = CookingTime.CookingTimeConverter.class)
     private CookingTime cookingTime;
     @Convert(converter = NutritionalInfo.NutritionConverter.class)
     private NutritionalInfo nutritionalInfo;
+    @Type(type = "uuid-char")
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(
+            name = "UUID",
+            strategy = "org.hibernate.id.UUIDGenerator"
+    )
     private UUID publicId;
+    @Lob
+    @Column(length = 100000)
+    private String instructions;
 
     @OneToMany(mappedBy = "recipe", cascade = ALL)
-    private final Set<Item> items = new HashSet<>();
+    private final Set<IngredientItem> ingredients = new HashSet<>();
 
-    @ManyToMany(
-            fetch = EAGER,
-            cascade = {PERSIST, REMOVE})
+    @ManyToMany(cascade = PERSIST)
     @JoinTable(
             name = "Recipe_Categories",
             joinColumns = {@JoinColumn(name = "recipe_id")},
             inverseJoinColumns = {@JoinColumn(name = "category_id")})
     private final Set<Category> categories = new HashSet<>();
-
-    @Lob
-    @Column(length = 100000)
-    private String instructions;
-
 
     public void switchChosen() {
         chosen = !chosen;
@@ -62,14 +61,6 @@ public class Recipe {
 
     public void setNutritionalInfo(NutritionalInfo nutritionalInfo) {
         this.nutritionalInfo = nutritionalInfo;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -100,16 +91,16 @@ public class Recipe {
         this.cookingTime = cookingTime;
     }
 
-    public Set<Item> getIngredients() {
-        return Collections.unmodifiableSet(items);
+    public Set<IngredientItem> getIngredients() {
+        return Collections.unmodifiableSet(ingredients);
     }
 
-    public boolean addIngredients(List<Item> items) {
-        return this.items.addAll(items);
+    public boolean addIngredients(Collection<IngredientItem> ingredients) {
+        return this.ingredients.addAll(ingredients);
     }
 
-    public boolean removeIngredients(List<Item> items) {
-        return this.items.removeAll(items);
+    public boolean removeIngredients(Collection<IngredientItem> ingredients) {
+        return this.ingredients.removeAll(ingredients);
     }
 
     public Set<Category> getCategories() {
@@ -132,6 +123,15 @@ public class Recipe {
         this.instructions = instructions;
     }
 
+    public UUID getPublicId() {
+        return publicId;
+    }
+
+    public void setPublicId(UUID publicId) {
+        if (this.publicId == null)
+            this.publicId = publicId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -144,4 +144,18 @@ public class Recipe {
     public int hashCode() {
         return Objects.hash(id);
     }
+
+    public void mergeWithNewRecipe(Recipe recipe) {
+        name = recipe.name;
+        imageLocation = recipe.imageLocation;
+        chosen = recipe.chosen;
+        cookingTime = recipe.cookingTime;
+        nutritionalInfo = recipe.nutritionalInfo;
+        instructions = recipe.instructions;
+        ingredients.clear();
+        ingredients.addAll(recipe.ingredients);
+        categories.clear();
+        categories.addAll(recipe.categories);
+    }
 }
+

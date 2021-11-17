@@ -90,12 +90,12 @@ public class NutritionalInfo {
         public NutritionalInfo convertToEntityAttribute(String dbData) {
             NutritionalInfo nutritionalInfo = new NutritionalInfo();
             String[] split = dbData.split(",");
-            String[] dietLabels = split[4].split(";");
-            String[] healthLabels = split[5].split(";");
-            String[] cautions = split[6].split(";");
+            String[] dietLabels = split[3].split(";");
+            String[] healthLabels = split[4].split(";");
+            String[] cautions = split[5].split(";");
             nutritionalInfo.uri = split[0];
             nutritionalInfo.calories = Integer.parseInt(split[1]);
-            nutritionalInfo.totalWeight = Double.parseDouble(split[3]);
+            nutritionalInfo.totalWeight = Double.parseDouble(split[2]);
             nutritionalInfo.dietLabels.addAll(List.of(dietLabels));
             nutritionalInfo.healthLabels.addAll(List.of(healthLabels));
             nutritionalInfo.cautions.addAll(List.of(cautions));

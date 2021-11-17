@@ -1,17 +1,11 @@
 package com.example.RecipeBook.recipe.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
-@Entity
 public class CookingTime {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
     private long prepTime;
     private long actualCookingTime;
+    private long totalCookingTime;
 
     public long getTotalCookingTime() {
         return prepTime + actualCookingTime;
@@ -31,5 +25,27 @@ public class CookingTime {
 
     public void setActualCookingTime(long actualCookingTime) {
         this.actualCookingTime = actualCookingTime;
+    }
+
+    @Override
+    public String toString() {
+        return "%d,%d,%d".formatted(prepTime, actualCookingTime, totalCookingTime);
+    }
+
+    public static class CookingTimeConverter implements AttributeConverter<CookingTime, String> {
+        @Override
+        public String convertToDatabaseColumn(CookingTime attribute) {
+            return attribute.toString();
+        }
+
+        @Override
+        public CookingTime convertToEntityAttribute(String dbData) {
+            CookingTime cookingTime = new CookingTime();
+            String[] values = dbData.split(",");
+            cookingTime.prepTime = Long.parseLong(values[0]);
+            cookingTime.actualCookingTime = Long.parseLong(values[1]);
+            cookingTime.prepTime = Long.parseLong(values[2]);
+            return cookingTime;
+        }
     }
 }
