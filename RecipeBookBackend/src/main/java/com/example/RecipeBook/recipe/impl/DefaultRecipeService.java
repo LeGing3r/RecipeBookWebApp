@@ -90,7 +90,7 @@ public class DefaultRecipeService implements RecipeService {
     }
 
     public boolean addRecipe(Recipe recipe) {
-        ingredientService.setIngredients(recipe);
+        ingredientService.setItems(recipe);
         categoryService.setCategories(recipe);
         return recipeRepository.addRecipe(recipe);
     }

@@ -1,7 +1,7 @@
 package com.example.RecipeBook.errors.controller;
 
 import com.example.RecipeBook.item.ItemService;
-import com.example.RecipeBook.item.impl.ItemController;
+import com.example.RecipeBook.item.impl.ShoppingItemController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -16,11 +16,11 @@ class ItemControllerWebTest {
 
     MockMvc mockMvc;
 
-    ItemController itemController;
+    ShoppingItemController itemController;
 
     @BeforeEach
     void setUp() {
-        itemController = new ItemController(itemService);
+        itemController = new ShoppingItemController(itemService);
 
         mockMvc = MockMvcBuilders.standaloneSetup(itemController)
                 .build();

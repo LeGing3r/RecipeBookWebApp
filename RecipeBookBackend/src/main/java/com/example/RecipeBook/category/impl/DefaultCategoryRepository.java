@@ -6,18 +6,22 @@ import com.example.RecipeBook.category.model.CategoryPage;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
 @Repository
 public class DefaultCategoryRepository implements CategoryRepository {
-    @PersistenceContext
+    @PersistenceUnit
+    private final EntityManagerFactory entityManagerFactory;
+
     private final EntityManager entityManager;
 
-    public DefaultCategoryRepository(EntityManager entityManager) {
-        this.entityManager = entityManager;
+    public DefaultCategoryRepository(EntityManagerFactory entityManagerFactory) {
+        this.entityManagerFactory = entityManagerFactory;
+        entityManager = entityManagerFactory.createEntityManager();
     }
 
     @Override

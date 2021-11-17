@@ -3,6 +3,7 @@ package com.example.RecipeBook.item.impl;
 import com.example.RecipeBook.item.ItemService;
 import com.example.RecipeBook.item.model.item.Item;
 import edu.emory.mathcs.backport.java.util.Collections;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,17 +16,18 @@ import static org.springframework.http.HttpStatus.NOT_ACCEPTABLE;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
-public class ItemController {
+public class ShoppingItemController {
+    @Qualifier("ShoppingItemService")
     private final ItemService itemService;
 
-    public ItemController(ItemService itemService) {
+    public ShoppingItemController(ItemService itemService) {
         this.itemService = itemService;
     }
 
     @RequestMapping("/todo")
     public HttpEntity<Collection<Item>> displayShoppingList() {
         try {
-            return new ResponseEntity<>(itemService.getShoppingItems(), OK);
+            return new ResponseEntity<>(itemService.getItems(), OK);
         } catch (Exception e) {
             return new ResponseEntity<>(Collections.emptySet(), OK);
         }
