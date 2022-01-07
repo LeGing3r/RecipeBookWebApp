@@ -2,25 +2,56 @@ package com.example.RecipeBook.category;
 
 import com.example.RecipeBook.category.model.Category;
 import com.example.RecipeBook.category.model.CategoryPage;
+import com.example.RecipeBook.errors.CategoryNotFoundException;
 import com.example.RecipeBook.recipe.model.Recipe;
+import org.springframework.stereotype.Service;
 
 import java.util.Set;
 import java.util.UUID;
 
-public interface CategoryService {
-    CategoryPage findCategories(Integer page, Integer size);
+@Service
+public class CategoryService {
+    private final CategoryRepository categoryRepository;
 
-    boolean delete(UUID catId);
+    public CategoryService(CategoryRepository categoryRepository) {
+        this.categoryRepository = categoryRepository;
+    }
 
-    boolean update(UUID catId, Category category);
 
-    Category findCategoryById(UUID catId);
+    public CategoryPage findCategories(Integer page, Integer size) {
+        return categoryRepository.findCategoriesPage(page, size)
+                .orElseThrow(CategoryNotFoundException::new);
+    }
 
-    Set<Category> findCategoryByRecipeName(String name);
+    public boolean delete(UUID catId) {
+        return categoryRepository.deleteCategory(catId);
+    }
 
-    void deleteRecipeFromCategory(Recipe recipe, Category cat);
+    public boolean update(UUID catId, Category category) {
+        return categoryRepository.updateCategory(catId, category);
+    }
 
-    void saveCategory(Category category);
+    public Category findCategoryById(UUID catId) {
+        return categoryRepository.findCategoryById(catId)
+                .orElseThrow(CategoryNotFoundException::new);
+    }
 
-    void setCategories(Recipe recipe);
+    public Set<Category> findCategoryByRecipeName(String name) {
+        return null;
+    }
+
+    public void deleteRecipeFromCategory(Recipe recipe, Category cat) {
+
+    }
+
+    public void saveCategory(Category category) {
+
+    }
+
+    public void setCategories(Recipe recipe) {
+        recipe.getCategories()
+                .stream()
+                .peek(category -> category.addRecipe(recipe))
+                .forEach(categoryRepository::saveCategory);
+    }
 }

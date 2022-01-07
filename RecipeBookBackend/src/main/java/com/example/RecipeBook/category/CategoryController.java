@@ -1,6 +1,5 @@
-package com.example.RecipeBook.category.impl;
+package com.example.RecipeBook.category;
 
-import com.example.RecipeBook.category.CategoryService;
 import com.example.RecipeBook.category.model.Category;
 import com.example.RecipeBook.category.model.CategoryPage;
 import org.springframework.http.HttpEntity;
@@ -14,7 +13,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 
 @Controller
-@RequestMapping("/categories")
+@RequestMapping("/api")
 public class CategoryController {
     private final CategoryService categoryService;
 
@@ -22,7 +21,7 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
-    @GetMapping("")
+    @GetMapping("/categories")
     public HttpEntity<CategoryPage> listCategories(@RequestParam("page") Integer page,
                                                    @RequestParam("size") Integer size) {
         try {
@@ -33,25 +32,24 @@ public class CategoryController {
         }
     }
 
-    @PostMapping("/{catId}/delete")
-    public HttpEntity<CategoryPage> deleteCategory(@PathVariable UUID catId) {
+    @PostMapping("/category/delete")
+    public HttpEntity<CategoryPage> deleteCategory(@RequestParam UUID catId) {
         if (categoryService.delete(catId)) {
             return new ResponseEntity<>(OK);
         }
         return new ResponseEntity<>(NOT_FOUND);
     }
 
-    @PutMapping("/{catId}")
-    public HttpEntity<Category> editCat(@PathVariable UUID catId,
-                                        Category category) {
+    @PutMapping("/category/edit")
+    public HttpEntity<Category> editCat(@RequestParam UUID catId, @RequestBody Category category) {
         if (categoryService.update(catId, category)) {
             return new ResponseEntity<>(category, OK);
         }
         return new ResponseEntity<>(NOT_FOUND);
     }
 
-    @GetMapping("/{catId}")
-    public HttpEntity<Category> getCategory(@PathVariable UUID catId) {
+    @GetMapping("/category")
+    public HttpEntity<Category> getCategory(@RequestParam UUID catId) {
         try {
             Category category = categoryService.findCategoryById(catId);
             return new ResponseEntity<>(category, OK);

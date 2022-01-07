@@ -16,14 +16,22 @@ public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String name;
+    String name;
     @Type(type = "uuid-char")
-    private UUID publicId;
+    UUID publicId;
     @JsonIgnore
     @ManyToMany(mappedBy = "categories",
             cascade = {PERSIST, REMOVE},
             fetch = EAGER)
-    private final Set<Recipe> recipes = new HashSet<>();
+    final Set<Recipe> recipes = new HashSet<>();
+
+    public Category() {
+    }
+
+    public Category(CategoryWithoutRecipes categoryWithoutRecipes){
+        this.name = categoryWithoutRecipes.name;
+        this.publicId = categoryWithoutRecipes.id;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -32,22 +40,6 @@ public class Category {
         }
         return id.equals(((Category) o).id);
 
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public UUID getPublicId() {
-        return publicId;
-    }
-
-    public void setPublicId(UUID publicId) {
-        this.publicId = publicId;
     }
 
     public Set<Recipe> getRecipes() {
@@ -61,14 +53,5 @@ public class Category {
     public boolean removeRecipe(Recipe recipe) {
         return recipes.remove(recipe);
     }
-
-    public boolean removeRecipes(Collection<Recipe> recipes) {
-        return this.recipes.removeAll(recipes);
-    }
-
-    public boolean addRecipes(Collection<Recipe> recipes) {
-        return this.recipes.addAll(recipes);
-    }
-
 
 }

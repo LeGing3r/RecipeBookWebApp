@@ -1,12 +1,16 @@
 package com.example.RecipeBook.recipe.model;
 
 import com.example.RecipeBook.category.model.Category;
-import com.example.RecipeBook.item.model.Item;
-import com.example.RecipeBook.recipe.model.nutiritional.NutritionalInfo;
+import com.example.RecipeBook.nutiritional.NutritionalInfo;
+import edu.emory.mathcs.backport.java.util.Collections;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static javax.persistence.CascadeType.PERSIST;
 
@@ -19,111 +23,48 @@ import static javax.persistence.CascadeType.PERSIST;
 public class Recipe {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
-    private String name;
-    private String imageLocation;
-    private boolean chosen = false;
+    Integer id;
+    String name;
+    String imageLocation;
+    boolean chosen;
     @Convert(converter = CookingTime.CookingTimeConverter.class)
-    private CookingTime cookingTime;
+    CookingTime cookingTime;
     @Convert(converter = NutritionalInfo.NutritionConverter.class)
-    private NutritionalInfo nutritionalInfo;
+    NutritionalInfo nutritionalInfo;
     @Type(type = "uuid-char")
-    private UUID publicId;
+    UUID publicId;
+    int portionSize;
     @Lob
     @Column(length = 100000)
-    private String instructions;
-
-    @ElementCollection
-    @Convert(converter = Item.IngredientConverter.class)
-    private final Set<Item> ingredients = new HashSet<>();
-
+    String instructions;
+    @ElementCollection(targetClass = String.class)
+    final Set<String> ingredients = new HashSet<>();
     @ManyToMany(cascade = PERSIST)
     @JoinTable(
             name = "Recipe_Categories",
             joinColumns = {@JoinColumn(name = "recipe_id")},
             inverseJoinColumns = {@JoinColumn(name = "category_id")})
-    private final Set<Category> categories = new HashSet<>();
+    Set<Category> categories = new HashSet<>();
 
-    public void switchChosen() {
-        chosen = !chosen;
+    public Recipe() {
     }
 
-    public NutritionalInfo getNutritionalInfo() {
-        return nutritionalInfo;
-    }
+    public Recipe(RecipeDTO recipeDTO) {
+        this.name = recipeDTO.name;
+        this.imageLocation = recipeDTO.imageLocation;
+        this.chosen = recipeDTO.chosen;
+        this.cookingTime = recipeDTO.cookingTime;
+        this.nutritionalInfo = recipeDTO.nutritionalInfo;
+        this.publicId = recipeDTO.id;
+        this.portionSize = recipeDTO.portionSize;
+        this.instructions = recipeDTO.instructions;
+        this.ingredients.addAll(recipeDTO.ingredients);
+        this.categories = recipeDTO.categories
+                .stream()
+                .map(Category::new)
+                .collect(Collectors.toSet());
 
-    public void setNutritionalInfo(NutritionalInfo nutritionalInfo) {
-        this.nutritionalInfo = nutritionalInfo;
-    }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getImageLocation() {
-        return imageLocation;
-    }
-
-    public void setImageLocation(String imageLocation) {
-        this.imageLocation = imageLocation;
-    }
-
-    public boolean isChosen() {
-        return chosen;
-    }
-
-    public CookingTime getCookingTime() {
-        return cookingTime;
-    }
-
-    public void setCookingTime(CookingTime cookingTime) {
-        this.cookingTime = cookingTime;
-    }
-
-    public Set<Item> getIngredients() {
-        return Collections.unmodifiableSet(ingredients);
-    }
-
-    public boolean addIngredients(Collection<Item> ingredients) {
-        return this.ingredients.addAll(ingredients);
-    }
-
-    public boolean removeIngredients(Collection<Item> ingredients) {
-        return this.ingredients.removeAll(ingredients);
-    }
-
-    public Set<Category> getCategories() {
-        return Collections.unmodifiableSet(categories);
-    }
-
-    public boolean addCategories(List<Category> categories) {
-        return this.categories.addAll(categories);
-    }
-
-    public boolean removeCategories(List<Category> categories) {
-        return this.categories.removeAll(categories);
-    }
-
-    public String getInstructions() {
-        return instructions;
-    }
-
-    public void setInstructions(String instructions) {
-        this.instructions = instructions;
-    }
-
-    public UUID getPublicId() {
-        return publicId;
-    }
-
-    public void setPublicId(UUID publicId) {
-        if (this.publicId == null)
-            this.publicId = publicId;
     }
 
     @Override
@@ -140,16 +81,44 @@ public class Recipe {
     }
 
     public void mergeWithNewRecipe(Recipe recipe) {
-        name = recipe.name;
-        imageLocation = recipe.imageLocation;
-        chosen = recipe.chosen;
-        cookingTime = recipe.cookingTime;
-        nutritionalInfo = recipe.nutritionalInfo;
-        instructions = recipe.instructions;
-        ingredients.clear();
-        ingredients.addAll(recipe.ingredients);
-        categories.clear();
-        categories.addAll(recipe.categories);
+        this.name = recipe.name;
+        this.imageLocation = recipe.imageLocation;
+        this.chosen = recipe.chosen;
+        this.cookingTime = recipe.cookingTime;
+        this.nutritionalInfo = recipe.nutritionalInfo;
+        this.instructions = recipe.instructions;
+        this.ingredients.clear();
+        this.ingredients.addAll(recipe.ingredients);
+        this.categories.clear();
+        this.categories.addAll(recipe.categories);
+    }
+
+    public Set<String> getIngredients() {
+        return Collections.unmodifiableSet(ingredients);
+    }
+
+    public void switchChosen() {
+        chosen = !chosen;
+    }
+
+    public Set<Category> getCategories() {
+        return Collections.unmodifiableSet(categories);
+    }
+
+    public RecipeDTO toRecipeDTO() {
+        return new RecipeDTO(this);
+    }
+
+    public void setPublicId(UUID publicId) {
+        this.publicId = publicId;
+    }
+
+    public UUID getPublicId() {
+        return publicId;
+    }
+
+    public int getId() {
+        return id;
     }
 }
 

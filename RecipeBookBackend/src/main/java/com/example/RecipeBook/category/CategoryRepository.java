@@ -2,24 +2,52 @@ package com.example.RecipeBook.category;
 
 import com.example.RecipeBook.category.model.Category;
 import com.example.RecipeBook.category.model.CategoryPage;
+import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-public interface CategoryRepository {
+@Repository
+public class CategoryRepository {
+    @PersistenceUnit
+    private final EntityManagerFactory entityManagerFactory;
 
-    Set<Category> findByCatName(String name);
+    private final EntityManager entityManager;
 
-    int findAmountOfPages(Integer size);
+    public CategoryRepository(EntityManagerFactory entityManagerFactory) {
+        this.entityManagerFactory = entityManagerFactory;
+        entityManager = entityManagerFactory.createEntityManager();
+    }
 
-    Optional<CategoryPage> findCategoriesPage(Integer page, Integer size);
+    public Set<Category> findByCatName(String name) {
+        return null;
+    }
 
-    boolean deleteCategory(UUID catId);
+    public int findAmountOfPages(Integer size) {
+        return 0;
+    }
 
-    boolean updateCategory(UUID catId, Category category);
+    public Optional<CategoryPage> findCategoriesPage(Integer page, Integer size) {
+        return Optional.empty();
+    }
 
-    Optional<Category> findCategoryById(UUID catId);
+    public boolean deleteCategory(UUID catId) {
+        return false;
+    }
 
-    void saveCategory(Category category);
+    public boolean updateCategory(UUID catId, Category category) {
+        return false;
+    }
+
+    public Optional<Category> findCategoryById(UUID catId) {
+        return Optional.empty();
+    }
+
+    public void saveCategory(Category category) {
+
+    }
 }
