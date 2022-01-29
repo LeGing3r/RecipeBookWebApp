@@ -1,64 +1,79 @@
 package com.example.RecipeBook.item;
 
-import com.example.RecipeBook.errors.AliasExistsException;
-import com.example.RecipeBook.item.model.Item;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static com.example.RecipeBook.item.Item.ItemConverter.convertFromString;
 
 @Service
 public class ItemService {
 
     private final ItemRepository repository;
-    private final Pattern amountPattern = Pattern.compile("^\\d*/?\\d*");
-    private final Pattern wordPattern = Pattern.compile("\\s?[a-zA-Z]*\\s?");
 
-    public ItemService(ItemRepository repository) {
+    ItemService(ItemRepository repository) {
         this.repository = repository;
     }
 
-    public boolean addItem(Item item) {
-        return repository.save(item);
+    Set<ItemDto> addItem(String item) {
+        var newItem = convertFromString(item);
+        repository.save(newItem);
+        return getItems();
     }
 
-    public Collection<Item> getItems() {
-        return repository.getTodoItems();
+    Set<ItemDto> getItems() {
+        return getNeededItems();
     }
 
-    public boolean updateList(Collection<Item> items) {
-        Set<Item> changedItems = items.stream()
-                .filter(item -> repository.containsItem(item.getName()))
-                .map(this::getItemString)
+    Set<ItemDto> addToExistingItem(ItemDto itemDto, String itemString) {
+        var item = repository.getItemByUUID(itemDto.id);
+        var newItem = convertFromString(itemString);
+        repository.updateItem(item, newItem);
+        return getNeededItems();
+    }
+
+    private Set<ItemDto> getNeededItems() {
+        return repository.getTodoItems().stream().map(ItemDto::new).collect(Collectors.toSet());
+    }
+
+    boolean updateList(Collection<Item> items) {
+        try {
+            repository.removeAll();
+            items.forEach(repository::save);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    ItemDto addAliasToItem(UUID id, String newAlias) {
+        var item = repository.getItemByUUID(id).staticItem;
+        repository.addAliasToStaticItem(item, newAlias);
+        return new ItemDto(item);
+    }
+
+    Set<ItemDto> getSimilarItems(String item) {
+        var newItem = convertFromString(item).name;
+        //Compare with existing items
+        var items = new LinkedHashSet<>(repository.getSimilarItemsFromAlias(newItem))
+                .stream()
+                .map(ItemDto::new)
                 .collect(Collectors.toSet());
-        return repository.updateItems(changedItems);
+        //Compare with static items
+        var similarItems = repository.getStaticItemsFromAlias(newItem)
+                .stream()
+                .map(ItemDto::new)
+                .collect(Collectors.toSet());
+        items.addAll(similarItems);
+        return items;
     }
 
-    public Item addAliasToItem(UUID id, String newAlias) {
-        var existingItem = repository.getItemWithAlias(newAlias);
-        var item = repository.getItemByUUID(id);
-        if (existingItem.isPresent()) {
-            throw new AliasExistsException();
-        }
-        repository.addAliasToItem(item, newAlias);
-        return item;
+    private void addItemToNewItemsFile(Item newItem) {
+
     }
 
-    public Item getItem(UUID id) {
-        return repository.getItemByUUID(id);
-    }
-
-    private Item getItemString(Item item) {
-        String newString = item.getStringValue();
-        int amount = 0;
-        var amountMatcher = amountPattern.matcher(newString);
-        var wordMatcher = wordPattern.matcher(newString);
-        if (amountMatcher.matches()) {
-            amount = Integer.parseInt(amountMatcher.group());
-        }
-        return item;
-    }
 }

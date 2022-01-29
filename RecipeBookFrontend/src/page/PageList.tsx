@@ -1,16 +1,31 @@
-import { recipesUrl } from "../recipe/RecipeModule";
-import React from "react";
-
 type PageNumberElementProps = {
-    totalItems: number;
+    totalPages: number;
     itemsPerPage: number;
     currentPage: number;
+    url: string;
 }
 
-export const PageNumbersElement = ({ totalItems, itemsPerPage, currentPage }: PageNumberElementProps) => {
-    return <div style={{ font: "1.3rem", marginTop: "50px", marginLeft: "50px" }}>
-        <a href={recipesUrl + '?size=' + itemsPerPage + '&currentPage=' + currentPage}></a>
-    </div>
+export const PageNumbersElement = (props: PageNumberElementProps) => {
+    return (
+        <div id="pageDirectory">
+            {
+                props.currentPage > 1 ? <a href={props.url + "/" + (props.currentPage - 1) + "/" + props.itemsPerPage}>{"<"}</a> : <></>}
+            {
+                [...Array(props.totalPages).keys()].map(i => <PageNumber number={i + 1} url={props.url} size={props.itemsPerPage} focused={props.currentPage === i + 1} />)
+            }
+            {
+                props.currentPage < props.totalPages ? <a href={props.url + "/" + (props.currentPage + 1) + "/" + props.itemsPerPage}>{">"}</a> : <></>
+            }
+        </div>
+    )
+}
+
+const PageNumber = (props: { number: number, url: string, size: number, focused: boolean }) => {
+    return (
+        <a href={props.url + "/" + props.number + "/" + props.size} className={props.focused ? "focused" : ""}>
+            {props.number}
+        </a>
+    )
 }
 
 //     <div style={{font: "1.3rem" margin-top: 50px; margin-left: 50p{x;"}}>

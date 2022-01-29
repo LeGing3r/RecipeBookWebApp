@@ -1,6 +1,5 @@
-package com.example.RecipeBook.recipe.model;
+package com.example.RecipeBook.recipe;
 
-import com.example.RecipeBook.category.model.Category;
 import com.example.RecipeBook.nutiritional.NutritionalInfo;
 import edu.emory.mathcs.backport.java.util.Collections;
 import org.hibernate.annotations.Type;
@@ -10,9 +9,6 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
-
-import static javax.persistence.CascadeType.PERSIST;
 
 /**
  * Class wrapping all data necessary for a single recipe
@@ -39,12 +35,8 @@ public class Recipe {
     String instructions;
     @ElementCollection(targetClass = String.class)
     final Set<String> ingredients = new HashSet<>();
-    @ManyToMany(cascade = PERSIST)
-    @JoinTable(
-            name = "Recipe_Categories",
-            joinColumns = {@JoinColumn(name = "recipe_id")},
-            inverseJoinColumns = {@JoinColumn(name = "category_id")})
-    Set<Category> categories = new HashSet<>();
+    @ElementCollection(targetClass = String.class)
+    final Set<String> categories = new HashSet<>();
 
     public Recipe() {
     }
@@ -59,12 +51,7 @@ public class Recipe {
         this.portionSize = recipeDTO.portionSize;
         this.instructions = recipeDTO.instructions;
         this.ingredients.addAll(recipeDTO.ingredients);
-        this.categories = recipeDTO.categories
-                .stream()
-                .map(Category::new)
-                .collect(Collectors.toSet());
-
-
+        this.categories.addAll(recipeDTO.categories);
     }
 
     @Override
@@ -80,7 +67,7 @@ public class Recipe {
         return Objects.hash(id);
     }
 
-    public void mergeWithNewRecipe(Recipe recipe) {
+    public void mergeWithRecipeDTO(RecipeDTO recipe) {
         this.name = recipe.name;
         this.imageLocation = recipe.imageLocation;
         this.chosen = recipe.chosen;
@@ -97,28 +84,12 @@ public class Recipe {
         return Collections.unmodifiableSet(ingredients);
     }
 
-    public void switchChosen() {
-        chosen = !chosen;
-    }
-
-    public Set<Category> getCategories() {
+    public Set<String> getCategories() {
         return Collections.unmodifiableSet(categories);
     }
 
-    public RecipeDTO toRecipeDTO() {
+    RecipeDTO toRecipeDTO() {
         return new RecipeDTO(this);
-    }
-
-    public void setPublicId(UUID publicId) {
-        this.publicId = publicId;
-    }
-
-    public UUID getPublicId() {
-        return publicId;
-    }
-
-    public int getId() {
-        return id;
     }
 }
 

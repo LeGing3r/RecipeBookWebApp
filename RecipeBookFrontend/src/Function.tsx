@@ -1,5 +1,6 @@
 import React from "react";
 import "./index.css";
+import { BareRecipe } from "./recipe/RecipeModule";
 export const toggleMenu = () => {
 
 }
@@ -21,9 +22,9 @@ export const Navigation = () => {
             <a href="/categories">Categories</a>
           </li>
           <li>
-            <a href="/recipes/new">Upload Recipe</a></li>
+            <a href="/recipe/new">Upload Recipe</a></li>
           <li>
-            <a href="/todo">Shopping List</a></li>
+            <a href="/shoppinglist">Shopping List</a></li>
         </ul>
         <div className="searchbar frtwth right">
           {//SEARCHBAR IMPLEMENTATION
@@ -32,4 +33,9 @@ export const Navigation = () => {
       </div>
     </nav>
   );
+}
+
+export type PagesType = {
+  size?: number;
+  pageNumber?: number;
 }

@@ -1,12 +1,11 @@
 package com.example.RecipeBook.item;
 
-import com.example.RecipeBook.item.model.Item;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
-import java.util.UUID;
+import java.util.Set;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -21,9 +20,9 @@ public class ItemController {
     }
 
     @GetMapping("/todo")
-    public HttpEntity<Collection<Item>> displayShoppingList() {
+    public HttpEntity<Set<ItemDto>> displayShoppingList() {
         try {
-            Collection<Item> items = itemService.getItems();
+            var items = itemService.getItems();
             return new ResponseEntity<>(items, OK);
         } catch (Exception e) {
             return new ResponseEntity<>(NO_CONTENT);
@@ -31,20 +30,20 @@ public class ItemController {
     }
 
     @PostMapping("/todo")
-    public HttpEntity<Item> addItemToList(Item item) {
+    public HttpEntity<Set<ItemDto>> addItemToList(@RequestBody String item) {
         if (item == null) {
-            throw new IllegalArgumentException("No item added!");
+            return new ResponseEntity<>(METHOD_NOT_ALLOWED);
         }
         try {
-            itemService.addItem(item);
-            return new ResponseEntity<>(OK);
+            var list = itemService.addItem(item);
+            return new ResponseEntity<>(list, OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(NOT_ACCEPTABLE);
+            return new ResponseEntity<>(METHOD_NOT_ALLOWED);
         }
     }
 
     @PutMapping("/todo")
-    public HttpEntity<Item> updateList(@RequestBody Collection<Item> items) {
+    public HttpEntity<ItemDto> updateList(@RequestBody Collection<Item> items) {
         try {
             itemService.updateList(items);
             return new ResponseEntity<>(OK);
@@ -53,18 +52,18 @@ public class ItemController {
         }
     }
 
-    @PostMapping("/items")
-    public HttpEntity<Item> addAliasToItem(@RequestParam UUID id, @RequestParam String newAlias) {
+    @PutMapping("/items")
+    public HttpEntity<Set<ItemDto>> updateExistingItem(@RequestParam String itemString, @RequestBody ItemDto itemDto) {
         try {
-            var item = itemService.addAliasToItem(id, newAlias);
+            var item = itemService.addToExistingItem(itemDto, itemString);
             return new ResponseEntity<>(item, OK);
         } catch (Exception e) {
             return new ResponseEntity<>(EXPECTATION_FAILED);
         }
     }
 
-    @PostMapping("/item")
-    public HttpEntity<Item> getItem(@RequestParam UUID id) {
-        return new ResponseEntity<>(itemService.getItem(id), OK);
+    @GetMapping("/items")
+    public HttpEntity<Set<ItemDto>> getItem(@RequestParam String value) {
+        return new ResponseEntity<>(itemService.getSimilarItems(value), OK);
     }
 }

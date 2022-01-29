@@ -1,31 +1,25 @@
-package com.example.RecipeBook.recipe.model;
-
-import com.example.RecipeBook.category.model.CategoryWithoutRecipes;
+package com.example.RecipeBook.recipe;
 
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
-public class RecipePageElement {
+public class RecipePage {
     private UUID id;
     private String name;
     private String image;
     private boolean chosen;
-    private Set<CategoryWithoutRecipes> categories;
+    private Set<String> categories;
 
-    public RecipePageElement() {
+    public RecipePage() {
     }
 
-    public RecipePageElement(Recipe recipe) {
+    public RecipePage(Recipe recipe) {
         this.id = recipe.publicId;
         this.name = recipe.name;
         this.image = recipe.imageLocation;
         this.chosen = recipe.chosen;
-        this.categories = recipe.getCategories()
-                .stream()
-                .map(CategoryWithoutRecipes::new)
-                .collect(Collectors.toSet());
+        this.categories = recipe.categories;
     }
 
     public UUID getId() {
@@ -60,11 +54,11 @@ public class RecipePageElement {
         this.chosen = chosen;
     }
 
-    public Set<CategoryWithoutRecipes> getCategories() {
+    public Set<String> getCategories() {
         return categories;
     }
 
-    public void setCategories(Set<CategoryWithoutRecipes> categories) {
+    public void setCategories(Set<String> categories) {
         this.categories = categories;
     }
 
@@ -72,7 +66,7 @@ public class RecipePageElement {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        RecipePageElement that = (RecipePageElement) o;
+        RecipePage that = (RecipePage) o;
         return id.equals(that.id);
     }
 

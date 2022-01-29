@@ -1,4 +1,4 @@
-import React from "react"
+import React, { KeyboardEventHandler } from "react"
 import { NutritionalInfo, NutritionalInfoElement } from "../nutritionalinfo/NutritionalInfoModule"
 
 export type Item = {
@@ -23,7 +23,7 @@ type ItemProps = {
     item: Item;
     index: number;
     updateNeeded: (item: Item) => void;
-    updateItemString: (item: Item, evt:React.FocusEvent<HTMLInputElement>) => void;
+    updateItemString: (item: Item, evt: React.FocusEvent<HTMLInputElement>) => void;
 }
 
 export const ItemPageElement = (props: ItemPageProps) => {
@@ -62,6 +62,22 @@ export const ItemElement = ({ item, index, updateNeeded, updateItemString }: Ite
             <input className="item-text" type="text" defaultValue={item.stringValue}
                 style={{ textDecoration: item.needed ? 'none' : 'line-through' }} onBlur={(evt) => updateItemString(item, evt)} />
         </li>
+    )
+}
+
+export const SimilarItemsElement = (props: { items: Item[], addNewItem: (value: string) => void, updateExistingItem: (value: string, existing: Item) => void, value: string }) => {
+    return (
+        <div>
+            <h2>{"Are any of these items the same as " + props.value}</h2>
+            <ul>
+                {props.items.map(item => {
+                    return (
+                        <li><a onClick={() => props.updateExistingItem(props.value, item)}>{item.name}</a></li>
+                    )
+                })}
+                <li><a onClick={() => props.addNewItem(props.value)}>Add as new item</a></li>
+            </ul>
+        </div >
     )
 }
 

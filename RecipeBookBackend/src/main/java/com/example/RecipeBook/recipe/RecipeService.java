@@ -1,34 +1,30 @@
 package com.example.RecipeBook.recipe;
 
-import com.example.RecipeBook.category.CategoryService;
-import com.example.RecipeBook.category.model.Category;
-import com.example.RecipeBook.category.model.CategoryWithoutRecipes;
+import com.example.RecipeBook.Page;
+import com.example.RecipeBook.QueryType;
 import com.example.RecipeBook.errors.RecipeNotFoundException;
 import com.example.RecipeBook.item.ItemService;
-import com.example.RecipeBook.item.model.Item;
 import com.example.RecipeBook.nutiritional.NutritionalInfo;
-import com.example.RecipeBook.recipe.model.Recipe;
-import com.example.RecipeBook.recipe.model.RecipeDTO;
-import com.example.RecipeBook.recipe.model.RecipePage;
-import com.example.RecipeBook.recipe.model.RecipePageElement;
 import com.google.gson.Gson;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.example.RecipeBook.QueryType.CATEGORY;
+import static com.example.RecipeBook.QueryType.RECIPE;
 
 @Service
 public class RecipeService {
@@ -37,118 +33,85 @@ public class RecipeService {
     @Value("${nutrition.app.id}")
     private String nutritionId;
     private final RecipeRepository recipeRepository;
-    private final CategoryService categoryService;
     private final ItemService ingredientService;
 
     public RecipeService(RecipeRepository recipeRepository,
-                         CategoryService categoryService,
                          ItemService ingredientService) {
         this.recipeRepository = recipeRepository;
-        this.categoryService = categoryService;
         this.ingredientService = ingredientService;
     }
 
-    public RecipePage findPages(int pageSize, int currentPage, boolean chosenRecipes) {
-
-        Set<Recipe> newList = new HashSet<>();
-
-        int startPoint = (currentPage - 1) * pageSize;
-        if (chosenRecipes) {
-            newList.addAll(recipeRepository
-                    .findChosen(startPoint, pageSize)
-                    .orElseThrow(RecipeNotFoundException::new));
-        } else {
-            newList.addAll(recipeRepository
-                    .findRecipePage(startPoint, pageSize)
-                    .orElseThrow(RecipeNotFoundException::new));
-        }
-        Set<RecipePageElement> recipePageElements = convertRecipesToPageElements(newList);
-        int pageAmount = recipeRepository.getTotalRecipes();
-        return new RecipePage(recipePageElements, pageAmount, currentPage, pageSize);
+    Page<RecipePage> getRecipePage(int currentPage, int size, boolean chosenRecipes) {
+        int startPoint = (currentPage - 1) * size;
+        int totalRecipes = recipeRepository.getTotal(RECIPE);
+        int pageAmount = Math.max(totalRecipes / size, 1);
+        var newList = recipeRepository
+                .findRecipePage(startPoint, size, chosenRecipes)
+                .orElseThrow(RecipeNotFoundException::new);
+        Set<RecipePage> recipePageDTOS = convertRecipesToPageDTO(newList);
+        return new Page(recipePageDTOS, pageAmount, size, currentPage);
     }
 
-    public RecipeDTO findRecipeById(UUID recipeId) throws SQLException {
+    RecipeDTO findRecipeById(UUID recipeId) throws SQLException {
         return recipeRepository
                 .findRecipeById(recipeId)
                 .orElseThrow(RecipeNotFoundException::new)
                 .toRecipeDTO();
     }
 
-    public RecipePage findRecipesByName(String name) {
+    Page<RecipePage> findRecipesByQuery(String name, QueryType queryType) {
         Set<Recipe> recipes = recipeRepository
-                .findRecipesByName(name)
+                .findRecipesByQuery(name, queryType)
                 .orElseThrow(RecipeNotFoundException::new);
-        var recipePageElements = convertRecipesToPageElements(recipes);
-        return new RecipePage(recipePageElements, 1, 1, 8);
+        var recipePageElements = convertRecipesToPageDTO(recipes);
+        return new Page(recipePageElements, 1, 1, 8);
     }
 
-    public RecipePage findRecipesByCategoryName(String categoryName) {
-        Set<Recipe> recipes = recipeRepository
-                .findRecipesByCategory(categoryName)
-                .orElseThrow(RecipeNotFoundException::new);
-        var recipePageElements = convertRecipesToPageElements(recipes);
-        return new RecipePage(recipePageElements, 1, 1, 8);
-    }
-
-    private Set<RecipePageElement> convertRecipesToPageElements(Set<Recipe> recipes) {
-        return recipes.stream().map(RecipePageElement::new).collect(Collectors.toSet());
-    }
-
-    public RecipePage findRecipesByIngredientName(String ingredientName) {
-        Set<Recipe> recipes = recipeRepository
-                .findRecipesByIngredient(ingredientName)
-                .orElseThrow(RecipeNotFoundException::new);
-        var recipePageElements = convertRecipesToPageElements(recipes);
-        return new RecipePage(recipePageElements, 1, 1, 8);
-    }
-
-    public boolean addRecipe(RecipeDTO recipe) {
+    boolean addRecipe(RecipeDTO recipe) {
         var recipeCopy = new Recipe(recipe);
         return recipeRepository.addRecipe(recipeCopy);
     }
 
-    public boolean updateRecipe(UUID publicId, RecipeDTO recipe) {
+    boolean updateRecipe(RecipeDTO recipe) {
         try {
-            var recipeDao = new Recipe(recipe);
-            return recipeRepository.updateRecipe(recipeDao);
+            return recipeRepository.updateRecipe(recipe);
         } catch (Exception e) {
             return false;
         }
     }
 
-    public boolean delete(UUID recipeId) throws SQLException {
+    boolean delete(UUID recipeId) throws SQLException {
         return recipeRepository.delete(recipeId);
     }
 
-    public void toggleChosen(UUID recipeId) throws SQLException {
+    void toggleChosen(UUID recipeId) throws SQLException {
         Recipe r = recipeRepository.findRecipeById(recipeId).orElseThrow(RecipeNotFoundException::new);
-        r.switchChosen();
+        r.chosen = !r.chosen;
         recipeRepository.addRecipe(r);
     }
 
-    public boolean addIngredient(RecipeDTO recipe, String ingredient) {
-        recipe.addIngredients(List.of(ingredient));
-        var recipeDao = new Recipe(recipe);
-        return recipeRepository.updateRecipe(recipeDao);
+    boolean addIngredient(RecipeDTO recipe, String ingredient) {
+        if (recipe.addIngredients(List.of(ingredient))) {
+            return recipeRepository.updateRecipe(recipe);
+        }
+        return false;
     }
 
-    public boolean removeIngredient(RecipeDTO recipe, String ingredient) {
+    boolean removeIngredient(RecipeDTO recipe, String ingredient) {
         if (recipe.removeIngredients(List.of(ingredient))) {
-            var recipeDao = new Recipe(recipe);
-            return recipeRepository.updateRecipe(recipeDao);
+            return recipeRepository.updateRecipe(recipe);
         }
         return false;
     }
 
-    public boolean addCategory(RecipeDTO recipeDTO, CategoryWithoutRecipes category) {
+    boolean addCategory(RecipeDTO recipeDTO, String category) {
         if (recipeDTO.addCategories(List.of(category))) {
-            var recipeDao = new Recipe(recipeDTO);
-            return recipeRepository.updateRecipe(recipeDao);
+            return recipeRepository.updateRecipe(recipeDTO);
         }
         return false;
     }
 
-    public boolean removeCategory(RecipeDTO recipeDTO, CategoryWithoutRecipes category) {
+    boolean removeCategory(RecipeDTO recipeDTO, String category) {
         if (recipeDTO.removeCategories(List.of(category))) {
             var recipeDao = new Recipe(recipeDTO);
             return recipeRepository.addRecipe(recipeDao);
@@ -156,32 +119,19 @@ public class RecipeService {
         return false;
     }
 
-    public Integer getTotalRecipes() {
-        return recipeRepository.getTotalRecipes();
+    void saveImage(UUID id, MultipartFile image) throws IOException {
+        var recipe = recipeRepository.findRecipeById(id).orElseThrow(RecipeNotFoundException::new);
+        String pathname = "D:/Projects/RecipeBookWebApp/RecipeBookBackend/src/main/resources/images/" + recipe.id + ".png";
+        recipeRepository.updateRecipe(recipe, pathname);
+        FileUtils.copyInputStreamToFile(image.getInputStream(), new File(pathname));
     }
 
-    private void setImgLoc(RecipeDTO recipeDTO, MultipartFile file) throws IOException {
-
-        String path = "D:\\Projects\\RecipeBookWebApp\\src\\main\\resources\\images\\" + recipeDTO.getId() + ".png";
-        File ogFile = Paths.get(path).toFile();
-        if (ogFile.exists()) {
-            ogFile.delete();
-        }
-        file.transferTo(new File(path));
-
-        Path tempPath = Paths.get("D:\\Projects\\RecipeBookWebApp\\target\\classes\\images\\" + recipeDTO.getId() + ".png");
-        Files.copy(Paths.get(path), tempPath, StandardCopyOption.REPLACE_EXISTING);
-
-        recipeDTO.setImageLocation("/images/" + recipeDTO.getId() + ".png");
-        recipeDTO.setImageLocation(path);
-
+    byte[] findImage(UUID id) throws IOException {
+        var fileLocation = recipeRepository.getImageLocation(id);
+        return new FileInputStream(fileLocation).readAllBytes();
     }
 
-    private void deleteRecipeImage(String imageLocation) {
-        Paths.get(imageLocation).toFile().delete();
-    }
-
-    public Optional<NutritionalInfo> getNutritionalInfo(UUID id) {
+    Optional<NutritionalInfo> getNutritionalInfo(UUID id) {
         try {
             String address = "https://api.edamam.com/api/nutrition-data?app_id=%s&app_key=%s"
                     .formatted(nutritionId, nutritionKey);
@@ -192,10 +142,36 @@ public class RecipeService {
                     .stream()
                     .collect(Collectors.joining(" and ", address, ""));
             return Optional.of(getNutritionalInfo(url));
-        } catch (SQLException | IOException | InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
             return Optional.empty();
         }
+    }
+
+    void chooseRecipe(UUID recipeId) throws SQLException {
+        recipeRepository.switchChosenOfRecipe(recipeId);
+    }
+
+    Page<String> getCategoryPage(int page, int size) {
+        int startPoint = (page - 1) * size;
+        int totalCategories = recipeRepository.getTotal(CATEGORY);
+        int pagesAmount = Math.max(totalCategories / size, 1);
+        var categories = recipeRepository.findCategories(startPoint, size);
+        return new Page<>(categories, pagesAmount, page, size);
+    }
+
+    private Set<RecipePage> convertRecipesToPageDTO(Set<Recipe> recipes) {
+        return recipes.stream()
+                .map(this::convertRecipeToPageElement)
+                .collect(Collectors.toSet());
+    }
+
+    private RecipePage convertRecipeToPageElement(Recipe recipe) {
+        return new RecipePage(recipe);
+    }
+
+    private void deleteRecipeImage(String imageLocation) {
+        Paths.get(imageLocation).toFile().delete();
     }
 
     private NutritionalInfo getNutritionalInfo(String url) throws IOException, InterruptedException {
@@ -206,13 +182,5 @@ public class RecipeService {
         return new Gson().fromJson(
                 client.send(request, HttpResponse.BodyHandlers.ofString()).body(),
                 NutritionalInfo.class);
-    }
-
-    public void chooseRecipe(UUID recipeId) throws SQLException {
-        Recipe recipe = recipeRepository
-                .findRecipeById(recipeId)
-                .orElseThrow(RecipeNotFoundException::new);
-        recipe.switchChosen();
-        recipeRepository.updateRecipe(recipe);
     }
 }

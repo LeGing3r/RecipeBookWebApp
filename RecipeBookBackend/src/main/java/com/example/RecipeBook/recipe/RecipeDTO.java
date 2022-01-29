@@ -1,10 +1,8 @@
-package com.example.RecipeBook.recipe.model;
+package com.example.RecipeBook.recipe;
 
-import com.example.RecipeBook.category.model.CategoryWithoutRecipes;
 import com.example.RecipeBook.nutiritional.NutritionalInfo;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class RecipeDTO {
     String name;
@@ -16,7 +14,10 @@ public class RecipeDTO {
     int portionSize;
     String instructions;
     Set<String> ingredients = new HashSet<>();
-    Set<CategoryWithoutRecipes> categories = new HashSet<>();
+    Set<String> categories = new HashSet<>();
+
+    public RecipeDTO() {
+    }
 
     public RecipeDTO(Recipe recipe) {
         this.name = recipe.name;
@@ -28,10 +29,7 @@ public class RecipeDTO {
         this.portionSize = recipe.portionSize;
         this.instructions = recipe.instructions;
         this.ingredients = recipe.ingredients;
-        this.categories = recipe.getCategories()
-                .stream()
-                .map(CategoryWithoutRecipes::new)
-                .collect(Collectors.toSet());
+        this.categories = recipe.categories;
 
     }
 
@@ -103,23 +101,23 @@ public class RecipeDTO {
         return ingredients;
     }
 
-    public Set<CategoryWithoutRecipes> getCategories() {
+    public Set<String> getCategories() {
         return Collections.unmodifiableSet(categories);
     }
 
-    public void addIngredients(Collection<String> ingredients) {
-        this.ingredients.addAll(ingredients);
+    public boolean addIngredients(Collection<String> ingredients) {
+        return this.ingredients.addAll(ingredients);
     }
 
     public boolean removeIngredients(Collection<String> ingredients) {
         return this.ingredients.removeAll(ingredients);
     }
 
-    public boolean addCategories(Collection<CategoryWithoutRecipes> categories) {
+    public boolean addCategories(Collection<String> categories) {
         return this.categories.addAll(categories);
     }
 
-    public boolean removeCategories(Collection<CategoryWithoutRecipes> category) {
+    public boolean removeCategories(Collection<String> category) {
         return this.categories.removeAll(category);
     }
 }

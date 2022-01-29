@@ -1,23 +1,23 @@
-package com.example.RecipeBook.recipe.model;
+package com.example.RecipeBook;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-public class RecipePage {
-    private final Set<RecipePageElement> recipes;
+public class Page<T> {
+    private final Set<T> elements;
     private final int pagesAmount;
     private final int currentPage;
     private final int pageSize;
 
-    public RecipePage(Set<RecipePageElement> recipes, int pagesAmount, int currentPage, int pageSize) {
-        this.recipes = new LinkedHashSet<>(recipes);
+    public Page(Set<T> elements, int pagesAmount, int currentPage, int pageSize) {
+        this.elements = new LinkedHashSet<>(elements);
         this.pagesAmount = pagesAmount;
         this.currentPage = currentPage;
         this.pageSize = pageSize;
     }
 
-    public Set<RecipePageElement> getRecipes() {
-        return recipes;
+    public Set<T> getElements() {
+        return elements;
     }
 
     public int getPagesAmount() {

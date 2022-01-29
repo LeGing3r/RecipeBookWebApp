@@ -1,4 +1,4 @@
-package com.example.RecipeBook.recipe.model;
+package com.example.RecipeBook.recipe;
 
 import javax.persistence.*;
 

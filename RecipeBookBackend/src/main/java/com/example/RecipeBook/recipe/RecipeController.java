@@ -1,17 +1,16 @@
 package com.example.RecipeBook.recipe;
 
-import com.example.RecipeBook.recipe.model.RecipeDTO;
-import com.example.RecipeBook.recipe.model.RecipePage;
+import com.example.RecipeBook.Page;
+import com.example.RecipeBook.QueryType;
+import com.example.RecipeBook.errors.RecipeNotFoundException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.SQLException;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.springframework.http.HttpStatus.*;
@@ -27,9 +26,9 @@ public class RecipeController {
     }
 
     @GetMapping("/recipe")
-    public HttpEntity<RecipeDTO> getRecipe(@RequestParam UUID recipeId) {
+    public HttpEntity<RecipeDTO> getRecipe(@RequestParam UUID id) {
         try {
-            var recipe = recipeService.findRecipeById(recipeId);
+            var recipe = recipeService.findRecipeById(id);
             return new ResponseEntity<>(recipe, OK);
         } catch (SQLException e) {
             return new ResponseEntity<>(NOT_FOUND);
@@ -45,17 +44,17 @@ public class RecipeController {
     }
 
     @PutMapping("/recipe")
-    public HttpEntity<RecipeDTO> updateRecipe(@RequestParam UUID recipeId, @RequestBody RecipeDTO recipe) {
-        if (recipeService.updateRecipe(recipeId, recipe)) {
+    public HttpEntity<RecipeDTO> updateRecipe(@RequestBody RecipeDTO recipe) {
+        if (recipeService.updateRecipe(recipe)) {
             return new ResponseEntity<>(recipe, OK);
         }
         return new ResponseEntity<>(NOT_ACCEPTABLE);
     }
 
     @DeleteMapping("/recipe")
-    public HttpEntity<RecipeDTO> deleteRecipe(@RequestParam UUID recipeId) {
+    public HttpEntity<RecipeDTO> deleteRecipe(@RequestParam UUID id) {
         try {
-            recipeService.delete(recipeId);
+            recipeService.delete(id);
             return new ResponseEntity<>(OK);
 
         } catch (SQLException e) {
@@ -64,60 +63,80 @@ public class RecipeController {
     }
 
     @PutMapping("/recipe/choose")
-    public HttpEntity<RecipeDTO> chooseRecipe(@RequestParam UUID recipeId) {
+    public HttpEntity<RecipeDTO> chooseRecipe(@RequestParam UUID id) {
         try {
-            recipeService.chooseRecipe(recipeId);
+            recipeService.chooseRecipe(id);
             return new ResponseEntity<>(OK);
         } catch (Exception e) {
             return new ResponseEntity<>(INTERNAL_SERVER_ERROR);
         }
     }
 
+    @GetMapping("/recipe/new")
+    public HttpEntity<RecipeDTO> getNewRecipe() {
+        return new ResponseEntity<>(new RecipeDTO(), OK);
+    }
+
     @GetMapping("/recipes")
-    public HttpEntity<RecipePage> getRecipePage(@RequestParam Optional<Integer> page,
-                                                @RequestParam Optional<Integer> size) {
-        RecipePage recipePage = recipeService.findPages(size.orElse(8), page.orElse(1), false);
-        if (recipePage.getRecipes() == null || recipePage.getRecipes().isEmpty()) {
+    public HttpEntity<Page<RecipePage>> getRecipePage(@RequestParam int page,
+                                                      @RequestParam int size) {
+        Page<RecipePage> recipePage = recipeService.getRecipePage(page, size, false);
+        if (recipePage.getElements() == null || recipePage.getElements().isEmpty()) {
             return new ResponseEntity<>(NO_CONTENT);
         }
         return new ResponseEntity<>(recipePage, OK);
     }
 
     @GetMapping("/recipes/chosen")
-    public HttpEntity<RecipePage> listChosenRecipes(@RequestParam Optional<Integer> page,
-                                                    @RequestParam Optional<Integer> size) {
-        RecipePage recipePage = recipeService.findPages(size.orElse(8), page.orElse(1), true);
-        if (recipePage.getRecipes() == null) {
+    public HttpEntity<Page<RecipePage>> listChosenRecipes(@RequestParam int page,
+                                                          @RequestParam int size) {
+        Page<RecipePage> recipePage = recipeService.getRecipePage(page, size, true);
+        if (recipePage.getElements() == null) {
             return new ResponseEntity<>(NOT_FOUND);
         }
         return new ResponseEntity<>(recipePage, OK);
     }
 
-
-    @GetMapping(
-            value = "/recipe/image",
+    @GetMapping(value = "/recipe/image",
             produces = MediaType.IMAGE_PNG_VALUE)
-    public HttpEntity<byte[]> getRecipeImage(@RequestParam String id) throws IOException {
-        InputStream in = new FileInputStream("src/main/resources/images/1.png");
-        return new ResponseEntity<>(in.readAllBytes(), OK);
+    public HttpEntity<byte[]> getRecipeImage(@RequestParam UUID id) {
+        try {
+            var imageBytes = recipeService.findImage(id);
+            return new ResponseEntity<>(imageBytes, OK);
+        } catch (RecipeNotFoundException | IOException e) {
+            return new ResponseEntity<>(NOT_FOUND);
+        }
+
     }
 
-    @GetMapping("/search")
-    public HttpEntity<RecipePage> filterRecipes(@RequestParam String query, @RequestParam String searchType) {
-        RecipePage page = switch (searchType.toLowerCase()) {
-            case "recipe" -> recipeService.findRecipesByName(query);
-            case "category" -> recipeService.findRecipesByCategoryName(query);
-            case "ingredient" -> recipeService.findRecipesByIngredientName(query);
-            default -> null;
-        };
-        if (page == null)
+    @PostMapping(value = "/recipe/image", headers = {"content-type=multipart/form-data"})
+    public HttpEntity<byte[]> setRecipeImage(@RequestParam UUID id, MultipartFile image) {
+        try {
+            recipeService.saveImage(id, image);
+            return new ResponseEntity<>(OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(METHOD_NOT_ALLOWED);
+        }
+    }
+
+
+    @GetMapping("/recipes/search")
+    public HttpEntity<Page<RecipePage>> filterRecipes(@RequestParam String query, @RequestParam QueryType searchType) {
+        Page<RecipePage> page = recipeService.findRecipesByQuery(query, searchType);
+        if (page == null) {
             return new ResponseEntity<>(NOT_FOUND);
+        }
         return new ResponseEntity<>(page, OK);
     }
 
-    @GetMapping("/recipes/total")
-    public HttpEntity<Integer> getTotalRecipes() {
-        return new ResponseEntity<>(recipeService.getTotalRecipes(), OK);
+    @GetMapping("/categories")
+    public HttpEntity<Page<String>> getCategoryPage(@RequestParam int page, @RequestParam int size) {
+        try {
+            return new ResponseEntity<>(recipeService.getCategoryPage(page, size), OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(NOT_FOUND);
+        }
+
     }
 }
 

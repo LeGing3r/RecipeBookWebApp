@@ -1,4 +1,4 @@
-package com.example.RecipeBook.item.model;
+package com.example.RecipeBook.measurement;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;

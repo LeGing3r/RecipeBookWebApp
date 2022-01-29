@@ -1,15 +1,14 @@
 package com.example.RecipeBook.recipe;
 
+import com.example.RecipeBook.QueryType;
 import com.example.RecipeBook.errors.RecipeNotFoundException;
-import com.example.RecipeBook.recipe.model.Recipe;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.*;
-import java.sql.SQLException;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.example.RecipeBook.QueryType.*;
 
 @Repository
 public class RecipeRepository {
@@ -17,26 +16,22 @@ public class RecipeRepository {
     private final EntityManagerFactory entityManagerFactory;
 
     private final EntityManager entityManager;
+    private final String WHERE_ID_IS = "where publicId = :id";
+    private final String FROM_RECIPES = "select r from Recipe r ";
+    private final String WHERE_CHOSEN = "where chosen = true";
+    private final String WHERE_NAME_IS = "where name like :name";
+    private final String WHERE_CATEGORY_IS = "join r.categories c where c = :name";
+    private final String WHERE_INGREDIENT_IS = "join r.ingredients i where i = :name";
 
     public RecipeRepository(EntityManagerFactory entityManagerFactory) {
         this.entityManagerFactory = entityManagerFactory;
         entityManager = entityManagerFactory.createEntityManager();
     }
 
-    public Optional<Recipe> findRecipeById(UUID recipeId) throws SQLException {
+    public Optional<Set<Recipe>> findRecipePage(int startPoint, int numberOfRecipes, boolean chosen) {
         try {
-            return entityManager.createQuery("from Recipe where publicId = :id", Recipe.class)
-                    .setParameter("id", recipeId)
-                    .getResultStream()
-                    .findAny();
-        } catch (NoResultException e) {
-            return Optional.empty();
-        }
-    }
-
-    public Optional<Set<Recipe>> findRecipePage(int startPoint, int numberOfRecipes) {
-        try {
-            return Optional.of(entityManager.createQuery("from Recipe", Recipe.class)
+            var query = chosen ? FROM_RECIPES + WHERE_CHOSEN : FROM_RECIPES;
+            return Optional.of(entityManager.createQuery(query, Recipe.class)
                     .setMaxResults(numberOfRecipes)
                     .setFirstResult(startPoint)
                     .getResultStream()
@@ -46,11 +41,22 @@ public class RecipeRepository {
         }
     }
 
+    public Optional<Recipe> findRecipeById(UUID recipeId) {
+        try {
+            return entityManager.createQuery(FROM_RECIPES + WHERE_ID_IS, Recipe.class)
+                    .setParameter("id", recipeId)
+                    .getResultStream()
+                    .findAny();
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
+    }
+
     public boolean addRecipe(Recipe recipe) {
         try {
             EntityTransaction transaction = entityManager.getTransaction();
             transaction.begin();
-            recipe.setPublicId(UUID.randomUUID());
+            recipe.publicId = UUID.randomUUID();
             entityManager.persist(recipe);
             transaction.commit();
             return true;
@@ -68,18 +74,18 @@ public class RecipeRepository {
             entityManager.remove(savedRecipe);
             transaction.commit();
             return true;
-        } catch (IllegalArgumentException | SQLException e) {
+        } catch (IllegalArgumentException e) {
             return false;
         }
     }
 
-    public boolean updateRecipe(Recipe recipe) {
+    public boolean updateRecipe(RecipeDTO recipe) {
         try {
             EntityTransaction transaction = entityManager.getTransaction();
             transaction.begin();
-            Recipe savedRecipe = findRecipeById(recipe.getPublicId())
+            Recipe savedRecipe = findRecipeById(recipe.getId())
                     .orElseThrow(RecipeNotFoundException::new);
-            savedRecipe.mergeWithNewRecipe(recipe);
+            savedRecipe.mergeWithRecipeDTO(recipe);
             transaction.commit();
             return true;
         } catch (Exception throwables) {
@@ -88,54 +94,73 @@ public class RecipeRepository {
         }
     }
 
-    public Optional<Set<Recipe>> findChosen(int startPoint, int numberOfRecipes) {
+    public Optional<Set<Recipe>> findRecipesByQuery(String name, QueryType queryType) {
         try {
-            return Optional.of(entityManager.createQuery("from Recipe where chosen = true", Recipe.class)
-                    .getResultStream()
-                    .collect(Collectors.toSet()));
-        } catch (Exception e) {
-            return Optional.empty();
-        }
-    }
-
-    public Optional<Set<Recipe>> findRecipesByName(String name) {
-        try {
-            return Optional.of(entityManager.createQuery("from Recipe where name like :name", Recipe.class)
-                    .getResultStream()
-                    .collect(Collectors.toSet()));
-        } catch (Exception e) {
-            return Optional.empty();
-        }
-    }
-
-    public Optional<Set<Recipe>> findRecipesByCategory(String categoryName) {
-        try {
-            String qlString = "from Recipe where id in (select recipe_id from recipe_category where category_id in (select id from Category where name like :name";
-            return Optional.of(entityManager.createQuery(qlString, Recipe.class)
-                    .setParameter("name", categoryName)
-                    .getResultStream()
-                    .collect(Collectors.toSet()));
-        } catch (Exception e) {
-            return Optional.empty();
-        }
-    }
-
-    public int getTotalRecipes() {
-        return entityManager
-                .createQuery("select count(*) from Recipe", Long.class)
-                .getSingleResult()
-                .intValue();
-    }
-
-    public Optional<Set<Recipe>> findRecipesByIngredient(String name) {
-        try {
-            String qlString = "from Recipe where id in (select recipe_id from recipe_ingredient where ingredient_id in (select id from Ingredient where name like :name";
-            return Optional.of(entityManager.createQuery(qlString, Recipe.class)
+            var query = switch (queryType) {
+                case RECIPE -> FROM_RECIPES + WHERE_NAME_IS;
+                case CATEGORY -> FROM_RECIPES + WHERE_CATEGORY_IS;
+                case INGREDIENT -> FROM_RECIPES + WHERE_INGREDIENT_IS;
+            };
+            return Optional.of(entityManager.createQuery(query, Recipe.class)
                     .setParameter("name", name)
                     .getResultStream()
                     .collect(Collectors.toSet()));
         } catch (Exception e) {
             return Optional.empty();
         }
+    }
+
+    public int getTotal(QueryType queryType) {
+        var recipes = entityManager.createQuery(FROM_RECIPES, Recipe.class)
+                .getResultStream()
+                .collect(Collectors.toSet());
+        if (queryType.equals(CATEGORY)) {
+            return recipes.stream()
+                    .map(Recipe::getCategories)
+                    .flatMap(Collection::stream)
+                    .collect(Collectors.toSet())
+                    .size();
+        }
+        return recipes.size();
+    }
+
+    public String getImageLocation(UUID id) {
+        try {
+            return entityManager
+                    .createQuery(FROM_RECIPES + WHERE_ID_IS, Recipe.class)
+                    .setParameter("id", id)
+                    .getSingleResult()
+                    .imageLocation;
+        } catch (Exception e) {
+            throw new RecipeNotFoundException();
+        }
+    }
+
+    public void switchChosenOfRecipe(UUID publicId) {
+        var recipe = findRecipeById(publicId)
+                .orElseThrow(RecipeNotFoundException::new);
+        var transaction = entityManager.getTransaction();
+        transaction.begin();
+        recipe.chosen = !recipe.chosen;
+        transaction.commit();
+    }
+
+    public void updateRecipe(Recipe recipe, String pathName) {
+        var transaction = entityManager.getTransaction();
+        transaction.begin();
+        recipe.imageLocation = pathName;
+        transaction.commit();
+    }
+
+    public Set<String> findCategories(int startPoint, int size) {
+        return entityManager.createQuery(FROM_RECIPES, Recipe.class)
+                .getResultStream()
+                .collect(Collectors.toCollection(LinkedHashSet::new))
+                .stream()
+                .map(Recipe::getCategories)
+                .flatMap(Collection::stream)
+                .skip(startPoint)
+                .limit(size)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }

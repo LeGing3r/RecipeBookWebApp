@@ -1,62 +1,57 @@
-import { localRecipeUrl, Recipe, recipeUrl } from "./RecipeModule";
+import { localRecipesUrl, localRecipeUrl, Recipe, recipeUrl } from "./RecipeModule";
 import * as React from "react";
-import { IngredientCheckBox, RecipeElement, RecipePageElement } from "./Recipe";
+import { IngredientCheckBox, RecipeElement, RecipeFormCategoryElement, RecipeFormIngredientElement, RecipePageType } from "./Recipe";
 import { Spinner } from "react-bootstrap";
-import { alternateRecipeChosen, getChosenRecipes, getRecipe, getRecipePageList, getRecipes } from "./RecipeService";
-import { useParams } from "react-router";
+import { alternateRecipeChosen, alternateRecipeElementChosen, getNewRecipe, getRecipe, getRecipes, getRecipesWithCategory, updateRecipe, updateRecipeImage } from "./RecipeService";
+import { useNavigate, useParams } from "react-router";
+import { PageNumbersElement } from "../page/PageModule";
 
-type PagesType = {
-    size?: number;
-    pageNumber?: number;
-}
-
-export const RecipesPage = (props: PagesType) => {
-    const [recipes, updateRecipes] = React.useState<RecipePageElement[]>();
-    const setTotal = (amount: number) => { totalRecipes = amount; }
+export const RecipesPage = (props: { chosen?: boolean }) => {
+    const { pageNumber, size, category } = useParams();
+    const navigate = useNavigate();
+    let actualSize = size ? Number(size) : 8;
+    let actualPageNumber = pageNumber ? Number(pageNumber) : 1;
+    const [recipePage, setPage] = React.useState<RecipePageType>();
     const chooseRecipe = (id: string) => {
-        alternateRecipeChosen(id);
-        getRecipes(actualSize, actualPageNumber, updateRecipes);
+        alternateRecipeElementChosen(id, { page: actualSize, size: actualPageNumber, setPage: setPage }, props.chosen === undefined);
+        setPage(undefined);
     }
-    const alternateRecipesType = () => {
-        let button = document.getElementById("recipesTypeButton");
-        let title = document.getElementById("recipesTitle");
-        if (button?.innerText === "Chosen") {
-            getChosenRecipes(actualSize, actualPageNumber, updateRecipes);
-            button.innerText = "All";
-            title!.innerText = "Chosen Recipes";
+    if (recipePage === undefined) {
+        if (category !== undefined) {
+            getRecipesWithCategory(setPage, category)
         } else {
-            getRecipes(actualSize, actualPageNumber, updateRecipes);
-            button!.innerText = "Chosen";
-            title!.innerText = "All recipes";
+            getRecipes({ page: actualPageNumber, size: actualSize, setPage: setPage }, props.chosen === undefined);
         }
     }
-    let actualSize = props.size ? props.size : 8;
-    let actualPageNumber = props.pageNumber ? props.pageNumber : 1;
-    let totalRecipes = 0;
-    if (!recipes) {
-        getRecipes(actualSize, actualPageNumber, updateRecipes);
-    }
-    if (totalRecipes === 0) {
-        getRecipePageList(setTotal);
-    }
     return (
-        <div className="container">
-            <div className="cntr" style={{ width: "fit-content, -moz-fit-content" }}>
-                <button type="submit" className="scaling-button" id="recipesTypeButton" onClick={() => alternateRecipesType()}>Chosen</button>
-            </div>
-            <h1 id="recipesTitle">All Recipes</h1>
-            <div className="separator" />
-            {
-                recipes === undefined ? <Spinner animation={"border"} role="status"><span className="visually-hidden">Loading...</span></Spinner> :
-                    recipes.map(recipe => <RecipeElement recipe={recipe} chooseRecipe={chooseRecipe} />)
-            }
-            <div className="separator" />
-            {/* <PageNumbersElement totalItems={totalRecipes} itemsPerPage={actualSize} currentPage={actualPageNumber} /> */}
-        </div>
+        recipePage === undefined ? <></> :
+            <div className="container">
+                <div className="cntr" style={{ width: "fit-content, -moz-fit-content" }}>
+                    {
+                        props.chosen === undefined ?
+                            <a style={{ background: "black", borderRadius: "0.5em", padding: "0.3em" }} href={localRecipesUrl + "/chosen"}>Chosen</a> :
+                            <a style={{ background: "black", borderRadius: "0.5em", padding: "0.3em" }} href={localRecipesUrl}>All Recipes</a>
+                    }
+                </div>
+                <h1 id="recipesTitle">
+                    {
+                        props.chosen ? "Chosen Recipes" : "All Recipes"
+                    }
+                </h1>
+                <div className="separator" />
+                {
+                    recipePage!.elements === undefined ? <></> :
+                        recipePage!.elements.map(recipe => <RecipeElement recipe={recipe} chooseRecipe={chooseRecipe} />)
+                }
+                <div className="separator" />
+                {
+                    recipePage.elements ? <></> :
+                        <div className="pageDirectory">
+                            <PageNumbersElement itemsPerPage={actualSize} currentPage={actualPageNumber} totalPages={recipePage.pagesAmount} url={localRecipesUrl} />
+                        </div>
+                }
+            </div >
     );
-
-
-
 }
 
 export const RecipePage = () => {
@@ -70,11 +65,9 @@ export const RecipePage = () => {
         else {
             neededList.push(name);
         }
-        console.log(neededList)
     }
     const chooseRecipe = (id: string) => {
-        console.log(recipe);
-        alternateRecipeChosen(id);
+        alternateRecipeChosen(id, setRecipe);
         getRecipe(id!, setRecipe);
     }
     if (recipe === undefined) {
@@ -90,12 +83,12 @@ export const RecipePage = () => {
                 <div className="container">
                     <div className="row">
                         <h2 style={{ textAlign: "center", fontSize: "2.5rem" }} className="lnblock">{recipe.name}</h2>
-                        <a href={localRecipeUrl + "?recipeId=" + id + "/edit"} className="lnblock"><i className="material-icons">edit</i></a>
+                        <a href={localRecipeUrl + "/" + id + "/edit"} className="lnblock"><i className="material-icons">edit</i></a>
                         <button className={recipe.chosen ? "mark chck" : "unmark chck"} onClick={() => chooseRecipe(recipe.id)} ></button>
                     </div>
                     <div className="separator"></div>
                     <div>
-                        <img src="@{${recipe.imgLoc}}" alt={recipe.name} className="lrgimg brdrd" style={{ margin: "20px auto" }} />
+                        <img src={recipeUrl + "/image?id=" + id} alt={recipe.name} className="lrgimg brdrd" style={{ margin: "20px auto" }} />
                         {/* SCALING RECIPE */}
                         <h3 style={{ width: "33%", float: "left" }}>{"Prep time:" + recipe.cookingTime.prepTime}</h3>
                         <h3 style={{ width: "33%", float: "left" }}>{"Cook time:" + recipe.cookingTime.actualCookingTime}</h3>
@@ -144,11 +137,9 @@ export const RecipePage = () => {
                         <div className="separator"></div>
                         <div className="flwth">
                             {recipe.categories.map(category => {
-                                <>
-                                    <h4 style={{ display: "inline" }}>
-                                        <a href={"http://localhost:2017/categories?categoryId=" + category.id}>{category.name}</a>
-                                    </h4>
-                                </>
+                                <h4 style={{ display: "inline" }}>
+                                    <a href={localRecipesUrl + "?category=" + category}>{category}</a>
+                                </h4>
                             })}
                         </div>
                         <form action={recipeUrl + "/delete?recipeId=" + id} method="post"
@@ -164,15 +155,159 @@ export const RecipePage = () => {
 }
 
 export const RecipeForm = () => {
-    return (
-        <div style={{ height: "90px" }}>
-        </div>
-    );
-}
+    const [image, updateImage] = React.useState<string>('');
+    const [recipe, setRecipe] = React.useState<Recipe>();
+    const [file, setFile] = React.useState<File>();
+    const navigate = useNavigate();
+    const { id } = useParams();
 
-export const RecipeEdit = () => {
+    function updateIngredient(index: number, toDelete?: boolean) {
+        if (recipe?.ingredients === undefined) {
+            return;
+        }
+        let tempIngredients = recipe.ingredients;
+        if (toDelete) {
+            tempIngredients?.splice(index, 1);
+        } else {
+            let ingredientInput: HTMLInputElement = document.getElementById("ingredient" + index);
+            let newVal = ingredientInput.value;
+            if (newVal === undefined) {
+                return;
+            }
+            tempIngredients[index] = newVal;
+        }
+        setRecipe(prevState => ({ ...prevState, ingredients: tempIngredients }))
+    }
+    function addNewIngredient(event?: React.KeyboardEvent) {
+        if (event !== undefined && event.key !== "Enter") {
+            return;
+        }
+        let inputBox: HTMLInputElement = document.getElementById("addIngredient")
+        if (!inputBox) {
+            return;
+        }
+        let tempIng = recipe?.ingredients
+        if (tempIng === undefined) {
+            return;
+        }
+        tempIng.push(inputBox.value);
+        setRecipe(prevState => ({ ...prevState, ingredients: tempIng }));
+        inputBox.value = "";
+    }
+    function updateCategory(index: number, toDelete?: boolean) {
+        if (recipe.categories === undefined) {
+            return;
+        }
+        let tempCats = recipe.categories;
+        if (toDelete) {
+            tempCats?.splice(index, 1);
+        } else {
+            let newVal = document.getElementById("category" + index).value;
+            if (newVal === undefined) {
+                return;
+            }
+            tempCats[index].name = newVal;
+        }
+
+        setRecipe(prevState => ({ ...prevState, categories: tempCats }));
+
+    }
+    function addNewCategory(event?: React.KeyboardEvent) {
+        if (event !== undefined && event.key !== "Enter") {
+            return;
+        }
+        let inputBox: HTMLInputElement = document.getElementById("addCategory")
+        let tempCats = recipe?.categories
+        if (tempCats === undefined) {
+            return;
+        }
+        let newCat = inputBox!.value
+        tempCats.push(newCat);
+        setRecipe(prevState => ({ ...prevState, categories: tempCats }));
+        inputBox!.value = "";
+    }
+    function onSubmit(evt: React.FormEvent<HTMLButtonElement>) {
+        if (recipe === undefined) {
+            return;
+        }
+        updateRecipe(recipe, setRecipe)
+        if (image !== "") {
+            updateRecipeImage(recipe?.id, file);
+        }
+        navigate(localRecipeUrl + recipe.id);
+    }
+    function setImage(evt: React.ChangeEvent<HTMLInputElement>) {
+        const imageString = URL.createObjectURL(evt.currentTarget.files[0]);
+        updateImage(prevState => (imageString));
+        setFile(evt.currentTarget.files[0]);
+    }
+    function updateInstructions(evt: React.ChangeEventHandler<HTMLTextAreaElement>) {
+        setRecipe(prevState => ({ ...prevState, instructions: evt.target.value }))
+    }
+
+    if (recipe === undefined) {
+        if (id === undefined) {
+            getNewRecipe(setRecipe);
+        }
+        else {
+            getRecipe(id, setRecipe);
+        }
+    }
     return (
-        <>
-        </>
+        recipe === undefined ? <></> :
+            <div className="rcpfrm container">
+                <div className="cntr" id="recipeTitle" style={{ textAlign: "center" }}>
+                    <input type="text" autoComplete="off" placeholder="Name of Recipe" style={{ textAlign: "center" }} />
+                    <div className="separator" />
+                    <br />
+                    {id !== undefined ? <></> :
+                        <button style={{ position: "absolute", right: 0, top: 0 }}>Copy From Site</button>
+                    }
+                </div>
+                <div id="imagePreview">
+                    {
+                        image === "" && id !== undefined ?
+                            <img src={recipeUrl + "/image?id=" + id} id="recipeImg" className="medimg cntr" /> :
+                            <img id="recipeImg" className="medimg cntr" src={image} />
+                    }
+                </div>
+                <br />
+                <div id="imageInput" style={{ border: "solid gray 1px", borderRadius: "1em", width: "fit-content", background: "white" }} className="cntr">
+                    <input type="file" id="file" name="file" accept="image/*" onChange={setImage}
+                        style={{ padding: "2rem 0" }} />
+                    <label htmlFor="file" style={{ padding: "2rem" }}>Upload Picture</label>
+                </div>
+                <br />
+                <div id="ingredients" className="cntr">
+                    {
+                        recipe?.ingredients.map((ingredient, i) =>
+                            <RecipeFormIngredientElement id={i} ingredient={ingredient} updateIngredient={updateIngredient} />)
+                    }
+                    <div>
+                        <input id="addIngredient" type="text" className="newIngBox" placeholder="New Ingredient" autoComplete="off" onKeyDown={(evt) => addNewIngredient(evt)} />
+                        <button name="addIngredient" className="addIngredientBtn" onClick={() => addNewIngredient()}>
+                            <i className="material-icons">add</i>
+                        </button>
+                    </div>
+                    <br /><br />
+                </div >
+                <div id="instructions">
+                    <textarea id="instructionsBox" cols={30} rows={5} placeholder="Enter instructions here..." className="nntywth" value={recipe.instructions === undefined ? "" : recipe.instructions} onChange={updateInstructions} />
+                </div>
+                <div id="categories" className="lnblock">
+                    <div className="flwth cntr">
+                        <h3>Add Categories: </h3>
+                        {
+                            recipe?.categories.map((cat, i) => <RecipeFormCategoryElement category={cat} index={i} updateCategory={updateCategory} />)
+                        }
+                        <div>
+                            <input type="text" id="addCategory" className="newCatBox" placeholder="Category Name" autoComplete="off" style={{ width: "70%" }} onKeyDown={(evt) => addNewCategory(evt)} />
+                            <button type="submit" ><i className="material-icons">add</i></button>
+                        </div>
+                    </div >
+                </div >
+                <button style={{ position: "absolute", right: "0", bottom: "0" }} onClick={onSubmit}>Save Recipe</button>
+            </div >
+
     )
 }
