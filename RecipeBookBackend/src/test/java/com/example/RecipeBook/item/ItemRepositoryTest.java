@@ -6,8 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class ItemRepositoryTest {
@@ -21,15 +20,13 @@ public class ItemRepositoryTest {
 
     @Test
     public void testAddingToRepo() {
-        Item item = getItem();
-        itemRepository.save(item);
+        getItem();
         assertEquals(1, itemRepository.getTodoItems().size());
     }
 
     @Test
     public void testDeletingFromRepo() {
         Item item = getItem();
-        itemRepository.save(item);
         itemRepository.removeItem(item.publicId);
         assertTrue(itemRepository.getTodoItems().isEmpty());
     }
@@ -37,20 +34,27 @@ public class ItemRepositoryTest {
     @Test
     public void testGetItemById() {
         Item item = getItem();
-        itemRepository.save(item);
         assertEquals(item, itemRepository.getItemByUUID(item.publicId));
     }
 
     @Test
     public void testGetStaticItems() {
+        assertFalse(itemRepository.getStaticItemsFromAlias("banana").isEmpty());
+        assertFalse(itemRepository.getStaticItemsFromAlias("bananas").isEmpty());
+        assertFalse(itemRepository.getStaticItemsFromAlias("Banana").isEmpty());
+    }
 
+    @Test
+    public void testGetSimilarItems() {
+        var item = getItem();
+        assertTrue(itemRepository.getSimilarItemsFromAlias("bananas").contains(item));
     }
 
     private Item getItem() {
         var item = new Item("Banana");
-        item.staticItem = new StaticItem();
-        item.staticItem.aliases.add("Banana");
         item.measurement = new Measurement(1, Unit.NONE);
+        item.staticItem = (StaticItem) itemRepository.getStaticItemsFromAlias("banana").toArray()[0];
+        itemRepository.save(item);
         return item;
     }
 

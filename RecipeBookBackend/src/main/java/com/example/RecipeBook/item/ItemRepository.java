@@ -17,9 +17,9 @@ public class ItemRepository {
     @PersistenceUnit
     private final EntityManagerFactory entityManagerFactory;
     private final EntityManager entityManager;
-    private final String NAME_LIKE = "~* '^(:name(es|s)*)$'";
-    private final String FROM_ITEM = "from Item";
-    private final String FROM_STATIC_ITEM = "from StaticItem";
+    private final String NAME_LIKE = "LIKE :name";
+    private final String FROM_ITEM = "select i from Item i ";
+    private final String FROM_STATIC_ITEM = "select s from StaticItem s ";
     private final String WHERE_PUBLIC_ID = " where public_id = :id";
 
     public ItemRepository(EntityManagerFactory entityManagerFactory) {
@@ -74,30 +74,33 @@ public class ItemRepository {
                 .findAny()
                 .orElseThrow(ItemNotFoundException::new);
     }
-    //TODO Maybe remove:
-    /*    boolean containsItem(String name) {
-        return entityManager.createQuery(FROM_ITEM + " where name " + NAME_LIKE, Item.class)
-                .setParameter("name", name)
-                .getResultStream()
-                .findAny()
-                .isPresent();
-    }*/
-
 
     Set<StaticItem> getStaticItemsFromAlias(String alias) {
-        return entityManager.createQuery(FROM_STATIC_ITEM + " s join s.aliases a where a " + NAME_LIKE, StaticItem.class)
+        return entityManager.createQuery(FROM_STATIC_ITEM + " join s.aliases a where a like :name", StaticItem.class)
                 .setParameter("name", alias)
                 .getResultStream()
                 .collect(Collectors.toSet());
     }
 
+    StaticItem getStaticItemByName(String name) {
+        var staticItem = entityManager.createQuery(FROM_STATIC_ITEM + " where name like :name", StaticItem.class)
+                .setParameter("name", name)
+                .getSingleResult();
+        if (staticItem == null) {
+            return entityManager.createQuery(FROM_STATIC_ITEM + " join s.aliases a where a like :name", StaticItem.class)
+                    .setParameter("name", name)
+                    .getSingleResult();
+        }
+        return staticItem;
+    }
+
     Set<Item> getSimilarItemsFromAlias(String alias) {
-        var similarItems = entityManager.createQuery(FROM_ITEM + " where " + NAME_LIKE, Item.class)
+        var similarItems = entityManager.createQuery(FROM_ITEM + " where name " + NAME_LIKE, Item.class)
                 .setParameter("name", alias)
                 .getResultStream()
                 .collect(Collectors.toSet());
         var itemsFromStaticItems = entityManager.createQuery(
-                        FROM_ITEM + " i where i.staticItemId in (" + FROM_STATIC_ITEM + " s join s.aliases a where a " + NAME_LIKE + ")", Item.class)
+                        FROM_ITEM + " where i.staticItem.id in ( select s.id from StaticItem s join s.aliases a where a " + NAME_LIKE + ")", Item.class)
                 .setParameter("name", alias)
                 .getResultStream()
                 .collect(Collectors.toSet());

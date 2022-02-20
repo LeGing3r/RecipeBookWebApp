@@ -11,6 +11,7 @@ VALUES ('Strawberry Soup', 'C:/Users/babw0/Downloads/oh_my_jarek.jpg', false, '3
 INSERT into Recipe_Ingredients VALUES (1,'2.0 TEASPOON Garlic');
 INSERT into Recipe_Ingredients VALUES (1,'1.0 GRAM Tomato');
 INSERT into Recipe_Categories VALUES (1,'Vegan');
+INSERT into Recipe_Categories VALUES (1,'Vegetarian');
 INSERT into Recipe_Categories VALUES (2,'Vegetarian');
 INSERT into Recipe_Categories VALUES (3,'Moo');
 
@@ -25,6 +26,10 @@ VALUES ( 'avocado', '1,NONE', 170, 662);
 
 INSERT INTO Static_Item (name, default_measurement, ratio_grams_to_none, density)
 VALUES ( 'banana', '1,NONE', 120, 951);
+
+INSERT INTO Static_Item_Aliases VALUES (4, 'banana');
+INSERT INTO Static_Item_Aliases VALUES (4, 'bananas');
+INSERT INTO Static_Item_Aliases VALUES (4, 'Banana');
 
 INSERT INTO Static_Item (name, default_measurement, ratio_grams_to_none, density)
 VALUES ( 'blackberry', '250,GRAM', 7, 663);

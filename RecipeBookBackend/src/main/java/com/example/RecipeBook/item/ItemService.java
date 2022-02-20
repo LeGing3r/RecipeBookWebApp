@@ -22,21 +22,31 @@ public class ItemService {
 
     Set<ItemDto> addItem(ItemDto itemDto) {
         var item = itemDto.toItem();
+        item.staticItem = repository.getStaticItemByName(item.name);
         repository.save(item);
         return getItems();
     }
 
     Set<ItemDto> getItems() {
-        return repository.getTodoItems().stream().map(ItemDto::new).collect(Collectors.toSet());
+        return repository.getTodoItems()
+                .stream()
+                .map(ItemDto::new)
+                .collect(Collectors.toSet());
     }
 
     Set<ItemDto> addToExistingItem(ItemDto itemDto, UUID itemId) {
         var item = repository.getItemByUUID(itemId);
-
         var newItem = itemDto.toItem();
+
         item.staticItem.aliases.add(newItem.name);
         item.actualMeasurement = measurementComparator.addMeasurementToItem(item, newItem.measurement);
-        item.measurement = measurementComparator.getClosestWholeAmount(item.measurement, item.staticItem.defaultMeasurement);
+
+        if (item.staticItem == null) {
+            item.measurement = item.actualMeasurement;
+        } else {
+            item.measurement = measurementComparator.getClosestWholeAmount(item.measurement, item.staticItem.defaultMeasurement);
+        }
+
         return getItems();
     }
 
@@ -47,6 +57,10 @@ public class ItemService {
     private void updateItem(ItemDto itemDto) {
         var item = repository.getItemByUUID(itemDto.id);
         var updatedItem = itemDto.toItem();
+        if (!updatedItem.needed) {
+            repository.removeItem(item.publicId);
+            return;
+        }
         if (!item.name.equals(updatedItem.name)) {
             item.staticItem.aliases.add(updatedItem.name);
             item.name = updatedItem.name;
@@ -59,10 +73,17 @@ public class ItemService {
     }
 
     Set<ItemDto> getSimilarItems(String alias) {
-        return repository.getSimilarItemsFromAlias(alias)
+        var items = repository.getSimilarItemsFromAlias(alias)
                 .stream()
                 .map(ItemDto::new)
                 .collect(Collectors.toSet());
+        var staticItems = repository.getStaticItemsFromAlias(alias)
+                .stream()
+                .map(staticItem -> staticItem.name)
+                .map(ItemDto::new)
+                .collect(Collectors.toSet());
+        items.addAll(staticItems);
+        return items;
     }
 
     private void addItemToNewItemsFile(Item newItem) {
