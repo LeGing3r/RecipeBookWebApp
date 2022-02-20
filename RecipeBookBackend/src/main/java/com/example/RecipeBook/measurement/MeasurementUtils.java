@@ -4,14 +4,10 @@ import java.util.Arrays;
 
 public class MeasurementUtils {
 
-    public static Measurement fromString(String measurement) {
-        return Arrays.stream(Measurement.values())
-                .filter(m1 -> m1.alternateNames.contains(measurement))
+    public static Unit fromString(String unit) {
+        return Arrays.stream(Unit.values())
+                .filter(m1 -> m1.alternateNames.contains(unit))
                 .findFirst()
                 .orElseThrow();
-    }
-
-    public static String getLargestWholeAmountComparingStatic(){
-
     }
 }
