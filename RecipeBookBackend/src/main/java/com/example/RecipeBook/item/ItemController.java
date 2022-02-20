@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -30,7 +31,7 @@ public class ItemController {
     }
 
     @PostMapping("/todo")
-    public HttpEntity<Set<ItemDto>> addItemToList(@RequestBody String item) {
+    public HttpEntity<Set<ItemDto>> addItemToList(@RequestBody ItemDto item) {
         if (item == null) {
             return new ResponseEntity<>(METHOD_NOT_ALLOWED);
         }
@@ -43,7 +44,7 @@ public class ItemController {
     }
 
     @PutMapping("/todo")
-    public HttpEntity<ItemDto> updateList(@RequestBody Collection<Item> items) {
+    public HttpEntity<ItemDto> updateList(@RequestBody Collection<ItemDto> items) {
         try {
             itemService.updateList(items);
             return new ResponseEntity<>(OK);
@@ -53,9 +54,9 @@ public class ItemController {
     }
 
     @PutMapping("/items")
-    public HttpEntity<Set<ItemDto>> updateExistingItem(@RequestParam String itemString, @RequestBody ItemDto itemDto) {
+    public HttpEntity<Set<ItemDto>> updateExistingItem(@RequestParam UUID itemId, @RequestBody ItemDto itemDto) {
         try {
-            var item = itemService.addToExistingItem(itemDto, itemString);
+            var item = itemService.addToExistingItem(itemDto, itemId);
             return new ResponseEntity<>(item, OK);
         } catch (Exception e) {
             return new ResponseEntity<>(EXPECTATION_FAILED);
@@ -63,7 +64,7 @@ public class ItemController {
     }
 
     @GetMapping("/items")
-    public HttpEntity<Set<ItemDto>> getItem(@RequestParam String value) {
-        return new ResponseEntity<>(itemService.getSimilarItems(value), OK);
+    public HttpEntity<Set<ItemDto>> getItemsWithSimilarAlias(@RequestParam String itemName) {
+        return new ResponseEntity<>(itemService.getSimilarItems(itemName), OK);
     }
 }

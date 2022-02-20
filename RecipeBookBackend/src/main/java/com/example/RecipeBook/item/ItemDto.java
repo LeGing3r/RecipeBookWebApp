@@ -1,8 +1,12 @@
 package com.example.RecipeBook.item;
 
+import com.example.RecipeBook.measurement.MeasurementConverter;
+
 import java.util.UUID;
 
 public class ItemDto {
+
+    String measurement;
     String name;
     boolean needed = true;
     UUID id;
@@ -15,8 +19,9 @@ public class ItemDto {
         this.id = item.publicId;
     }
 
-    public ItemDto(StaticItem item) {
-        this.name = item.name;
+    public ItemDto(String measurement, String name) {
+        this.measurement = measurement;
+        this.name = name;
     }
 
     public String getName() {
@@ -33,5 +38,13 @@ public class ItemDto {
 
     public void setNeeded(boolean needed) {
         this.needed = needed;
+    }
+
+    public Item toItem() {
+        //TODO:Remove whitespaces in frontend
+        var item = new Item();
+        item.name = name;
+        item.measurement = new MeasurementConverter().convertToEntityAttribute(measurement);
+        return item;
     }
 }

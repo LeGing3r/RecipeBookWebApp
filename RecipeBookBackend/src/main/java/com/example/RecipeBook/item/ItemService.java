@@ -3,73 +3,66 @@ package com.example.RecipeBook.item;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static com.example.RecipeBook.item.Item.ItemConverter.convertFromString;
 
 @Service
 public class ItemService {
 
     private final ItemRepository repository;
 
-    ItemService(ItemRepository repository) {
+    private final MeasurementComparator measurementComparator;
+
+    ItemService(ItemRepository repository, MeasurementComparator measurementComparator) {
         this.repository = repository;
+        this.measurementComparator = measurementComparator;
     }
 
-    Set<ItemDto> addItem(String item) {
-        var newItem = convertFromString(item);
-        repository.save(newItem);
+    Set<ItemDto> addItem(ItemDto itemDto) {
+        var item = itemDto.toItem();
+        repository.save(item);
         return getItems();
     }
 
     Set<ItemDto> getItems() {
-        return getNeededItems();
-    }
-
-    Set<ItemDto> addToExistingItem(ItemDto itemDto, String itemString) {
-        var item = repository.getItemByUUID(itemDto.id);
-        var newItem = convertFromString(itemString);
-        repository.updateItem(item, newItem);
-        return getNeededItems();
-    }
-
-    private Set<ItemDto> getNeededItems() {
         return repository.getTodoItems().stream().map(ItemDto::new).collect(Collectors.toSet());
     }
 
-    boolean updateList(Collection<Item> items) {
-        try {
-            repository.removeAll();
-            items.forEach(repository::save);
-            return true;
-        } catch (Exception e) {
-            return false;
+    Set<ItemDto> addToExistingItem(ItemDto itemDto, UUID itemId) {
+        var item = repository.getItemByUUID(itemId);
+
+        var newItem = itemDto.toItem();
+        item.staticItem.aliases.add(newItem.name);
+        item.actualMeasurement = measurementComparator.addMeasurementToItem(item, newItem.measurement);
+        item.measurement = measurementComparator.getClosestWholeAmount(item.measurement, item.staticItem.defaultMeasurement);
+        return getItems();
+    }
+
+    void updateList(Collection<ItemDto> itemDtos) {
+        itemDtos.forEach(this::updateItem);
+    }
+
+    private void updateItem(ItemDto itemDto) {
+        var item = repository.getItemByUUID(itemDto.id);
+        var updatedItem = itemDto.toItem();
+        if (!item.name.equals(updatedItem.name)) {
+            item.staticItem.aliases.add(updatedItem.name);
+            item.name = updatedItem.name;
         }
+        if (!item.measurement.equals(updatedItem.measurement)) {
+            item.measurement = updatedItem.measurement;
+            item.actualMeasurement = updatedItem.measurement;
+        }
+        item.needed = updatedItem.needed;
     }
 
-    ItemDto addAliasToItem(UUID id, String newAlias) {
-        var item = repository.getItemByUUID(id).staticItem;
-        repository.addAliasToStaticItem(item, newAlias);
-        return new ItemDto(item);
-    }
-
-    Set<ItemDto> getSimilarItems(String item) {
-        var newItem = convertFromString(item).name;
-        //Compare with existing items
-        var items = new LinkedHashSet<>(repository.getSimilarItemsFromAlias(newItem))
+    Set<ItemDto> getSimilarItems(String alias) {
+        return repository.getSimilarItemsFromAlias(alias)
                 .stream()
                 .map(ItemDto::new)
                 .collect(Collectors.toSet());
-        //Compare with static items
-        var similarItems = repository.getStaticItemsFromAlias(newItem)
-                .stream()
-                .map(ItemDto::new)
-                .collect(Collectors.toSet());
-        items.addAll(similarItems);
-        return items;
     }
 
     private void addItemToNewItemsFile(Item newItem) {

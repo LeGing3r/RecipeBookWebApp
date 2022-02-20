@@ -1,5 +1,6 @@
 package com.example.RecipeBook.item;
 
+import com.example.RecipeBook.measurement.MeasurementConverter;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -8,11 +9,11 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ItemDtoTest {
+class MeasurementConverterTest {
     @ParameterizedTest
     @MethodSource("matcherArguments")
     public void matcherMatchesMatchingMatch(String toMatch, String expectedAmount, String expectedUnit) {
-        var matcher = ItemDto.pattern.matcher(toMatch);
+        var matcher = MeasurementConverter.pattern.matcher(toMatch);
         assertThat(matcher.find()).isTrue();
 
         String amount = matcher.group(1);

@@ -1,22 +1,14 @@
 package com.example.RecipeBook.item;
 
 import com.example.RecipeBook.measurement.Measurement;
-import com.example.RecipeBook.measurement.MeasurementUtils;
+import com.example.RecipeBook.measurement.MeasurementConverter;
+import com.example.RecipeBook.measurement.Unit;
 
 import javax.persistence.*;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Objects;
 import java.util.UUID;
 
-import static com.example.RecipeBook.NumberUtils.findNumberInString;
-
 @Entity
-@DiscriminatorColumn(
-        name = "discriminator",
-        discriminatorType = DiscriminatorType.STRING
-)
-@DiscriminatorValue("I")
 public class Item {
 
     @Id
@@ -24,9 +16,14 @@ public class Item {
     Long id;
     UUID publicId;
     String name;
-    String amount;
-    Boolean needed = true;
+    @Convert(converter = MeasurementConverter.class)
+    Measurement measurement = new Measurement();
+    @Convert(converter = MeasurementConverter.class)
+    Measurement actualMeasurement;
+    boolean needed = true;
     String stringValue;
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "staticItemId")
     StaticItem staticItem;
 
     public Item() {
@@ -58,49 +55,11 @@ public class Item {
         return name;
     }
 
-    void combineWithItem(Item newItem) {
-
+    private double getAmount() {
+        return measurement.getAmount();
     }
 
-    public static class ItemConverter {
-        public static Item convertFromString(String itemString) {
-            boolean isFoodIem = false;
-            for (Measurement m : Measurement.values()) {
-                for (String s : m.getAlternateNames()) {
-                    if (itemString.contains(s)) {
-                        isFoodIem = true;
-                        break;
-                    }
-                    if (isFoodIem) {
-                        break;
-                    }
-                }
-            }
-            if (!isFoodIem) {
-                return new Item(itemString);
-            }
-            String[] items = itemString.split(" ");
-            var foodItem = new FoodItem();
-            String amt;
-            for (String s : items) {
-                if (!(amt = findNumberInString(s)).isEmpty()) {
-                    foodItem.amount = amt;
-                    foodItem.measurement = getMeasurementFromString(s);
-                }
-
-            }
-            return foodItem;
-        }
-
-
-        private static Measurement getMeasurementFromString(String s) {
-            return Arrays.stream(Measurement.values())
-                    .map(Measurement::getAlternateNames)
-                    .flatMap(Collection::stream)
-                    .filter(s::contains)
-                    .map(MeasurementUtils::fromString)
-                    .findFirst()
-                    .orElse(null);
-        }
+    private Unit getUnit() {
+        return measurement.getUnit();
     }
 }
