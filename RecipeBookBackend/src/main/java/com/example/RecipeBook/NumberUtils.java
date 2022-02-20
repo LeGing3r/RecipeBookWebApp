@@ -2,16 +2,13 @@ package com.example.RecipeBook;
 
 public class NumberUtils {
     public static double getNumberFromString(String s) {
-        if (s.matches("\\d*(.)\\d+")) {
-            var nums = s.split("(.)");
-            return Double.parseDouble(nums[0]) + (Double.parseDouble(nums[1]) / Math.pow(10, nums[1].length()));
-        }
-        if (s.matches("\\d+/\\d+")) {
-            var nums = s.split("/");
-            return Double.parseDouble(nums[0]) / Double.parseDouble(nums[1]);
-        }
-        if (s.matches("\\d+")) {
+        try {
             return Double.parseDouble(s);
+        } catch (NumberFormatException e) {
+            if (s.contains("/")) {
+                var nums = s.split("/");
+                return Double.parseDouble(nums[0]) / Double.parseDouble(nums[1]);
+            }
         }
         return 0;
     }
