@@ -1,6 +1,5 @@
 package com.example.RecipeBook.item;
 
-import com.example.RecipeBook.measurement.Measurement;
 import com.example.RecipeBook.measurement.MeasurementConverter;
 
 import javax.persistence.*;

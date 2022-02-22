@@ -73,17 +73,10 @@ public class ItemService {
     }
 
     Set<ItemDto> getSimilarItems(String alias) {
-        var items = repository.getSimilarItemsFromAlias(alias)
+       return repository.getSimilarItemsFromAlias(alias)
                 .stream()
                 .map(ItemDto::new)
                 .collect(Collectors.toSet());
-        var staticItems = repository.getStaticItemsFromAlias(alias)
-                .stream()
-                .map(staticItem -> staticItem.name)
-                .map(ItemDto::new)
-                .collect(Collectors.toSet());
-        items.addAll(staticItems);
-        return items;
     }
 
     private void addItemToNewItemsFile(Item newItem) {

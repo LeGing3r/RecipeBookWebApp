@@ -1,7 +1,7 @@
 package com.example.RecipeBook.recipe;
 
-import com.example.RecipeBook.Page;
-import com.example.RecipeBook.QueryType;
+import com.example.RecipeBook.utils.Page;
+import com.example.RecipeBook.utils.QueryType;
 import com.example.RecipeBook.errors.RecipeNotFoundException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;

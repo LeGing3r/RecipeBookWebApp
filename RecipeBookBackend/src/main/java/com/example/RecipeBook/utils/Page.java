@@ -1,4 +1,4 @@
-package com.example.RecipeBook;
+package com.example.RecipeBook.utils;
 
 import java.util.LinkedHashSet;
 import java.util.Set;

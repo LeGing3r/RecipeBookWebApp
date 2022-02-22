@@ -1,12 +1,10 @@
 package com.example.RecipeBook.item;
 
 import com.example.RecipeBook.errors.IncompatibleTypes;
-import com.example.RecipeBook.measurement.Measurement;
-import com.example.RecipeBook.measurement.Unit;
 
-import static com.example.RecipeBook.measurement.Unit.*;
-import static com.example.RecipeBook.measurement.Unit.UnitType.VOLUME;
-import static com.example.RecipeBook.measurement.Unit.UnitType.WEIGHT;
+import static com.example.RecipeBook.item.Unit.*;
+import static com.example.RecipeBook.item.Unit.UnitType.VOLUME;
+import static com.example.RecipeBook.item.Unit.UnitType.WEIGHT;
 
 public class MeasurementComparator {
 

@@ -1,7 +1,5 @@
 package com.example.RecipeBook.item;
 
-import com.example.RecipeBook.measurement.Measurement;
-import com.example.RecipeBook.measurement.Unit;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,6 +1,5 @@
 package com.example.RecipeBook.recipe;
 
-import com.example.RecipeBook.nutiritional.NutritionalInfo;
 import edu.emory.mathcs.backport.java.util.Collections;
 import org.hibernate.annotations.Type;
 

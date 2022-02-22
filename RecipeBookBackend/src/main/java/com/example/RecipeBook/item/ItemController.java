@@ -36,8 +36,9 @@ public class ItemController {
             return new ResponseEntity<>(METHOD_NOT_ALLOWED);
         }
         try {
+            System.out.println("Adding new item to list: " + item);
             var list = itemService.addItem(item);
-            return new ResponseEntity<>(list, OK);
+            return displayShoppingList();
         } catch (Exception e) {
             return new ResponseEntity<>(METHOD_NOT_ALLOWED);
         }
@@ -56,6 +57,7 @@ public class ItemController {
     @PutMapping("/items")
     public HttpEntity<Set<ItemDto>> updateExistingItem(@RequestParam UUID itemId, @RequestBody ItemDto itemDto) {
         try {
+            System.out.println("Updating: " + itemDto.name);
             var item = itemService.addToExistingItem(itemDto, itemId);
             return new ResponseEntity<>(item, OK);
         } catch (Exception e) {
@@ -65,6 +67,7 @@ public class ItemController {
 
     @GetMapping("/items")
     public HttpEntity<Set<ItemDto>> getItemsWithSimilarAlias(@RequestParam String itemName) {
+        System.out.println("Getting similar items for " + itemName);
         return new ResponseEntity<>(itemService.getSimilarItems(itemName), OK);
     }
 }

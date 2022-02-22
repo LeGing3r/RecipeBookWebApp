@@ -1,4 +1,4 @@
-package com.example.RecipeBook.nutiritional;
+package com.example.RecipeBook.recipe;
 
 import edu.emory.mathcs.backport.java.util.Collections;
 

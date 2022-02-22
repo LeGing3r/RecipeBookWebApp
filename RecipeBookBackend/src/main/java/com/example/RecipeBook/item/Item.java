@@ -1,9 +1,5 @@
 package com.example.RecipeBook.item;
 
-import com.example.RecipeBook.measurement.Measurement;
-import com.example.RecipeBook.measurement.MeasurementConverter;
-import com.example.RecipeBook.measurement.Unit;
-
 import javax.persistence.*;
 import java.util.Objects;
 import java.util.UUID;
@@ -16,15 +12,15 @@ public class Item {
     Long id;
     UUID publicId;
     String name;
-    @Convert(converter = MeasurementConverter.class)
+    @Convert(converter = Measurement.MeasurementConverter.class)
     Measurement measurement = new Measurement();
-    @Convert(converter = MeasurementConverter.class)
+    @Convert(converter = Measurement.MeasurementConverter.class)
     Measurement actualMeasurement;
     boolean needed = true;
-    String stringValue;
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "staticItemId")
     StaticItem staticItem;
+
 
     public Item() {
     }

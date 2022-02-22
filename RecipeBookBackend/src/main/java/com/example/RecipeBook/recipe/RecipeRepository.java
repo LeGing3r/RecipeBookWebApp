@@ -1,6 +1,6 @@
 package com.example.RecipeBook.recipe;
 
-import com.example.RecipeBook.QueryType;
+import com.example.RecipeBook.utils.QueryType;
 import com.example.RecipeBook.errors.RecipeNotFoundException;
 import org.springframework.stereotype.Repository;
 
@@ -8,7 +8,7 @@ import javax.persistence.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.example.RecipeBook.QueryType.*;
+import static com.example.RecipeBook.utils.QueryType.*;
 
 @Repository
 public class RecipeRepository {

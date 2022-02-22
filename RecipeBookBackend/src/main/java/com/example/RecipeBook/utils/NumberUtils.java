@@ -1,4 +1,4 @@
-package com.example.RecipeBook;
+package com.example.RecipeBook.utils;
 
 public class NumberUtils {
     public static double getNumberFromString(String s) {

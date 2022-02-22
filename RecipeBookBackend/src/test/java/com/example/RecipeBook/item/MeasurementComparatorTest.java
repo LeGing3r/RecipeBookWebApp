@@ -1,11 +1,9 @@
 package com.example.RecipeBook.item;
 
-import com.example.RecipeBook.measurement.Measurement;
-import com.example.RecipeBook.measurement.Unit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static com.example.RecipeBook.measurement.Unit.*;
+import static com.example.RecipeBook.item.Unit.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MeasurementComparatorTest {

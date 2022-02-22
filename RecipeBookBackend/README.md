@@ -1,1 +1,1 @@
-"# RecipeBookWebApp" 
+The purpose of this application is to remedy one of the biggest annoyances in my life: looking for recipes. I hate scrolling for a minute to find a recipe just to have to click to expand the recipe and confirm to cookies. This application contains a simplisted design for recipes, allows copying in recipes as well as manually adding, nutritional data and a shopping list, because who doesn't forget something while cooking?

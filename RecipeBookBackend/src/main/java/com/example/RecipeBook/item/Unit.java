@@ -1,14 +1,14 @@
-package com.example.RecipeBook.measurement;
+package com.example.RecipeBook.item;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.example.RecipeBook.measurement.Unit.UnitStandard.IMPERIAL;
-import static com.example.RecipeBook.measurement.Unit.UnitStandard.METRIC;
-import static com.example.RecipeBook.measurement.Unit.UnitType.VOLUME;
-import static com.example.RecipeBook.measurement.Unit.UnitType.WEIGHT;
+import static com.example.RecipeBook.item.Unit.UnitStandard.IMPERIAL;
+import static com.example.RecipeBook.item.Unit.UnitStandard.METRIC;
+import static com.example.RecipeBook.item.Unit.UnitType.VOLUME;
+import static com.example.RecipeBook.item.Unit.UnitType.WEIGHT;
 
 public enum Unit {
     PINCH(0.001302, VOLUME, IMPERIAL, "PINCH OF", "PINCHES", "PINCHES OF"),

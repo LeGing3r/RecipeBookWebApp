@@ -1,12 +1,10 @@
 package com.example.RecipeBook.recipe;
 
-import com.example.RecipeBook.Page;
-import com.example.RecipeBook.QueryType;
+import com.example.RecipeBook.utils.Page;
+import com.example.RecipeBook.utils.QueryType;
 import com.example.RecipeBook.errors.RecipeNotFoundException;
 import com.example.RecipeBook.item.ItemService;
-import com.example.RecipeBook.nutiritional.NutritionalInfo;
 import com.google.gson.Gson;
-import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,8 +21,9 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.example.RecipeBook.QueryType.CATEGORY;
-import static com.example.RecipeBook.QueryType.RECIPE;
+import static com.example.RecipeBook.utils.QueryType.CATEGORY;
+import static com.example.RecipeBook.utils.QueryType.RECIPE;
+import static org.apache.commons.io.FileUtils.copyInputStreamToFile;
 
 @Service
 public class RecipeService {
@@ -123,7 +122,7 @@ public class RecipeService {
         var recipe = recipeRepository.findRecipeById(id).orElseThrow(RecipeNotFoundException::new);
         String pathname = "D:/Projects/RecipeBookWebApp/RecipeBookBackend/src/main/resources/images/" + recipe.id + ".png";
         recipeRepository.updateRecipe(recipe, pathname);
-        FileUtils.copyInputStreamToFile(image.getInputStream(), new File(pathname));
+        copyInputStreamToFile(image.getInputStream(), new File(pathname));
     }
 
     byte[] findImage(UUID id) throws IOException {

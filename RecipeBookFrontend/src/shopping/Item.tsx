@@ -3,12 +3,9 @@ import { NutritionalInfo, NutritionalInfoElement } from "../nutritionalinfo/Nutr
 
 export type Item = {
     name: string;
-    amount: number;
     measurement: string;
     needed: boolean;
-    defaultMeasurement: string;
     publicId: string;
-    stringValue: string;
 }
 
 type ItemPageProps = {
@@ -50,22 +47,27 @@ export const ItemPageElement = (props: ItemPageProps) => {
 }
 
 export const ItemElement = ({ item, index, updateNeeded, updateItemString }: ItemProps) => {
-    var measurement = item.measurement === "NONE" ? ' ' : ' ' + item.measurement;
-    if (!item.stringValue) {
-        item.stringValue = item.amount + measurement + ' ' + item.name;
+    var measurement = item.measurement;
+    if (measurement.includes("NONE")) {
+        if (measurement.includes(".0NONE")) {
+            let index = item.measurement.indexOf(".0NONE")
+            measurement = measurement.substring(0, index);
+        } else {
+            let index = item.measurement.indexOf("NONE")
+            measurement = measurement.substring(0, index);
+        }
     }
     return (
-        <li className="item" key={item.name}>
-            <input type="hidden" key={'' + index} />
-            <input type="checkbox" className="dblchkbx" id={index + item.name}
+        <li className="item" key={item.publicId}>
+            <input type="checkbox" className="dblchkbx" id={item.name + item.publicId}
                 checked={item.needed} onChange={() => updateNeeded(item)} />
-            <input className="item-text" type="text" defaultValue={item.stringValue}
+            <input className="item-text" type="text" defaultValue={measurement + " " + item.name} id={"itemNr" + index}
                 style={{ textDecoration: item.needed ? 'none' : 'line-through' }} onBlur={(evt) => updateItemString(item, evt)} />
         </li>
     )
 }
 
-export const SimilarItemsElement = (props: { items: Item[], addNewItem: (value: string) => void, updateExistingItem: (value: string, existing: Item) => void, value: string }) => {
+export const SimilarItemsPopUp = (props: { items: Item[], addNewItem: (value: string) => void, updateExistingItem: (value: string, existing: Item) => void, value: string }) => {
     return (
         <div>
             <h2>{"Are any of these items the same as " + props.value}</h2>

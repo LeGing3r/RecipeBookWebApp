@@ -1,21 +1,43 @@
 package com.example.RecipeBook.item;
 
 import com.example.RecipeBook.measurement.MeasurementConverter;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.UUID;
 
+@Getter
+@Setter
 public class ItemDto {
 
-    String measurement;
     String name;
+    String measurement;
     boolean needed = true;
     UUID id;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public ItemDto() {
     }
 
     public ItemDto(Item item) {
         this.name = item.name;
+        this.measurement = item.measurement.toString();
+        this.needed = item.needed;
         this.id = item.publicId;
     }
 
@@ -28,27 +50,15 @@ public class ItemDto {
         this.name = name;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public boolean isNeeded() {
-        return needed;
-    }
-
-    public void setNeeded(boolean needed) {
-        this.needed = needed;
-    }
-
     public Item toItem() {
-        //TODO:Remove whitespaces in frontend
         var item = new Item();
         item.name = name;
         item.measurement = new MeasurementConverter().convertToEntityAttribute(measurement);
         return item;
+    }
+
+    @Override
+    public String toString() {
+        return measurement + " " + name;
     }
 }

@@ -1,7 +1,5 @@
 package com.example.RecipeBook.recipe;
 
-import com.example.RecipeBook.nutiritional.NutritionalInfo;
-
 import java.util.*;
 
 public class RecipeDTO {

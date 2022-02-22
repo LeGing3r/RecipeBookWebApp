@@ -1,4 +1,4 @@
-package com.example.RecipeBook;
+package com.example.RecipeBook.utils;
 
 public enum QueryType {
     RECIPE,

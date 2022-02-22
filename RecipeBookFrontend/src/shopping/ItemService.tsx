@@ -3,7 +3,7 @@ import { Item } from "./Item";
 import { ItemUrl as itemUrl, ShoppingUrl as shoppingUrl } from "./ShoppingModule";
 
 type ItemProps = {
-    value: string,
+    item: Item,
     updateList: (items: Item[]) => void
 }
 
@@ -13,16 +13,13 @@ export function getItems(updateList: (items: Item[]) => void) {
 }
 
 export function createNewItem(props: ItemProps) {
-    axios.post(shoppingUrl, props.value, {
-        headers: { 
-            'Content-Type' : 'text/plain' 
-        }
-    })
+    console.log(props.item);
+    axios.post(shoppingUrl, props.item)
         .then(res => props.updateList(res.data));
 }
 
-export function updateExistingItem(props: ItemProps, existing: Item) {
-    axios.put(itemUrl + "?id=" + existing.publicId, props.value)
+export function updateExistingItem(props: ItemProps, id: string) {
+    axios.put(itemUrl + "?itemId=" + id, props.item)
         .then(res => props.updateList(res.data))
 }
 
@@ -31,8 +28,8 @@ export function updateItems(itemList: Item[], updateList: (items: Item[]) => voi
         .then(res => updateList(res.data));;
 }
 
-export function checkForSimilarItems(props: ItemProps) {
-    axios.get<Item[]>(itemUrl + "?item=" + props.value)
-        .then(res => props.updateList(res.data))
+export async function checkForSimilarItems(name: string, updateList: (items: Item[]) => void) {
+    axios.get<Item[]>(itemUrl + "?itemName=" + name)
+        .then(res => updateList(res.data));
 }
 
