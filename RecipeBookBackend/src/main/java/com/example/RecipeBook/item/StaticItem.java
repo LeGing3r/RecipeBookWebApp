@@ -1,7 +1,5 @@
 package com.example.RecipeBook.item;
 
-import com.example.RecipeBook.measurement.MeasurementConverter;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -16,7 +14,7 @@ public class StaticItem {
     Double ratioGramsToNone = 0.0;
     Double ratioLitersToNone = 0.0;
     double density;// g/L
-    @Convert(converter = MeasurementConverter.class)
+    @Convert(converter = Measurement.MeasurementConverter.class)
     Measurement defaultMeasurement;
     @ElementCollection(targetClass = String.class)
     final Set<String> aliases = new HashSet<>();

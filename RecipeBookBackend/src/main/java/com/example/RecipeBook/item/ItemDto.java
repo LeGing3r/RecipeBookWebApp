@@ -1,6 +1,5 @@
 package com.example.RecipeBook.item;
 
-import com.example.RecipeBook.measurement.MeasurementConverter;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,22 +13,6 @@ public class ItemDto {
     String measurement;
     boolean needed = true;
     UUID id;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     public ItemDto() {
     }
@@ -53,7 +36,7 @@ public class ItemDto {
     public Item toItem() {
         var item = new Item();
         item.name = name;
-        item.measurement = new MeasurementConverter().convertToEntityAttribute(measurement);
+        item.measurement = new Measurement.MeasurementConverter().convertToEntityAttribute(measurement);
         return item;
     }
 
