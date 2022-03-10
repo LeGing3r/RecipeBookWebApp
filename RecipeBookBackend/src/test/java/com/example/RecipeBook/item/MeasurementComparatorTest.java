@@ -21,6 +21,7 @@ public class MeasurementComparatorTest {
 
         var expected = new Measurement(3, NONE);
         var actual = measurementComparator.addMeasurementToItem(item, measurement);
+
         assertEquals(expected, actual);
     }
 
@@ -109,7 +110,9 @@ public class MeasurementComparatorTest {
     public void getClosestWholeAmountOneDefaultMeasurementSameUnit() {
         var measurement = new Measurement(0.5, NONE);
         var measurement2 = new Measurement(1, NONE);
-        var actual = measurementComparator.getClosestWholeAmount(measurement, measurement2);
+        var staticItem = new StaticItem();
+        staticItem.defaultMeasurement = measurement2;
+        var actual = measurementComparator.getClosestWholeAmount(measurement, staticItem);
         assertEquals(measurement2, actual);
     }
 
@@ -117,16 +120,19 @@ public class MeasurementComparatorTest {
     public void getClosestWholeAmountOneDefaultMeasurementDifferentUnit() {
         var measurement = new Measurement(2, CUP);
         var measurement2 = new Measurement(1, LITER);
-        var actual = measurementComparator.getClosestWholeAmount(measurement, measurement2);
+        var staticItem = new StaticItem();
+        staticItem.defaultMeasurement = measurement2;
+        var actual = measurementComparator.getClosestWholeAmount(measurement, staticItem);
         assertEquals(measurement2, actual);
     }
 
     @Test
     public void getClosestWholeAmountSmallerDefaultMeasurement() {
         var measurement = new Measurement(2, CUP);
-        var measurement2 = new Measurement(1, CUP);
+        var staticItem = new StaticItem();
+        staticItem.defaultMeasurement = new Measurement(1, CUP);
         var expected = new Measurement(1, PINT);
-        var actual = measurementComparator.getClosestWholeAmount(measurement, measurement2);
+        var actual = measurementComparator.getClosestWholeAmount(measurement, staticItem);
         assertEquals(expected, actual);
     }
 

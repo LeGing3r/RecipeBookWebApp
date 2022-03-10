@@ -1,5 +1,6 @@
 package com.example.RecipeBook.item;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -10,21 +11,22 @@ import java.util.stream.Collectors;
 
 @Service
 public class ItemService {
+    @Autowired
+    private ItemRepository repository;
+    @Autowired
+    private MeasurementComparator measurementComparator;
 
-    private final ItemRepository repository;
-
-    private final MeasurementComparator measurementComparator;
-
-    ItemService(ItemRepository repository, MeasurementComparator measurementComparator) {
-        this.repository = repository;
-        this.measurementComparator = measurementComparator;
-    }
-
-    Set<ItemDto> addItem(ItemDto itemDto) {
-        var item = itemDto.toItem();
-        item.staticItem = repository.getStaticItemByName(item.name);
-        repository.save(item);
-        return getItems();
+    void addItem(ItemDto itemDto) {
+        var existingItem = repository.getSimilarItemsFromAlias(itemDto.name).stream().findFirst();
+        if (existingItem.isEmpty() || existingItem.get().staticItem == null) {
+            var item = itemDto.toItem();
+            item.staticItem = repository.getStaticItemByName(itemDto.name);
+            item.actualMeasurement = new Measurement(item.measurement.amount, item.measurement.unit);
+            item.measurement = measurementComparator.getClosestWholeAmount(item.measurement, item.staticItem);
+            repository.save(item);
+        } else {
+            addToExistingItem(itemDto, existingItem.get().publicId);
+        }
     }
 
     Set<ItemDto> getItems() {
@@ -34,7 +36,7 @@ public class ItemService {
                 .collect(Collectors.toSet());
     }
 
-    Set<ItemDto> addToExistingItem(ItemDto itemDto, UUID itemId) {
+    void addToExistingItem(ItemDto itemDto, UUID itemId) {
         var item = repository.getItemByUUID(itemId);
         var newItem = itemDto.toItem();
 
@@ -44,14 +46,20 @@ public class ItemService {
         if (item.staticItem == null) {
             item.measurement = item.actualMeasurement;
         } else {
-            item.measurement = measurementComparator.getClosestWholeAmount(item.measurement, item.staticItem.defaultMeasurement);
+            item.measurement = measurementComparator.getClosestWholeAmount(item.actualMeasurement, item.staticItem);
         }
-
-        return getItems();
+        repository.save(item);
     }
 
     void updateList(Collection<ItemDto> itemDtos) {
         itemDtos.forEach(this::updateItem);
+    }
+
+    Set<ItemDto> getSimilarItems(String alias) {
+        return repository.getSimilarItemsFromAlias(alias)
+                .stream()
+                .map(ItemDto::new)
+                .collect(Collectors.toSet());
     }
 
     private void updateItem(ItemDto itemDto) {
@@ -72,15 +80,7 @@ public class ItemService {
         item.needed = updatedItem.needed;
     }
 
-    Set<ItemDto> getSimilarItems(String alias) {
-       return repository.getSimilarItemsFromAlias(alias)
-                .stream()
-                .map(ItemDto::new)
-                .collect(Collectors.toSet());
-    }
-
     private void addItemToNewItemsFile(Item newItem) {
 
     }
-
 }

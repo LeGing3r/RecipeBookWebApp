@@ -13,7 +13,6 @@ export function getItems(updateList: (items: Item[]) => void) {
 }
 
 export function createNewItem(props: ItemProps) {
-    console.log(props.item);
     axios.post(shoppingUrl, props.item)
         .then(res => props.updateList(res.data));
 }

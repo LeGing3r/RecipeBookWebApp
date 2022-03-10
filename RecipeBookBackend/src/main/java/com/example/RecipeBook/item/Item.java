@@ -4,6 +4,8 @@ import javax.persistence.*;
 import java.util.Objects;
 import java.util.UUID;
 
+import static javax.persistence.CascadeType.*;
+
 @Entity
 public class Item {
 
@@ -17,7 +19,7 @@ public class Item {
     @Convert(converter = Measurement.MeasurementConverter.class)
     Measurement actualMeasurement;
     boolean needed = true;
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = ALL)
     @JoinColumn(name = "staticItemId")
     StaticItem staticItem;
 
@@ -48,7 +50,7 @@ public class Item {
 
     @Override
     public String toString() {
-        return name;
+        return measurement.toString() + " " + name;
     }
 
     private double getAmount() {

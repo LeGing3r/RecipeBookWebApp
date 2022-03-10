@@ -1,6 +1,7 @@
 package com.example.RecipeBook.recipe;
 
-import edu.emory.mathcs.backport.java.util.Collections;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
@@ -8,7 +9,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-
+@Getter
+@Setter
 public class NutritionalInfo {
     private String uri;
     private int calories;
@@ -16,43 +18,6 @@ public class NutritionalInfo {
     private final Set<String> dietLabels = new HashSet<>();
     private final Set<String> healthLabels = new HashSet<>();
     private final Set<String> cautions = new HashSet<>();
-
-    public String getUri() {
-        return uri;
-    }
-
-    public void setUri(String uri) {
-        this.uri = uri;
-    }
-
-    public int getCalories() {
-        return calories;
-    }
-
-    public void setCalories(int calories) {
-        this.calories = calories;
-    }
-
-    public Set<String> getDietLabels() {
-        return Collections.unmodifiableSet(dietLabels);
-    }
-
-    public Set<String> getHealthLabels() {
-        return Collections.unmodifiableSet(healthLabels);
-    }
-
-    public Set<String> getCautions() {
-        return java.util.Collections.unmodifiableSet(cautions);
-    }
-
-
-    public double getTotalWeight() {
-        return totalWeight;
-    }
-
-    public void setTotalWeight(double totalWeight) {
-        this.totalWeight = totalWeight;
-    }
 
     public void addDietLabels(String s) {
         dietLabels.add(s);
@@ -89,13 +54,14 @@ public class NutritionalInfo {
         @Override
         public NutritionalInfo convertToEntityAttribute(String dbData) {
             NutritionalInfo nutritionalInfo = new NutritionalInfo();
-            String[] split = dbData.split(",");
-            String[] dietLabels = split[3].split(";");
-            String[] healthLabels = split[4].split(";");
-            String[] cautions = split[5].split(";");
-            nutritionalInfo.uri = split[0];
-            nutritionalInfo.calories = Integer.parseInt(split[1]);
-            nutritionalInfo.totalWeight = Double.parseDouble(split[2]);
+            String[] nutritionStrings = dbData.split(",");
+            nutritionalInfo.uri = nutritionStrings[0];
+            nutritionalInfo.calories = Integer.parseInt(nutritionStrings[1]);
+            nutritionalInfo.totalWeight = Double.parseDouble(nutritionStrings[2]);
+            String[] dietLabels = nutritionStrings[3].split(";");
+            String[] healthLabels = nutritionStrings[4].split(";");
+            String[] cautions = nutritionStrings[5].split(";");
+
             nutritionalInfo.dietLabels.addAll(List.of(dietLabels));
             nutritionalInfo.healthLabels.addAll(List.of(healthLabels));
             nutritionalInfo.cautions.addAll(List.of(cautions));

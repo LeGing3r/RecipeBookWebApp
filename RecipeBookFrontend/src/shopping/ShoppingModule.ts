@@ -1,5 +1,12 @@
 export * from "./Item";
 export * from "./ItemService";
 export * from "./ShoppingListPage";
-export const ItemUrl = "http://localhost:905/api/items" 
+export const ItemUrl = "http://localhost:905/api/items"
 export const ShoppingUrl = "http://localhost:905/api/todo";
+export const VALID_UNITS = ["MILLIGRAMS OF", "", "KILOGRAM OF", "OUNCES OF", "QUART", "MILLIGRAM OF", "OUNCE", "PINCHES OF", "LB OF",
+    "QUARTS", "PINCH", "TEASPOON", "HANDFUL", "TABLESPOON OF", "MG", "GRAMS OF", "NONE", "LBS", "CUP", "TEASPOON OF", "MILLIGRAMS", "GALLONS",
+    "TABLESPOONS OF", "PINCHES", "HANDFUL OF", "PINTS OF", "OUNCES", "FLUID OUNCES", "TSP OF", "TEASPOONS OF", "TBSP OF", "OZ OF", "TSP", "GALLON OF", "LITERS",
+    "MILLILITERS", "LITER", "LITRE OF", "MILLILITRE OF", "CUPS OF", "MILLILITRES OF", "TEASPOONS", "MILLILITERS OF", "PINTS", "CUP OF", "QUART OF", "FLUID_OUNCE",
+    "GRAM OF", "MG OF", "LBS OF", "FLUID OUNCE OF", "G", "GALLONS OF", "MILLILITER OF", "LITERS OF", "GRAMS", "KILOGRAMS OF", "TABLESPOON", "PINT", "TABLESPOONS",
+    "LITER OF", "KG OF", "FL OZ OF", "LITRES OF", "KG", "POUND", "KILOGRAMS", "POUNDS", "FLUID OUNCES OF", "GALLON", "MILLILITER", "CUPS", "OZ", "POUND OF", "TBSP",
+    "PINCH OF", "MILLILITRE", "PINT OF", "QUARTS OF", "G OF", "KILOGRAM", "LITRES", "OUNCE OF", "GRAM", "LB", "MILLIGRAM", "POUNDS OF"];

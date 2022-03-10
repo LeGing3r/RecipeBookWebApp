@@ -454,8 +454,18 @@ li a.active {
   width: fit-content;
 }
 
-.error {
+#errorHolder {
   background: red;
+}
+
+#nutrition {
+  background: white;
+  border: 1px black solid; 
+  border-collapse: collapse;
+}
+
+#nutrition tbody tr td {
+  border: solid black 1px;
 }
 
 /*Beginning of responsive design*/

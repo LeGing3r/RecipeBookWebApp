@@ -1,11 +1,11 @@
 import React, { KeyboardEventHandler } from "react"
-import { NutritionalInfo, NutritionalInfoElement } from "../nutritionalinfo/NutritionalInfoModule"
+import { NutritionalInfo, NutritionalInfoElement } from "../recipe/nutritionalinfo/NutritionalInfoModule"
 
 export type Item = {
     name: string;
     measurement: string;
     needed: boolean;
-    publicId: string;
+    id: string;
 }
 
 type ItemPageProps = {
@@ -48,18 +48,17 @@ export const ItemPageElement = (props: ItemPageProps) => {
 
 export const ItemElement = ({ item, index, updateNeeded, updateItemString }: ItemProps) => {
     var measurement = item.measurement;
-    if (measurement.includes("NONE")) {
-        if (measurement.includes(".0NONE")) {
-            let index = item.measurement.indexOf(".0NONE")
-            measurement = measurement.substring(0, index);
+    var matcher;
+    if (matcher = measurement.match("([0-9]*)(\.0)(\\w*)")) {
+        if (matcher[3] === "NONE") {
+            measurement = matcher[1];
         } else {
-            let index = item.measurement.indexOf("NONE")
-            measurement = measurement.substring(0, index);
+            measurement = matcher[1] + matcher[3].toLocaleLowerCase()
         }
     }
     return (
         <li className="item" key={item.publicId}>
-            <input type="checkbox" className="dblchkbx" id={item.name + item.publicId}
+            <input type="checkbox" className="dblchkbx" id={"item" + item.publicId}
                 checked={item.needed} onChange={() => updateNeeded(item)} />
             <input className="item-text" type="text" defaultValue={measurement + " " + item.name} id={"itemNr" + index}
                 style={{ textDecoration: item.needed ? 'none' : 'line-through' }} onBlur={(evt) => updateItemString(item, evt)} />

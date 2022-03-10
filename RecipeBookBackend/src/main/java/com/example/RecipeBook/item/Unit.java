@@ -1,9 +1,6 @@
 package com.example.RecipeBook.item;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static com.example.RecipeBook.item.Unit.UnitStandard.IMPERIAL;
 import static com.example.RecipeBook.item.Unit.UnitStandard.METRIC;
@@ -32,6 +29,7 @@ public enum Unit {
     POUND(1, WEIGHT, IMPERIAL, "LB", "LBS", "POUNDS", "POUND OF", "LB OF", "LBS OF", "POUNDS OF"),
 
     NONE(1, UnitType.NONE, UnitStandard.NONE, "");
+
     double toBase;
     UnitType type;
     UnitStandard standard;
@@ -44,33 +42,33 @@ public enum Unit {
         this.alternateNames.addAll(List.of(alternateNames));
     }
 
-    public double convertToMetric(double amt) {
-        var amount = amt * toBase;
-        if (IMPERIAL.equals(this.standard)) {
-            return VOLUME.equals(this.type) ? amount * 0.24 : amount * 453.6;
-        }
-        return amount;
-    }
-
-    public Unit toMetric() {
-        return VOLUME.equals(this.type) ? LITER : GRAM;
-    }
-
-    public Set<String> getAlternateNames() {
-        var set = new HashSet<>(Set.of(this.toString()));
-        set.addAll(alternateNames);
-        return set;
-    }
-
     public static Unit getUnitFromString(String s) {
         return Arrays.stream(Unit.values())
-                .filter(unit -> unit.alternateNames.contains(s))
+                .filter(unit -> unit.alternateNames.contains(s.toUpperCase(Locale.ROOT)))
                 .findFirst()
                 .orElse(NONE);
     }
 
     public double toBase() {
         return toBase;
+    }
+
+    public UnitType getType() {
+        return this.type;
+    }
+
+    public UnitStandard getStandard() {
+        return this.standard;
+    }
+
+    public Unit toMetric() {
+        return VOLUME.equals(this.type) ? LITER : GRAM;
+    }
+
+    public double convertToMetric(double amt) {
+        var amount = amt * toBase;
+        if (IMPERIAL.equals(this.standard)) return VOLUME.equals(this.type) ? amount * 0.24 : amount * 453.6;
+        return amount;
     }
 
     public Unit getNextLargestUnit() {
@@ -88,14 +86,6 @@ public enum Unit {
             case OUNCE -> POUND;
             case GALLON, POUND, LITER, NONE, KILOGRAM -> null;
         };
-    }
-
-    public UnitType getType() {
-        return this.type;
-    }
-
-    public UnitStandard getStandard() {
-        return this.standard;
     }
 
     public double toOtherStandard() {

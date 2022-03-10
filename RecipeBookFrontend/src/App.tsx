@@ -10,14 +10,12 @@ const App = () => (
       <Routes>
         <Route path="" element={<RecipesPage />} />
         <Route path="/recipes" element={<RecipesPage />} />
-        <Route path="/recipes/:page/:size" element={<RecipesPage />} />
         <Route path="/recipes/category=:category" element={<RecipesPage />} />
         <Route path="/recipes/chosen" element={<RecipesPage chosen={true}/>} />
-        <Route path="recipe/:id" element={<RecipePage />} />
+        <Route path="recipes/:id" element={<RecipePage />} />
         <Route path="/recipe/new" element={<RecipeForm />} />
         <Route path="/recipe/:id/edit" element={<RecipeForm />} />
         <Route path="/categories" element={<CategoriesPage />} />
-        <Route path="/categories/:page/:size" element={<CategoriesPage />} />
         <Route path="/shoppinglist" element={<ShoppingList />} />
       </Routes>
     </BrowserRouter>

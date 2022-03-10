@@ -10,7 +10,6 @@ type PageRequestParams = {
 
 export function getRecipes(requestParams: PageRequestParams, allRecipes: boolean) {
     if (allRecipes) {
-        console.log(allRecipes)
         axios.get(recipesUrl + "?page=" + requestParams.page + "&size=" + requestParams.size)
             .then(res => {
                 requestParams.setPage(res.data)
@@ -31,6 +30,7 @@ export function getRecipesWithCategory(updatePage: (page: RecipePageType) => voi
 export function getRecipe(id: string, updateRecipe: (recipe: Recipe) => void) {
     axios.get<Recipe>(recipeUrl + "?id=" + id)
         .then(res => {
+            console.log(res)
             updateRecipe(res.data)
         });
 }

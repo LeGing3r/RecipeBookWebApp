@@ -1,6 +1,4 @@
-import { useEffect } from "react"
-import { updateItems } from "../shopping/ItemService"
-import { categoryUrl } from "./category/CategoryModule"
+import { NutritionalInfo } from "./nutritionalinfo/NutritionalInfoModule"
 import { localRecipesUrl, localRecipeUrl, recipeUrl } from "./RecipeModule"
 
 export type Recipe = {
@@ -33,15 +31,6 @@ type CookingTime = {
     prepTime: number;
     actualCookingTime: number;
     totalCookingTime: number;
-}
-
-type NutritionalInfo = {
-    uri: string;
-    calories: number;
-    totalWeight: number;
-    dietLabels: string[];
-    healthLabels: string[];
-    cautions: string[];
 }
 
 type RecipePageProps = {

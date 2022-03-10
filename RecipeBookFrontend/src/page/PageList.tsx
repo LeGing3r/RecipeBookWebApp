@@ -6,6 +6,7 @@ type PageNumberElementProps = {
 }
 
 export const PageNumbersElement = (props: PageNumberElementProps) => {
+    console.log(props)
     return (
         <div id="pageDirectory">
             {
@@ -14,7 +15,7 @@ export const PageNumbersElement = (props: PageNumberElementProps) => {
                 [...Array(props.totalPages).keys()].map(i => <PageNumber number={i + 1} url={props.url} size={props.itemsPerPage} focused={props.currentPage === i + 1} />)
             }
             {
-                props.currentPage < props.totalPages ? <a href={props.url + "/" + (props.currentPage + 1) + "/" + props.itemsPerPage}>{">"}</a> : <></>
+                props.currentPage < props.totalPages ? <a href={props.url + "?page=" + (props.currentPage + 1) + "&size=" + props.itemsPerPage}>{">"}</a> : <></>
             }
         </div>
     )
@@ -22,7 +23,7 @@ export const PageNumbersElement = (props: PageNumberElementProps) => {
 
 const PageNumber = (props: { number: number, url: string, size: number, focused: boolean }) => {
     return (
-        <a href={props.url + "/" + props.number + "/" + props.size} className={props.focused ? "focused" : ""}>
+        <a href={props.url + "?page=" + props.number + "&size=" + props.size} className={props.focused ? "focused" : ""}>
             {props.number}
         </a>
     )

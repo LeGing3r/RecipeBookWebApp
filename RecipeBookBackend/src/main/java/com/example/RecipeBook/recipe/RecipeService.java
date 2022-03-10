@@ -5,6 +5,7 @@ import com.example.RecipeBook.utils.QueryType;
 import com.example.RecipeBook.errors.RecipeNotFoundException;
 import com.example.RecipeBook.item.ItemService;
 import com.google.gson.Gson;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,14 +32,10 @@ public class RecipeService {
     private String nutritionKey;
     @Value("${nutrition.app.id}")
     private String nutritionId;
-    private final RecipeRepository recipeRepository;
-    private final ItemService ingredientService;
-
-    public RecipeService(RecipeRepository recipeRepository,
-                         ItemService ingredientService) {
-        this.recipeRepository = recipeRepository;
-        this.ingredientService = ingredientService;
-    }
+    @Autowired
+    private RecipeRepository recipeRepository;
+    @Autowired
+    private ItemService ingredientService;
 
     Page<RecipePage> getRecipePage(int currentPage, int size, boolean chosenRecipes) {
         int startPoint = (currentPage - 1) * size;

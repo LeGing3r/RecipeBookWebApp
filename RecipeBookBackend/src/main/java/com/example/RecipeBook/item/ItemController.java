@@ -21,7 +21,7 @@ public class ItemController {
     }
 
     @GetMapping("/todo")
-    public HttpEntity<Set<ItemDto>> displayShoppingList() {
+    public HttpEntity<Set<ItemDto>> getAllItems() {
         try {
             var items = itemService.getItems();
             return new ResponseEntity<>(items, OK);
@@ -37,8 +37,8 @@ public class ItemController {
         }
         try {
             System.out.println("Adding new item to list: " + item);
-            var list = itemService.addItem(item);
-            return displayShoppingList();
+            itemService.addItem(item);
+            return getAllItems();
         } catch (Exception e) {
             return new ResponseEntity<>(METHOD_NOT_ALLOWED);
         }
@@ -55,11 +55,12 @@ public class ItemController {
     }
 
     @PutMapping("/items")
-    public HttpEntity<Set<ItemDto>> updateExistingItem(@RequestParam UUID itemId, @RequestBody ItemDto itemDto) {
+    public HttpEntity<Set<ItemDto>> updateExistingItem(@RequestParam UUID itemId,
+                                                       @RequestBody ItemDto itemDto) {
         try {
             System.out.println("Updating: " + itemDto.name);
-            var item = itemService.addToExistingItem(itemDto, itemId);
-            return new ResponseEntity<>(item, OK);
+            itemService.addToExistingItem(itemDto, itemId);
+            return getAllItems();
         } catch (Exception e) {
             return new ResponseEntity<>(EXPECTATION_FAILED);
         }
@@ -67,7 +68,6 @@ public class ItemController {
 
     @GetMapping("/items")
     public HttpEntity<Set<ItemDto>> getItemsWithSimilarAlias(@RequestParam String itemName) {
-        System.out.println("Getting similar items for " + itemName);
         return new ResponseEntity<>(itemService.getSimilarItems(itemName), OK);
     }
 }

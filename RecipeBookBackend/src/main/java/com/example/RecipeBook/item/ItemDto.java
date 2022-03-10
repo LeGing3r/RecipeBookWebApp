@@ -24,10 +24,6 @@ public class ItemDto {
         this.id = item.publicId;
     }
 
-    public ItemDto(String name) {
-        this.name = name;
-    }
-
     public ItemDto(String measurement, String name) {
         this.measurement = measurement;
         this.name = name;

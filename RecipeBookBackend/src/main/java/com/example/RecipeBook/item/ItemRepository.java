@@ -3,11 +3,9 @@ package com.example.RecipeBook.item;
 import com.example.RecipeBook.errors.ItemNotFoundException;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.PersistenceUnit;
+import javax.persistence.*;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -17,7 +15,7 @@ public class ItemRepository {
     @PersistenceUnit
     private final EntityManagerFactory entityManagerFactory;
     private final EntityManager entityManager;
-    private final String NAME_LIKE = "LIKE :name";
+    private final String NAME_LIKE = "LIKE CONCAT('%',:name,'%')";
     private final String FROM_ITEM = "select i from Item i ";
     private final String FROM_STATIC_ITEM = "select s from StaticItem s ";
     private final String WHERE_PUBLIC_ID = " where public_id = :id";
@@ -39,17 +37,17 @@ public class ItemRepository {
         }
     }
 
-    boolean save(Item item) {
+    void save(Item item) {
         try {
             EntityTransaction transaction = entityManager.getTransaction();
             transaction.begin();
-            item.publicId = UUID.randomUUID();
+            if (item.id == null) {
+                item.publicId = UUID.randomUUID();
+            }
             entityManager.persist(item);
             transaction.commit();
-            return true;
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
         }
     }
 
@@ -83,29 +81,43 @@ public class ItemRepository {
     }
 
     StaticItem getStaticItemByName(String name) {
-        var staticItem = entityManager.createQuery(FROM_STATIC_ITEM + " where name like :name", StaticItem.class)
-                .setParameter("name", name)
-                .getSingleResult();
-        if (staticItem == null) {
-            return entityManager.createQuery(FROM_STATIC_ITEM + " join s.aliases a where a like :name", StaticItem.class)
+        try {
+            if (name.endsWith("s")) {
+                name = name.substring(0, name.length() - 2);
+            }
+            return entityManager.createQuery(FROM_STATIC_ITEM + " where name " + NAME_LIKE, StaticItem.class)
                     .setParameter("name", name)
                     .getSingleResult();
+        } catch (NoResultException | EntityNotFoundException e) {
+            try {
+                return entityManager.createQuery(FROM_STATIC_ITEM + " join s.aliases a where a " + NAME_LIKE, StaticItem.class)
+                        .setParameter("name", name)
+                        .getSingleResult();
+            } catch (NoResultException | EntityNotFoundException e1) {
+                return null;
+            }
         }
-        return staticItem;
     }
 
     Set<Item> getSimilarItemsFromAlias(String alias) {
-        var similarItems = entityManager.createQuery(FROM_ITEM + " where name " + NAME_LIKE, Item.class)
-                .setParameter("name", alias)
-                .getResultStream()
-                .collect(Collectors.toSet());
-        var itemsFromStaticItems = entityManager.createQuery(
-                        FROM_ITEM + " where i.staticItem.id in ( select s.id from StaticItem s join s.aliases a where a " + NAME_LIKE + ")", Item.class)
-                .setParameter("name", alias)
-                .getResultStream()
-                .collect(Collectors.toSet());
-        similarItems.addAll(itemsFromStaticItems);
+        Set<Item> similarItems = new HashSet<>();
+        try {
+            var items = entityManager.createQuery(FROM_ITEM + " where name " + NAME_LIKE, Item.class)
+                    .setParameter("name", alias)
+                    .getResultList();
+            similarItems.addAll(items);
+        } catch (NoResultException e) {
+        }
+        try {
+            var itemsFromStaticItems = entityManager.createQuery(
+                            FROM_ITEM + " where i.staticItem.id in ( select s.id from StaticItem s join s.aliases a where a " + NAME_LIKE + ")", Item.class)
+                    .setParameter("name", alias)
+                    .getResultList();
+            similarItems.addAll(itemsFromStaticItems);
+        } catch (NoResultException e) {
+        }
         return similarItems;
-    }
 
+
+    }
 }

@@ -21,8 +21,4 @@ public class StaticItem {
     String name;
     @OneToMany(mappedBy = "staticItem")
     private final List<Item> items = new ArrayList<>();
-
-    public Measurement getDefaultMeasurement() {
-        return defaultMeasurement;
-    }
 }

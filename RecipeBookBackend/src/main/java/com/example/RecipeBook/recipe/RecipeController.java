@@ -28,8 +28,7 @@ public class RecipeController {
     @GetMapping("/recipe")
     public HttpEntity<RecipeDTO> getRecipe(@RequestParam UUID id) {
         try {
-            var recipe = recipeService.findRecipeById(id);
-            return new ResponseEntity<>(recipe, OK);
+            return new ResponseEntity<>(recipeService.findRecipeById(id), OK);
         } catch (SQLException e) {
             return new ResponseEntity<>(NOT_FOUND);
         }
@@ -119,7 +118,6 @@ public class RecipeController {
         }
     }
 
-
     @GetMapping("/recipes/search")
     public HttpEntity<Page<RecipePage>> filterRecipes(@RequestParam String query, @RequestParam QueryType searchType) {
         Page<RecipePage> page = recipeService.findRecipesByQuery(query, searchType);
@@ -139,8 +137,3 @@ public class RecipeController {
 
     }
 }
-
-
-
-
-
