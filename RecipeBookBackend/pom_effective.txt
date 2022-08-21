@@ -5757,7 +5757,7 @@
               <goal>repackage</goal>
             </goals>
             <configuration>
-              <mainClass>com.example.RecipeBook.RecipeBookApplication</mainClass>
+              <mainClass>com.example.recipebook.RecipeBookApplication</mainClass>
             </configuration>
           </execution>
           <execution>
@@ -5765,12 +5765,12 @@
               <goal>repackage</goal>
             </goals>
             <configuration>
-              <mainClass>com.example.RecipeBook.RecipeBookApplication</mainClass>
+              <mainClass>com.example.recipebook.RecipeBookApplication</mainClass>
             </configuration>
           </execution>
         </executions>
         <configuration>
-          <mainClass>com.example.RecipeBook.RecipeBookApplication</mainClass>
+          <mainClass>com.example.recipebook.RecipeBookApplication</mainClass>
         </configuration>
       </plugin>
       <plugin>

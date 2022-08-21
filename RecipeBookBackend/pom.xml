@@ -8,21 +8,28 @@
         <version>2.5.6</version>
         <relativePath/>
     </parent>
+
     <groupId>com.example</groupId>
     <artifactId>RecipeBook</artifactId>
     <version>1</version>
     <name>RecipeBook</name>
-    <description>Recipes from all over now localized in one place!</description>
+    <description>Recipes from all over now localized in one place! Also includes integrated shopping list application to
+        More easily prepare recipes
+    </description>
+    <packaging>pom</packaging>
 
     <properties>
         <java.version>15</java.version>
         <spring-boot-starter-parent.version>2.2.6.RELEASE</spring-boot-starter-parent.version>
         <mysql-connector-java.version>8.0.25</mysql-connector-java.version>
         <spring-mvc-test-utils.version>3.1.0</spring-mvc-test-utils.version>
-        <antlr4-maven-plugin.version>4.9.3</antlr4-maven-plugin.version>
-        <spring-test.version>5.3.15</spring-test.version>
+        <antlr4-maven-plugin.version>4.10.1</antlr4-maven-plugin.version>
+        <spring-test.version>5.3.22</spring-test.version>
         <mockito-core.version>4.3.1</mockito-core.version>
         <assertj-core.version>3.22.0</assertj-core.version>
+        <validation-api.version>2.0.1.Final</validation-api.version>
+        <gson.version>2.9.1</gson.version>
+        <commons-io.version>20030203.000550</commons-io.version>
     </properties>
 
     <dependencies>
@@ -55,16 +62,17 @@
         <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
-            <version>2.0.1.Final</version>
+            <version>${validation-api.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
+            <version>${gson.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.11.0</version>
+            <version>${commons-io.version}</version>
         </dependency>
         <!--Testing-->
         <dependency>
@@ -86,33 +94,9 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>2.3.4.RELEASE</version>
-                <configuration>
-                    <mainClass>com.example.RecipeBook.RecipeBookApplication</mainClass>
-                </configuration>
-
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>15</source>
-                    <target>15</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
+    <modules>
+        <module>recipebook</module>
+        <module>shoppinglist</module>
+        <module>utils</module>
+    </modules>
 </project>
