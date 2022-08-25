@@ -1,0 +1,23 @@
+version: '2'
+services:
+  recipebook-backend:
+    container_name: reicpebook-backend
+    build:
+      context: ../RecipeBookBackend/recipebook/
+      dockerfile: ./Dockerfile
+    ports:
+      - 905:905
+    networks:
+      - spring-cloud-network
+  shoppinglist-backend:
+    container_name: shoppinglist-backend
+    build:
+      context: ../RecipeBookBackend/shoppinglist
+      dockerfile: ./Dockerfile
+    ports:
+      - 906:905
+    networks:
+      - spring-cloud-network
+networks:
+  spring-cloud-network:
+    driver: bridge

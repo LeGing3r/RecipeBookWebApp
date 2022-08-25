@@ -23,77 +23,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bdda3d5a-fa74-4c89-bc3c-9f82cc4a271f" name="Default Changelist" comment="Major changes made to application, future commits more detailed">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.mvn/wrapper/MavenWrapperDownloader.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.mvn/wrapper/maven-wrapper.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mvnw" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mvnw.cmd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/RecipeBookApplication.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/StaticStrings.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/config/Server.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/config/TemplateConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/dao/CategoryRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/dao/IngredientRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/dao/ItemDtoRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/dao/ItemRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/dao/RecipeRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/model/Category.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/model/ConversionObj.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/model/Ingredient.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/model/Item.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/model/ItemsDto.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/model/Recipe.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/service/CategoryService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/service/ConversionObjService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/service/IngredientService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/service/ItemService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/service/RecipeService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/web/FlashMessage.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/web/controller/CategoryController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/web/controller/ItemController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/RecipeBook/web/controller/RecipeController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/app.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/app.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/dropzone/CONTRIBUTING.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/dropzone/LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/dropzone/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/dropzone/bower.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/dropzone/component.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/dropzone/composer.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/dropzone/dist/basic.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/dropzone/dist/dropzone-amd-module.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/dropzone/dist/dropzone.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/dropzone/dist/dropzone.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/dropzone/dist/dropzone.js.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/dropzone/dist/min/basic.min.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/dropzone/dist/min/dropzone-amd-module.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/dropzone/dist/min/dropzone.min.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/dropzone/dist/min/dropzone.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/dropzone/index.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/dropzone/package.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/icons/chck.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/icons/unchck.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/jquery-1.11.3.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/shkshka.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/category/details.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/category/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/error.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/layout.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/recipe/copy-form.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/recipe/details.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/recipe/form.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/recipe/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/shopping/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/shopping/ingredients.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/example/RecipeBook/RecipeBookApplicationTests.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/example/RecipeBook/service/CategoryServiceTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/example/RecipeBook/service/RecipeServiceTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/example/RecipeBook/web/controller/ItemControllerTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/example/RecipeBook/web/controller/ItemControllerWebTest.java" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/docker/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -174,8 +105,8 @@
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_package_manager_path" value="npm" />
-    <property name="project.structure.last.edited" value="Project" />
-    <property name="project.structure.proportion" value="0.0" />
+    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.0" />
     <property name="settings.editor.selected.configurable" value="project.propCompiler" />
   </component>
