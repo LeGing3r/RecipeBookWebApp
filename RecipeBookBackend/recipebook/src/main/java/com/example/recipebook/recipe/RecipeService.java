@@ -37,8 +37,7 @@ public class RecipeService {
     @Autowired
     private ImageService imageService;
 
-    //tested
-    Page<RecipePage> getRecipePage(int page, int size, boolean chosenRecipes) {
+    Page<RecipePageElement> getRecipePage(int page, int size, boolean chosenRecipes) {
         var totalRecipes = recipeRepository.getTotalRecipes();
         var pageAmount = Math.max(totalRecipes / size, 1);
         var pageRequest = PageRequest.of(page, size);
@@ -48,14 +47,7 @@ public class RecipeService {
         return new Page(recipePageDTOS, pageAmount, page, size);
     }
 
-    //tested
-    RecipeDTO findRecipeById(UUID recipeId) throws SQLException {
-        return getByPublicId(recipeId)
-                .toRecipeDTO();
-    }
-
-    //tested
-    Page<RecipePage> findRecipesByQuery(String name, QueryType queryType) {
+    Page<RecipePageElement> findRecipesByQuery(String name, QueryType queryType) {
         var recipes = switch (queryType) {
             case RECIPE -> recipeRepository.findByNameContainsIgnoreCase(name);
             case CATEGORY -> recipeRepository.findByCategoriesContainsIgnoreCase(name);
@@ -64,42 +56,6 @@ public class RecipeService {
         var recipePageElements = convertRecipesToPageDTO(recipes);
 
         return new Page(recipePageElements, 1, 1, recipes.size());
-    }
-
-    //tested
-    RecipeDTO addRecipe(RecipeDTO recipeDTO) {
-        recipeDTO.id = UUID.randomUUID();
-
-        var recipe = new Recipe(recipeDTO);
-
-        recipeRepository.save(recipe);
-
-        return new RecipeDTO(recipe);
-    }
-
-    //tested
-    void updateRecipe(RecipeDTO recipeDTO) {
-        var recipe = getByPublicId(recipeDTO.id);
-
-        recipe.mergeWithRecipeDTO(recipeDTO);
-
-        recipeRepository.save(recipe);
-    }
-
-    //tested
-    void delete(UUID recipeId) throws SQLException {
-        var recipe = getByPublicId(recipeId);
-
-        recipeRepository.delete(recipe);
-    }
-
-    //tested
-    void toggleChosen(UUID recipeId) throws SQLException {
-        var recipe = getByPublicId(recipeId);
-
-        recipe.chosen = !recipe.chosen;
-
-        recipeRepository.save(recipe);
     }
 
     Page<String> getCategoryPage(int page, int size) {
@@ -118,24 +74,21 @@ public class RecipeService {
         return new Page<>(categories, pagesAmount, page, size);
     }
 
-    //tested
-    void saveImage(UUID id, MultipartFile image) throws IOException, URISyntaxException {
-        var recipe = getByPublicId(id);
-        var imageName = imageService.saveImage(image.getBytes(), recipe.id);
+    RecipeDTO findRecipeById(UUID recipeId) throws SQLException {
+        return getByPublicId(recipeId)
+                .toRecipeDTO();
+    }
 
-        recipe.imageLocation = imageName;
+    RecipeDTO addRecipe(RecipeDTO recipeDTO) {
+        recipeDTO.id = UUID.randomUUID();
+
+        var recipe = new Recipe(recipeDTO);
+
         recipeRepository.save(recipe);
+
+        return new RecipeDTO(recipe);
     }
 
-    //tested
-    byte[] findImage(UUID id) throws IOException {
-        var fileLocation = getByPublicId(id)
-                .imageLocation;
-
-        return imageService.loadImage(fileLocation);
-    }
-
-    //API CALL CANNOT BE TESTED
     NutritionalInfo getNutritionalInfo(UUID id) throws IOException, InterruptedException {
         var address = nutritionURL
                 .formatted(nutritionId, nutritionKey);
@@ -147,14 +100,51 @@ public class RecipeService {
         return getNutritionalInfo(url);
     }
 
+    void updateRecipe(RecipeDTO recipeDTO) {
+        var recipe = getByPublicId(recipeDTO.id);
+
+        recipe.mergeWithRecipeDTO(recipeDTO);
+
+        recipeRepository.save(recipe);
+    }
+
+    void delete(UUID recipeId) throws SQLException {
+        var recipe = getByPublicId(recipeId);
+
+        recipeRepository.delete(recipe);
+    }
+
+    void toggleChosen(UUID recipeId) throws SQLException {
+        var recipe = getByPublicId(recipeId);
+
+        recipe.chosen = !recipe.chosen;
+
+        recipeRepository.save(recipe);
+    }
+
+    void saveImage(UUID id, MultipartFile image) throws IOException, URISyntaxException {
+        var recipe = getByPublicId(id);
+        var imageName = imageService.saveImage(image.getBytes(), recipe.id);
+
+        recipe.imageLocation = imageName;
+        recipeRepository.save(recipe);
+    }
+
+    byte[] findImage(UUID id) throws IOException {
+        var fileLocation = getByPublicId(id)
+                .imageLocation;
+
+        return imageService.loadImage(fileLocation);
+    }
+
     private Recipe getByPublicId(UUID id) {
         return recipeRepository.findByPublicId(id)
                 .orElseThrow(RecipeNotFoundException::new);
     }
 
-    private Set<RecipePage> convertRecipesToPageDTO(Collection<Recipe> recipes) {
+    private Set<RecipePageElement> convertRecipesToPageDTO(Collection<Recipe> recipes) {
         return recipes.stream()
-                .map(RecipePage::new)
+                .map(RecipePageElement::new)
                 .collect(Collectors.toSet());
     }
 

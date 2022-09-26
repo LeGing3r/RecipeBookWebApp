@@ -1,5 +1,6 @@
 package com.example.utils;
 
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -9,7 +10,7 @@ public class Page<T> {
     private final int currentPage;
     private final int pageSize;
 
-    public Page(Set<T> elements, int pagesAmount, int currentPage, int pageSize) {
+    public Page(Collection<T> elements, int pagesAmount, int currentPage, int pageSize) {
         this.elements = new LinkedHashSet<>(elements);
         this.pagesAmount = pagesAmount;
         this.currentPage = currentPage;

@@ -75,8 +75,8 @@ public class RecipeController {
     }
 
     @GetMapping("/recipes")
-    public HttpEntity<Page<RecipePage>> getRecipePage(@RequestParam int page,
-                                                      @RequestParam int size) {
+    public HttpEntity<Page<RecipePageElement>> getRecipePage(@RequestParam int page,
+                                                             @RequestParam int size) {
         var recipePage = recipeService.getRecipePage(page, size, false);
 
         if (recipePage.getElements() == null || recipePage.getElements().isEmpty()) {
@@ -86,8 +86,8 @@ public class RecipeController {
     }
 
     @GetMapping("/recipes/chosen")
-    public HttpEntity<Page<RecipePage>> getRecipePageChosen(@RequestParam int page,
-                                                            @RequestParam int size) {
+    public HttpEntity<Page<RecipePageElement>> getRecipePageChosen(@RequestParam int page,
+                                                                   @RequestParam int size) {
         var recipePage = recipeService.getRecipePage(page, size, true);
 
         return new ResponseEntity<>(recipePage, OK);
@@ -112,8 +112,8 @@ public class RecipeController {
     }
 
     @GetMapping("/recipes/search")
-    public HttpEntity<Page<RecipePage>> filterRecipes(@RequestParam String query, @RequestParam QueryType searchType) {
-        Page<RecipePage> page = recipeService.findRecipesByQuery(query, searchType);
+    public HttpEntity<Page<RecipePageElement>> filterRecipes(@RequestParam String query, @RequestParam QueryType searchType) {
+        Page<RecipePageElement> page = recipeService.findRecipesByQuery(query, searchType);
         if (page == null) {
             return new ResponseEntity<>(NOT_FOUND);
         }

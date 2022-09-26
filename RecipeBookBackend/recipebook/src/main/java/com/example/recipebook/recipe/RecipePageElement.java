@@ -9,14 +9,14 @@ import java.util.UUID;
 
 @Data
 @NoArgsConstructor
-public class RecipePage {
+public class RecipePageElement {
     private UUID id;
     private String name;
     private String image;
     private boolean chosen;
     private Set<String> categories;
 
-    public RecipePage(Recipe recipe) {
+    public RecipePageElement(Recipe recipe) {
         this.id = recipe.publicId;
         this.name = recipe.name;
         this.image = recipe.imageLocation;
@@ -28,7 +28,7 @@ public class RecipePage {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        RecipePage that = (RecipePage) o;
+        RecipePageElement that = (RecipePageElement) o;
         return id.equals(that.id);
     }
 
