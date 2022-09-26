@@ -9,6 +9,8 @@ services:
       - 905:905
     networks:
       - spring-cloud-network
+
+
   shoppinglist-backend:
     container_name: shoppinglist-backend
     build:
@@ -18,6 +20,17 @@ services:
       - 906:905
     networks:
       - spring-cloud-network
+
+
+  recipebook-frontend:
+    container_name: recipebook-frontend
+    build:
+      context: ../RecipeBookFrontend/
+      dockerfile: ./Dockerfile
+    ports:
+      - 2017:2017
+
+
 networks:
   spring-cloud-network:
     driver: bridge
