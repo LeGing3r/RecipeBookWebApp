@@ -11,10 +11,8 @@ import java.util.UUID;
 
 @Repository
 public interface RecipeRepository extends JpaRepository<Recipe, Long> {
-    String WHERE_ID_IS = "WHERE r.publicId = :id";
     String FROM_RECIPES = "SELECT r FROM Recipe r ";
     String WHERE_CHOSEN = "WHERE  r.chosen = true";
-    String WHERE_NAME_IS = "WHERE UPPER(r.name) LIKE UPPER(:name)";
     String WHERE_CATEGORY_IS = "JOIN r.categories c WHERE UPPER(c) LIKE CONCAT('%', UPPER(:name), '%')";
     String WHERE_INGREDIENT_IS = "JOIN r.ingredients i WHERE UPPER(i) LIKE CONCAT('%', UPPER(:name), '%')";
 

@@ -18,6 +18,8 @@ import java.util.UUID;
 /**
  * Class wrapping all data necessary for a single recipe
  *
+ * TODO ADD WEIGHT OF RECIPE(FREQUENCY OF VISITED)
+ *
  * @author Brendan Williams
  */
 @Entity
