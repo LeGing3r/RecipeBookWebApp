@@ -3,6 +3,7 @@ package com.example.shoppinglist.item;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @Getter
@@ -33,11 +34,25 @@ public class ItemDto {
         var item = new Item();
         item.name = name;
         item.measurement = new Measurement.MeasurementConverter().convertToEntityAttribute(measurement);
+        item.actualMeasurement = item.measurement;
         return item;
     }
 
     @Override
     public String toString() {
         return measurement + " " + name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ItemDto itemDto = (ItemDto) o;
+        return Objects.equals(id, itemDto.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

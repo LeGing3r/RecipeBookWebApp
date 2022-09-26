@@ -13,10 +13,11 @@ class MeasurementConverterTest {
     @MethodSource("matcherArguments")
     public void matcherMatchesMatchingMatch(String toMatch, String expectedAmount, String expectedUnit) {
         var matcher = Measurement.MeasurementConverter.pattern.matcher(toMatch);
+
         assertThat(matcher.find()).isTrue();
 
-        String amount = matcher.group(1);
-        String unit = matcher.group(2);
+        var amount = matcher.group(1);
+        var unit = matcher.group(2);
 
         assertThat(amount).isEqualTo(expectedAmount);
         assertThat(unit).isEqualTo(expectedUnit);

@@ -1,5 +1,7 @@
 package com.example.shoppinglist.item;
 
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
 import java.util.Objects;
 import java.util.UUID;
@@ -10,6 +12,7 @@ public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
+    @Type(type = "uuid-char")
     UUID publicId;
     String name;
     @Convert(converter = Measurement.MeasurementConverter.class)
@@ -21,16 +24,11 @@ public class Item {
     @JoinColumn(name = "staticItemId")
     StaticItem staticItem;
 
-
     public Item() {
     }
 
     Item(String name) {
         this.name = name;
-    }
-
-    public UUID getPublicId() {
-        return publicId;
     }
 
     @Override
@@ -49,13 +47,5 @@ public class Item {
     @Override
     public String toString() {
         return measurement.toString() + " " + name;
-    }
-
-    private double getAmount() {
-        return measurement.getAmount();
-    }
-
-    private Unit getUnit() {
-        return measurement.getUnit();
     }
 }

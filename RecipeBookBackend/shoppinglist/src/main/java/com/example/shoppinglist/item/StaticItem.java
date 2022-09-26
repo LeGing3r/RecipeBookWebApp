@@ -16,9 +16,8 @@ public class StaticItem {
     double density;// g/L
     @Convert(converter = Measurement.MeasurementConverter.class)
     Measurement defaultMeasurement;
-    @ElementCollection(targetClass = String.class)
+    @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
     final Set<String> aliases = new HashSet<>();
-    String name;
     @OneToMany(mappedBy = "staticItem")
     private final List<Item> items = new ArrayList<>();
 }

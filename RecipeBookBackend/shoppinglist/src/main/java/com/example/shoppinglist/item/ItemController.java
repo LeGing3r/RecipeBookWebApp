@@ -1,48 +1,68 @@
 package com.example.shoppinglist.item;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
 
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.EXPECTATION_FAILED;
+import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
+import static org.springframework.http.HttpStatus.NOT_ACCEPTABLE;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
+import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "*")
 public class ItemController {
-    private final ItemService itemService;
-
-    public ItemController(ItemService itemService) {
-        this.itemService = itemService;
-    }
+    @Autowired
+    private ItemService itemService;
 
     @GetMapping("/todo")
     public HttpEntity<Set<ItemDto>> getAllItems() {
         try {
-            var items = itemService.getItems();
-
-            return new ResponseEntity<>(items, OK);
+            return new ResponseEntity<>(itemService.getItems(), OK);
         } catch (Exception e) {
             return new ResponseEntity<>(NO_CONTENT);
         }
     }
 
     @PostMapping("/todo")
-    public HttpEntity<Set<ItemDto>> addItemToList(@RequestBody ItemDto item) {
+    public HttpEntity<ItemDto> addItemToList(@RequestBody ItemDto item) {
         if (item == null) {
-            return new ResponseEntity<>(METHOD_NOT_ALLOWED);
+            return new ResponseEntity<>(BAD_REQUEST);
         }
         try {
             System.out.println("Adding new item to list: " + item);
             itemService.addItem(item);
-            return getAllItems();
+            return new ResponseEntity<>(OK);
         } catch (Exception e) {
+            e.printStackTrace();
             return new ResponseEntity<>(METHOD_NOT_ALLOWED);
         }
+    }
+
+    @PostMapping("/items/food")
+    public HttpEntity<Set<ItemDto>> addFoodItems(@RequestBody Collection<ItemDto> items) {
+        itemService.addFoodItems(items);
+        return new ResponseEntity<>(OK);
+    }
+
+    @PutMapping("/items/food")
+    public HttpEntity<Set<ItemDto>> getNonExistingFoodItems(@RequestBody Collection<ItemDto> items) {
+        return new ResponseEntity<>(itemService.getNonExistingFoodItems(items), OK);
     }
 
     @PutMapping("/todo")
@@ -65,10 +85,5 @@ public class ItemController {
         } catch (Exception e) {
             return new ResponseEntity<>(EXPECTATION_FAILED);
         }
-    }
-
-    @GetMapping("/items")
-    public HttpEntity<Set<ItemDto>> getItemsWithSimilarAlias(@RequestParam String itemName) {
-        return new ResponseEntity<>(itemService.getSimilarItems(itemName), OK);
     }
 }
