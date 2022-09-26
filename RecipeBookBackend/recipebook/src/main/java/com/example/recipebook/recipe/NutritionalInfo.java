@@ -6,7 +6,9 @@ import lombok.Setter;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -36,6 +38,23 @@ public class NutritionalInfo {
         }
     }
 
+    public NutritionalInfo(String uri,
+                           int calories,
+                           double totalWeight,
+                           Collection<String> dietLabels,
+                           Collection<String> healthLabels,
+                           Collection<String> cautions) {
+        this.uri = uri;
+        this.calories = calories;
+        this.totalWeight = totalWeight;
+        this.dietLabels.addAll(dietLabels);
+        this.healthLabels.addAll(healthLabels);
+        this.cautions.addAll(cautions);
+    }
+
+    public NutritionalInfo() {
+    }
+
     @Override
     public String toString() {
         return "%d,%f,%s,%s,%s".formatted(
@@ -45,6 +64,24 @@ public class NutritionalInfo {
                 String.join(";", healthLabels),
                 String.join(";", cautions)
         );
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NutritionalInfo that = (NutritionalInfo) o;
+        return calories == that.calories &&
+                Double.compare(that.totalWeight, totalWeight) == 0 &&
+                Objects.equals(uri, that.uri) &&
+                Objects.equals(dietLabels, that.dietLabels) &&
+                Objects.equals(healthLabels, that.healthLabels) &&
+                Objects.equals(cautions, that.cautions);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(uri, calories, totalWeight, dietLabels, healthLabels, cautions);
     }
 
     @Converter

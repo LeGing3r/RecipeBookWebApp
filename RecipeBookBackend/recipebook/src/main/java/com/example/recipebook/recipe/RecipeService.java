@@ -6,163 +6,156 @@ import com.example.utils.QueryType;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.Paths;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Optional;
+import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static com.example.utils.QueryType.CATEGORY;
-import static com.example.utils.QueryType.RECIPE;
-
 
 @Service
 public class RecipeService {
-    @Value("${nutrition.app.key}")
+    @Value("${nutrition.app.key:null}")
     private String nutritionKey;
-    @Value("${nutrition.app.id}")
+    @Value("${nutrition.app.id:null}")
     private String nutritionId;
+    @Value("${nutritionURL:null}")
+    private String nutritionURL;
     @Autowired
     private RecipeRepository recipeRepository;
+    @Autowired
+    private ImageService imageService;
 
-    Page<RecipePage> getRecipePage(int currentPage, int size, boolean chosenRecipes) {
-        int startPoint = (currentPage - 1) * size;
-        int totalRecipes = recipeRepository.getTotal(RECIPE);
-        int pageAmount = Math.max(totalRecipes / size, 1);
-        var newList = recipeRepository
-                .findRecipePage(startPoint, size, chosenRecipes)
-                .orElseThrow(RecipeNotFoundException::new);
-        Set<RecipePage> recipePageDTOS = convertRecipesToPageDTO(newList);
-        return new Page(recipePageDTOS, pageAmount, size, currentPage);
+    //tested
+    Page<RecipePage> getRecipePage(int page, int size, boolean chosenRecipes) {
+        var totalRecipes = recipeRepository.getTotalRecipes();
+        var pageAmount = Math.max(totalRecipes / size, 1);
+        var pageRequest = PageRequest.of(page, size);
+        var newList = chosenRecipes ? recipeRepository.findChosenRecipes(pageRequest) : recipeRepository.findAll(pageRequest).getContent();
+        var recipePageDTOS = convertRecipesToPageDTO(newList);
+
+        return new Page(recipePageDTOS, pageAmount, page, size);
     }
 
+    //tested
     RecipeDTO findRecipeById(UUID recipeId) throws SQLException {
-        return recipeRepository
-                .findRecipeById(recipeId)
-                .orElseThrow(RecipeNotFoundException::new)
+        return getByPublicId(recipeId)
                 .toRecipeDTO();
     }
 
+    //tested
     Page<RecipePage> findRecipesByQuery(String name, QueryType queryType) {
-        Set<Recipe> recipes = recipeRepository
-                .findRecipesByQuery(name, queryType)
-                .orElseThrow(RecipeNotFoundException::new);
+        var recipes = switch (queryType) {
+            case RECIPE -> recipeRepository.findByNameContainsIgnoreCase(name);
+            case CATEGORY -> recipeRepository.findByCategoriesContainsIgnoreCase(name);
+            case INGREDIENT -> recipeRepository.findByIngredientsContainsIgnoreCase(name);
+        };
         var recipePageElements = convertRecipesToPageDTO(recipes);
-        return new Page(recipePageElements, 1, 1, 8);
+
+        return new Page(recipePageElements, 1, 1, recipes.size());
     }
 
-    boolean addRecipe(RecipeDTO recipe) {
-        var recipeCopy = new Recipe(recipe);
-        return recipeRepository.addRecipe(recipeCopy);
+    //tested
+    RecipeDTO addRecipe(RecipeDTO recipeDTO) {
+        recipeDTO.id = UUID.randomUUID();
+
+        var recipe = new Recipe(recipeDTO);
+
+        recipeRepository.save(recipe);
+
+        return new RecipeDTO(recipe);
     }
 
-    boolean updateRecipe(RecipeDTO recipe) {
-        try {
-            return recipeRepository.updateRecipe(recipe);
-        } catch (Exception e) {
-            return false;
-        }
+    //tested
+    void updateRecipe(RecipeDTO recipeDTO) {
+        var recipe = getByPublicId(recipeDTO.id);
+
+        recipe.mergeWithRecipeDTO(recipeDTO);
+
+        recipeRepository.save(recipe);
     }
 
-    boolean delete(UUID recipeId) throws SQLException {
-        return recipeRepository.delete(recipeId);
+    //tested
+    void delete(UUID recipeId) throws SQLException {
+        var recipe = getByPublicId(recipeId);
+
+        recipeRepository.delete(recipe);
     }
 
+    //tested
     void toggleChosen(UUID recipeId) throws SQLException {
-        Recipe r = recipeRepository.findRecipeById(recipeId).orElseThrow(RecipeNotFoundException::new);
-        r.chosen = !r.chosen;
-        recipeRepository.addRecipe(r);
-    }
+        var recipe = getByPublicId(recipeId);
 
-    boolean addIngredient(RecipeDTO recipe, String ingredient) {
-        if (recipe.addIngredients(List.of(ingredient))) {
-            return recipeRepository.updateRecipe(recipe);
-        }
-        return false;
-    }
+        recipe.chosen = !recipe.chosen;
 
-    boolean removeIngredient(RecipeDTO recipe, String ingredient) {
-        if (recipe.removeIngredients(List.of(ingredient))) {
-            return recipeRepository.updateRecipe(recipe);
-        }
-        return false;
-    }
-
-    boolean addCategory(RecipeDTO recipeDTO, String category) {
-        if (recipeDTO.addCategories(List.of(category))) {
-            return recipeRepository.updateRecipe(recipeDTO);
-        }
-        return false;
-    }
-
-    boolean removeCategory(RecipeDTO recipeDTO, String category) {
-        if (recipeDTO.removeCategories(List.of(category))) {
-            var recipeDao = new Recipe(recipeDTO);
-            return recipeRepository.addRecipe(recipeDao);
-        }
-        return false;
-    }
-
-    void saveImage(UUID id, MultipartFile image) throws IOException {
-        var recipe = recipeRepository.findRecipeById(id).orElseThrow(RecipeNotFoundException::new);
-        String pathname = "D:/Projects/RecipeBookWebApp/RecipeBookBackend/src/main/resources/images/" + recipe.id + ".png";
-        recipeRepository.updateRecipe(recipe, pathname);
-//        copyInputStreamToFile(image.getInputStream(), new File(pathname));
-    }
-
-    byte[] findImage(UUID id) throws IOException {
-        var fileLocation = recipeRepository.getImageLocation(id);
-        return new FileInputStream(fileLocation).readAllBytes();
-    }
-
-    Optional<NutritionalInfo> getNutritionalInfo(UUID id) {
-        try {
-            String address = "https://api.edamam.com/api/nutrition-data?app_id=%s&app_key=%s"
-                    .formatted(nutritionId, nutritionKey);
-            String url = recipeRepository
-                    .findRecipeById(id)
-                    .orElseThrow(RecipeNotFoundException::new)
-                    .getIngredients()
-                    .stream()
-                    .collect(Collectors.joining(" and ", address, ""));
-            return Optional.of(getNutritionalInfo(url));
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-            return Optional.empty();
-        }
-    }
-
-    void chooseRecipe(UUID recipeId) throws SQLException {
-        recipeRepository.switchChosenOfRecipe(recipeId);
+        recipeRepository.save(recipe);
     }
 
     Page<String> getCategoryPage(int page, int size) {
-        int startPoint = (page - 1) * size;
-        int totalCategories = recipeRepository.getTotal(CATEGORY);
-        int pagesAmount = Math.max(totalCategories / size, 1);
-        var categories = recipeRepository.findCategories(startPoint, size);
+        var startPoint = (page - 1) * size;
+        var totalCategories = recipeRepository.getTotalCategories();
+        var pagesAmount = Math.max(totalCategories / size, 1);
+        var categories = recipeRepository
+                .findAll()
+                .stream()
+                .flatMap(recipe -> recipe.categories.stream())
+                .sorted(String::compareTo)
+                .skip(startPoint)
+                .limit(size)
+                .collect(Collectors.toSet());
+
         return new Page<>(categories, pagesAmount, page, size);
     }
 
-    private Set<RecipePage> convertRecipesToPageDTO(Set<Recipe> recipes) {
-        return recipes.stream()
-                .map(this::convertRecipeToPageElement)
-                .collect(Collectors.toSet());
+    //tested
+    void saveImage(UUID id, MultipartFile image) throws IOException, URISyntaxException {
+        var recipe = getByPublicId(id);
+        var imageName = imageService.saveImage(image.getBytes(), recipe.id);
+
+        recipe.imageLocation = imageName;
+        recipeRepository.save(recipe);
     }
 
-    private RecipePage convertRecipeToPageElement(Recipe recipe) {
-        return new RecipePage(recipe);
+    //tested
+    byte[] findImage(UUID id) throws IOException {
+        var fileLocation = getByPublicId(id)
+                .imageLocation;
+
+        return imageService.loadImage(fileLocation);
+    }
+
+    //API CALL CANNOT BE TESTED
+    NutritionalInfo getNutritionalInfo(UUID id) throws IOException, InterruptedException {
+        var address = nutritionURL
+                .formatted(nutritionId, nutritionKey);
+        var url = getByPublicId(id)
+                .getIngredients()
+                .stream()
+                .collect(Collectors.joining(" and ", address, ""));
+
+        return getNutritionalInfo(url);
+    }
+
+    private Recipe getByPublicId(UUID id) {
+        return recipeRepository.findByPublicId(id)
+                .orElseThrow(RecipeNotFoundException::new);
+    }
+
+    private Set<RecipePage> convertRecipesToPageDTO(Collection<Recipe> recipes) {
+        return recipes.stream()
+                .map(RecipePage::new)
+                .collect(Collectors.toSet());
     }
 
     private void deleteRecipeImage(String imageLocation) {
@@ -170,10 +163,11 @@ public class RecipeService {
     }
 
     private NutritionalInfo getNutritionalInfo(String url) throws IOException, InterruptedException {
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
+        var client = HttpClient.newHttpClient();
+        var request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .build();
+
         return new Gson().fromJson(
                 client.send(request, HttpResponse.BodyHandlers.ofString()).body(),
                 NutritionalInfo.class);
