@@ -7,6 +7,7 @@ import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -89,11 +90,14 @@ public class NutritionalInfo {
 
         @Override
         public String convertToDatabaseColumn(NutritionalInfo attribute) {
-            return attribute.toString();
+            return attribute == null ? "0,0.0, , ," : attribute.toString();
         }
 
         @Override
         public NutritionalInfo convertToEntityAttribute(String dbData) {
+            if (dbData == null) {
+                return new NutritionalInfo("", 0, 0.0, Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
+            }
             var nutritionalInfo = new NutritionalInfo();
             var nutritionStrings = dbData.split(",");
 

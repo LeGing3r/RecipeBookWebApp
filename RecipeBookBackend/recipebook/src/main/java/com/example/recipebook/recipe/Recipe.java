@@ -9,6 +9,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
@@ -37,6 +38,7 @@ public class Recipe {
     @Type(type = "uuid-char")
     UUID publicId;
     int portionSize;
+    @Lob
     String instructions;
     @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
     final Set<String> ingredients = new HashSet<>();

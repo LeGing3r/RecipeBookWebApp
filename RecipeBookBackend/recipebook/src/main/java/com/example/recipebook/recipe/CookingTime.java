@@ -60,11 +60,14 @@ public class CookingTime {
     public static class CookingTimeConverter implements AttributeConverter<CookingTime, String> {
         @Override
         public String convertToDatabaseColumn(CookingTime attribute) {
-            return attribute.toString();
+            return attribute == null ? "0,0,0" : attribute.toString();
         }
 
         @Override
         public CookingTime convertToEntityAttribute(String dbData) {
+            if (dbData == null) {
+                return new CookingTime(0, 0);
+            }
             var cookingTime = new CookingTime();
             var values = dbData.split(",");
 

@@ -40,7 +40,7 @@ public class RecipeService {
     Page<RecipePageElement> getRecipePage(int page, int size, boolean chosenRecipes) {
         var totalRecipes = recipeRepository.getTotalRecipes();
         var pageAmount = Math.max(totalRecipes / size, 1);
-        var pageRequest = PageRequest.of(page, size);
+        var pageRequest = PageRequest.of(page-1, size);
         var newList = chosenRecipes ? recipeRepository.findChosenRecipes(pageRequest) : recipeRepository.findAll(pageRequest).getContent();
         var recipePageDTOS = convertRecipesToPageDTO(newList);
 
