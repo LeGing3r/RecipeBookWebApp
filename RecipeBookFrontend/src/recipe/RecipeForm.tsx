@@ -1,11 +1,33 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { Recipe, RecipeFormIngredientElement, RecipeFormCategoryElement, localRecipeUrl, recipeUrl, updateRecipe, updateRecipeImage, getNewRecipe, getRecipe } from "./RecipeModule";
-import { } from "./RecipeService";
+import { submitNewRecipe } from "./RecipeService";
 
 export const RecipeForm = () => {
     const [image, updateImage] = useState<string>('');
-    const [recipe, setRecipe] = useState<Recipe>();
+    const [recipe, setRecipe] = useState<Recipe>({
+        name: 'string',
+        chosen: false,
+        cookingTime: {
+            prepTime: 0,
+            actualCookingTime: 0,
+            totalCookingTime: 0
+        },
+        nutritionalInfo: {
+            uri: '',
+            calories: 0,
+            totalWeight: 0,
+            dietLabels: [],
+            healthLabels: [],
+            cautions: []
+        },
+        id: '',
+        portionSize: 0,
+        instructions: '',
+        ingredients: [],
+        categories: []
+
+    });
     const [file, setFile] = useState<File>();
     const navigate = useNavigate();
     const { id } = useParams();
@@ -79,11 +101,16 @@ export const RecipeForm = () => {
         if (recipe === undefined) {
             return;
         }
-        updateRecipe(recipe, setRecipe)
-        if (image !== "") {
-            updateRecipeImage(recipe?.id, file);
+        let isAdded = false;
+        submitNewRecipe(recipe, isAdded);
+
+        if (image !== "" && file !== undefined) {
+            updateRecipeImage(recipe.id, file);
         }
-        navigate(localRecipeUrl + recipe.id);
+        if(isAdded){
+            navigate(localRecipeUrl + recipe.id);
+        }
+        
     }
     function setImage(evt: React.ChangeEvent<HTMLInputElement>) {
         const imageString = URL.createObjectURL(evt.currentTarget.files[0]);
@@ -93,30 +120,26 @@ export const RecipeForm = () => {
     function updateInstructions(evt: React.ChangeEventHandler<HTMLTextAreaElement>) {
         setRecipe(prevState => ({ ...prevState, instructions: evt.target.value }))
     }
-    if (recipe === undefined) {
-        if (id === undefined) {
-            getNewRecipe(setRecipe);
-        }
-        else {
-            getRecipe(id, setRecipe);
-        }
+
+    if (id !== undefined) {
+        getRecipe(id, setRecipe);
     }
     return (
         recipe === undefined ? <></> :
             <div className="rcpfrm container">
+                {id !== undefined ? <></> :
+                    <button>Copy From Site</button>
+                }
                 <div className="cntr" id="recipeTitle" style={{ textAlign: "center" }}>
                     <input type="text" autoComplete="off" placeholder="Name of Recipe" style={{ textAlign: "center" }} />
                     <div className="separator" />
                     <br />
-                    {id !== undefined ? <></> :
-                        <button style={{ position: "absolute", right: 0, top: 0 }}>Copy From Site</button>
-                    }
                 </div>
                 <div id="imagePreview">
                     {
                         image === "" && id !== undefined ?
-                            <img src={recipeUrl + "/image?id=" + id} id="recipeImg" className="medimg cntr" /> :
-                            <img id="recipeImg" className="medimg cntr" src={image} />
+                            <img style={{ width: "25em", height: "fit-content" }} src={recipeUrl + "/image?id=" + id} id="recipeImg" className="medimg cntr" /> :
+                            <img style={{ width: "25em", height: "fit-content" }} id="recipeImg" className="medimg cntr" src={image} />
                     }
                 </div>
                 <br />

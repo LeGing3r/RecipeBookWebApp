@@ -74,10 +74,11 @@ export const RecipeFormIngredientElement = (props: { id: number, ingredient: str
     return (
         <>
             <input type="text" className="ingBox" id={"ingredient" + props.id} value={props.ingredient} autoComplete="off"
-                onChange={() => props.updateIngredient(props.id)} style={{ width: "70%" }} />
+                onChange={() => props.updateIngredient(props.id)} />
             <button name="removeIngredient" onClick={() => props.updateIngredient(props.id, true)}>
                 <i className="material-icons">delete </i>
             </button>
+            <br />
         </>
     )
 }
@@ -90,6 +91,7 @@ export const RecipeFormCategoryElement = (props: { category: string, index: numb
             <button name="removeCat" onClick={() => props.updateCategory(props.index, true)}>
                 <i className="material-icons">delete </i>
             </button>
+            <br />
         </>
     )
 }

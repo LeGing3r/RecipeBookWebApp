@@ -9,17 +9,15 @@ type PageRequestParams = {
 }
 
 export function getRecipes(requestParams: PageRequestParams, allRecipes: boolean) {
-    if (allRecipes) {
-        axios.get(recipesUrl + "?page=" + requestParams.page + "&size=" + requestParams.size)
-            .then(res => {
-                requestParams.setPage(res.data)
-            });
-    } else {
-        axios.get(recipesUrl + "/chosen?page=" + requestParams.page + "&size=" + requestParams.size)
-            .then(res => {
-                requestParams.setPage(res.data)
-            });
-    }
+    let url = allRecipes ?
+        recipesUrl + "?page=" + requestParams.page + "&size=" + requestParams.size :
+        recipesUrl + "/chosen?page=" + requestParams.page + "&size=" + requestParams.size;
+
+    axios.get(url)
+        .then(res => {
+            requestParams.setPage(res.data);
+            console.log(res.data);
+        });
 }
 
 export function getRecipesWithCategory(updatePage: (page: RecipePageType) => void, category: string) {
@@ -30,7 +28,6 @@ export function getRecipesWithCategory(updatePage: (page: RecipePageType) => voi
 export function getRecipe(id: string, updateRecipe: (recipe: Recipe) => void) {
     axios.get<Recipe>(recipeUrl + "?id=" + id)
         .then(res => {
-            console.log(res)
             updateRecipe(res.data)
         });
 }
@@ -57,9 +54,14 @@ export function getNewRecipe(updateRecipe: (recipe: Recipe) => void) {
 }
 
 export function submitNewRecipe(recipe: Recipe, added: boolean) {
+    let id = "";
     axios.post(recipeUrl + "/add", recipe)
-        .then(res => added = true)
+        .then(res => {
+            added = true;
+            id = res.data.id;
+        })
         .catch(e => added = false);
+        return id;
 }
 
 export function updateRecipe(recipe: Recipe, updateRecipe: (recipe: Recipe) => void) {
