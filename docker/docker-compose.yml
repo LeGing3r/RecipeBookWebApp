@@ -1,4 +1,4 @@
-version: '2'
+version: '3.8'
 services:
   recipebook-backend:
     container_name: reicpebook-backend
@@ -8,7 +8,7 @@ services:
     ports:
       - 905:905
     networks:
-      - spring-cloud-network
+      - recipebook-network
 
 
   shoppinglist-backend:
@@ -19,7 +19,7 @@ services:
     ports:
       - 906:905
     networks:
-      - spring-cloud-network
+      - recipebook-network
 
 
   recipebook-frontend:
@@ -30,7 +30,49 @@ services:
     ports:
       - 2017:2017
 
+  mongo1:
+    container_name: mongo1
+    image: mongo
+    hostname: recipebook
+    volumes:
+      - ~/recipebookrs/data1:/data/db
+      - ./rs-init.sh:/rs-init.sh
+    networks:
+      - recipebook-network
+    ports:
+      - 27021:27017
+    links:
+      - mongo2
+      - mongo3
+    restart: always
+    entrypoint: ["/usr/bin/mongod", "--bind_ip_all", "--replSet", "recipebookdbs"]
+
+  mongo2:
+    container_name: mongo2
+    image: mongo
+    hostname: recipebook
+    volumes:
+      - ~/recipebookrs/data2:/data/db
+    networks:
+      - recipebook-network
+    ports:
+      - 27022:27017
+    restart: always
+    entrypoint: ["/usr/bin/mongod", "--bind_ip_all", "--replSet", "recipebookdbs"]
+
+  mongo3:
+    container_name: mongo3
+    image: mongo
+    hostname: recipebook
+    volumes:
+      - ~/recipebookrs/data3:/data/db
+    networks:
+      - recipebook-network
+    ports:
+      - 27023:27017
+    restart: always
+    entrypoint: ["/usr/bin/mongod", "--bind_ip_all", "--replSet", "recipebookdbs"]
 
 networks:
-  spring-cloud-network:
+  recipebook-network:
     driver: bridge
