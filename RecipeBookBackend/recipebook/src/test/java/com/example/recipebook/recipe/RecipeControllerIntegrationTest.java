@@ -47,7 +47,7 @@ public class RecipeControllerIntegrationTest {
 
     @Test
     public void getRecipePage_getFirstRecipe_update_delete() {
-        var recipePage = getRecipePage(0, 10);
+        var recipePage = getRecipePage(1, 10);
         var recipes = recipePage.getElements().iterator();
         var recipeElement = recipes.next();
         var recipeDto = getRecipe(recipeElement.getId());
@@ -57,7 +57,7 @@ public class RecipeControllerIntegrationTest {
 
         removeRecipe(recipeDto);
 
-        var newRecipeFirstPage = getRecipePage(0, 10);
+        var newRecipeFirstPage = getRecipePage(1, 10);
 
         assertNotEquals(recipePage, newRecipeFirstPage);
 
@@ -66,7 +66,7 @@ public class RecipeControllerIntegrationTest {
 
     @Test
     public void getChosenRecipePage_createRecipe_chooseRecipe() {
-        var chosenPage = getRecipePageChosen(0, 10);
+        var chosenPage = getRecipePageChosen(1, 10);
 
         assertTrue(chosenPage.getElements().isEmpty());
 
@@ -84,7 +84,7 @@ public class RecipeControllerIntegrationTest {
 
         assertTrue(recipeDTO.chosen);
 
-        chosenPage = getRecipePageChosen(0, 10);
+        chosenPage = getRecipePageChosen(1, 10);
 
         assertFalse(chosenPage.getElements().isEmpty());
 
@@ -124,7 +124,7 @@ public class RecipeControllerIntegrationTest {
     public void addCheckImage() throws IOException, URISyntaxException {
         try {
             var image = getTestImage();
-            var page = getRecipePage(0, 2);
+            var page = getRecipePage(1, 2);
             var recipe = page.getElements().iterator().next();
 
             controller.setRecipeImage(recipe.getId(), image);

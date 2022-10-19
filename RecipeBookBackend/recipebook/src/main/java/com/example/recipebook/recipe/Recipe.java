@@ -12,13 +12,14 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
 /**
  * Class wrapping all data necessary for a single recipe
- *
+ * <p>
  * TODO ADD WEIGHT OF RECIPE(FREQUENCY OF VISITED)
  *
  * @author Brendan Williams
@@ -48,7 +49,7 @@ public class Recipe {
     public Recipe() {
     }
 
-    public Recipe(RecipeDTO recipeDTO) {
+    Recipe(RecipeDTO recipeDTO) {
         this.name = recipeDTO.name;
         this.chosen = recipeDTO.chosen;
         this.cookingTime = recipeDTO.cookingTime;
@@ -58,6 +59,30 @@ public class Recipe {
         this.instructions = recipeDTO.instructions;
         this.ingredients.addAll(recipeDTO.ingredients);
         this.categories.addAll(recipeDTO.categories);
+    }
+
+    public Recipe(long id,
+                  String name,
+                  String imageLocation,
+                  boolean chosen,
+                  CookingTime cookingTime,
+                  NutritionalInfo nutritionalInfo,
+                  UUID publicId,
+                  int portionSize,
+                  String instructions,
+                  List<String> ingredients,
+                  List<String> categories) {
+        this.id = id;
+        this.name = name;
+        this.imageLocation = imageLocation;
+        this.chosen = chosen;
+        this.cookingTime = cookingTime;
+        this.nutritionalInfo = nutritionalInfo;
+        this.publicId = publicId;
+        this.portionSize = portionSize;
+        this.instructions = instructions;
+        this.ingredients.addAll(ingredients);
+        this.categories.addAll(categories);
     }
 
     @Override
