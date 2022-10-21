@@ -1,30 +1,38 @@
 package com.example.recipebook.recipe;
 
 import com.example.recipebook.errors.RecipeNotFoundException;
+import com.example.recipebook.service.RecipeController;
 import com.example.utils.Page;
 import com.example.utils.QueryType;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.model.InsertManyOptions;
+import org.bson.Document;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
-import static com.example.utils.QueryType.*;
+import static com.example.utils.QueryType.CATEGORY;
+import static com.example.utils.QueryType.INGREDIENT;
+import static com.example.utils.QueryType.RECIPE;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -36,7 +44,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpStatus.OK;
 
 @SpringBootTest
-@ExtendWith(SpringExtension.class)
 public class RecipeControllerIntegrationTest {
 
     @Autowired
@@ -50,18 +57,18 @@ public class RecipeControllerIntegrationTest {
         var recipePage = getRecipePage(1, 10);
         var recipes = recipePage.getElements().iterator();
         var recipeElement = recipes.next();
-        var recipeDto = getRecipe(recipeElement.getId());
+        var recipe = getRecipe(recipeElement.getId());
 
-        recipeDto.categories.add("NewCategory");
-        updateRecipe(recipeDto);
+        recipe.categories.add("NewCategory");
+        updateRecipe(recipe);
 
-        removeRecipe(recipeDto);
+        removeRecipe(recipe);
 
         var newRecipeFirstPage = getRecipePage(1, 10);
 
         assertNotEquals(recipePage, newRecipeFirstPage);
 
-        assertThrows(RecipeNotFoundException.class, () -> controller.updateRecipe(recipeDto));
+        assertThrows(RecipeNotFoundException.class, () -> controller.updateRecipe(recipe));
     }
 
     @Test
@@ -70,25 +77,26 @@ public class RecipeControllerIntegrationTest {
 
         assertTrue(chosenPage.getElements().isEmpty());
 
-        var recipeDTO = createRecipeDao("FirstAddedRecipe");
+        var recipe = createRecipeDao("FirstAddedRecipe");
 
-        recipeDTO = addRecipe(recipeDTO);
+        recipe = addRecipe(recipe);
 
-        var chosenResponse = (ResponseEntity<RecipeDTO>) controller.chooseRecipe(recipeDTO.id);
+        var chosenResponse = (ResponseEntity<Recipe>) controller.chooseRecipe(recipe.id);
 
         responseOK(chosenResponse);
 
-        recipeDTO = controller.getRecipe(recipeDTO.id).getBody();
+        recipe = controller.getRecipe(recipe.id).getBody();
 
-        assertNotNull(recipeDTO);
+        assertNotNull(recipe);
 
-        assertTrue(recipeDTO.chosen);
+        assertTrue(recipe.chosen);
 
-        chosenPage = getRecipePageChosen(1, 10);
+        chosenPage = getRecipePageChosen(1
+                , 10);
 
         assertFalse(chosenPage.getElements().isEmpty());
 
-        removeRecipe(recipeDTO);
+        removeRecipe(recipe);
     }
 
     @Test
@@ -118,6 +126,8 @@ public class RecipeControllerIntegrationTest {
 
         assertFalse(recipe.categories.contains(cat));
         assertFalse(recipe.ingredients.contains(ing));
+
+        removeRecipe(recipe);
     }
 
     @Test
@@ -179,22 +189,48 @@ public class RecipeControllerIntegrationTest {
         assertTrue(largeCategorySet.containsAll(smallCategorySetPageTwo));
         assertFalse(smallCategorySet.containsAll(smallCategorySetPageTwo));
 
+        controller.deleteRecipe(recipe.id);
+
     }
 
-    private void updateRecipe(RecipeDTO recipeDTO) {
-        assertNotNull(recipeDTO);
+    @BeforeAll
+    static void setUpDB() {
+        var uri = "mongodb://test:test@localhost:27021/recipebook-test";
+        try (var client = MongoClients.create(uri);
+             var resources = Thread.currentThread().getContextClassLoader().getResourceAsStream("test-data.json")) {
 
-        var response = (ResponseEntity<RecipeDTO>) controller.updateRecipe(recipeDTO);
+            assert resources != null;
+
+            var recipes = JsonParser.parseReader(new InputStreamReader(resources)).getAsJsonArray();
+            var recipeArray = StreamSupport.stream(recipes.spliterator(), false)
+                    .map(JsonElement::toString)
+                    .map(Document::parse)
+                    .collect(Collectors.toList());
+            var collection = client.getDatabase("recipebook-test").getCollection("recipes");
+            var existingRecipes = StreamSupport.stream(collection.find().spliterator(), false).collect(Collectors.toList());
+
+            if (!existingRecipes.containsAll(recipeArray)) {
+                collection.insertMany(recipeArray, new InsertManyOptions().ordered(false));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void updateRecipe(Recipe recipe) {
+        assertNotNull(recipe);
+
+        var response = (ResponseEntity<Recipe>) controller.updateRecipe(recipe);
 
         responseOK(response);
 
-        var recipe = response.getBody();
+        var persistedRecipe = response.getBody();
 
-        assertEquals(recipeDTO, recipe);
+        assertEquals(persistedRecipe, persistedRecipe);
     }
 
-    private void removeRecipe(RecipeDTO recipe) {
-        var response = (ResponseEntity<RecipeDTO>) controller.deleteRecipe(recipe.id);
+    private void removeRecipe(Recipe recipe) {
+        var response = (ResponseEntity<Recipe>) controller.deleteRecipe(recipe.id);
 
         responseOK(response);
 
@@ -237,36 +273,29 @@ public class RecipeControllerIntegrationTest {
         return page;
     }
 
-    private RecipeDTO addRecipe(RecipeDTO recipeDTO) {
-        var response = (ResponseEntity<RecipeDTO>) controller.addRecipe(recipeDTO);
+    private Recipe addRecipe(Recipe recipe) {
+        var response = (ResponseEntity<Recipe>) controller.addRecipe(recipe);
 
         responseOK(response);
 
-        var recipe = response.getBody();
+        var persistedRecipe = response.getBody();
 
-        assertNotNull(recipe);
-        assertNotNull(recipe.id);
+        assertNotNull(persistedRecipe);
+        assertNotNull(persistedRecipe.id);
 
-        return recipe;
+        return persistedRecipe;
     }
 
-    private RecipeDTO createRecipeDao(String name) {
-        var recipe = new RecipeDTO();
-
-        recipe.name = name;
-        recipe.categories = new HashSet<>(Collections.singleton("Something"));
-        recipe.ingredients = new HashSet<>(Collections.singleton("Oil"));
-        recipe.instructions = "Cooka da fish";
-        recipe.nutritionalInfo = new NutritionalInfo("googe.com", 100, 2.2,
-                List.of("healhty stuff"), List.of("Smou"), List.of("die die bad"));
-        recipe.cookingTime = new CookingTime(50, 50);
-        recipe.portionSize = 44;
-
-        return recipe;
+    private Recipe createRecipeDao(String name) {
+        new Recipe();
+        return new Recipe(null, name, "", false,
+                new CookingTime(50, 50),
+                new NutritionalInfo("googe.com", 100, 2.2, List.of("healhty stuff"), List.of("Smou"), List.of("die die bad")),
+                44, "Cooka da fish", new HashSet<>(Set.of("Oil")), new HashSet<>(Set.of("Something")));
     }
 
-    private RecipeDTO getRecipe(UUID id) {
-        var response = (ResponseEntity<RecipeDTO>) controller.getRecipe(id);
+    private Recipe getRecipe(String id) {
+        var response = (ResponseEntity<Recipe>) controller.getRecipe(id);
 
         responseOK(response);
 
@@ -313,7 +342,7 @@ public class RecipeControllerIntegrationTest {
         return cats;
     }
 
-    private byte[] getRecipeImage(UUID id) {
+    private byte[] getRecipeImage(String id) {
         var response = (ResponseEntity<byte[]>) controller.getRecipeImage(id);
 
         responseOK(response);

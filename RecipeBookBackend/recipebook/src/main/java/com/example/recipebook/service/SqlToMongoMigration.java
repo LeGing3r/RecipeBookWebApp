@@ -1,5 +1,8 @@
-package com.example.recipebook.recipe;
+package com.example.recipebook.service;
 
+import com.example.recipebook.recipe.CookingTime;
+import com.example.recipebook.recipe.NutritionalInfo;
+import com.example.recipebook.recipe.Recipe;
 import com.google.gson.Gson;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
@@ -14,24 +17,25 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.UUID;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public class SqlToMongoMigration {
 
 
-    @Value("${mongo.uri}")
+    @Value("${spring.data.mongodb.uri:}")
     private String mongoUri;
 
-    @Value("${spring.datasource.url}")
+    @Value("${spring.datasource.url:}")
     private String mysqlUrl;
 
-    @Value("${spring.datasource.username}")
+    @Value("${spring.datasource.username:}")
     private String mysqlUser;
 
-    @Value("${spring.datasource.password}")
+    @Value("${spring.datasource.password:}")
     private String mysqlPass;
 
     private final Gson gson = new Gson();
@@ -56,8 +60,10 @@ public class SqlToMongoMigration {
              var sqlConn = DriverManager.getConnection(mysqlUrl, mysqlUser, mysqlPass)) {
 
             var recipeCollection = mongoClient.getDatabase("recipebook").getCollection("recipes");
-
             var relationalRecipes = getRecipesFromSql(sqlConn);
+            var mongoRecipes = getRecipesFromMongo(recipeCollection);
+
+            relationalRecipes.removeAll(mongoRecipes);
             insertRelationalRecipesIntoMongo(relationalRecipes, recipeCollection);
 
         } catch (SQLException e) {
@@ -102,19 +108,18 @@ public class SqlToMongoMigration {
             var name = rs.getString(6);
             var nutritionalInfo = nutritionalConverter.convertToEntityAttribute(rs.getString(7));
             var portionSize = rs.getInt(8);
-            var publicId = UUID.fromString(rs.getString(9));
             var categories = getListSql(conn, id, "recipe_categories");
             var ingredients = getListSql(conn, id, "recipe_ingredients");
 
             recipes.add(
-                    new Recipe(id, name, imageLocation, chosen, cookingTime, nutritionalInfo, publicId,
+                    new Recipe(null, name, imageLocation, chosen, cookingTime, nutritionalInfo,
                             portionSize, instructions, ingredients, categories));
         }
         return recipes;
     }
 
-    private List<String> getListSql(Connection conn, long id, String tableName) throws SQLException {
-        List<String> list = new ArrayList<>();
+    private Set<String> getListSql(Connection conn, long id, String tableName) throws SQLException {
+        Set<String> list = new HashSet<>();
         var statement = conn.createStatement();
         var rs = statement.executeQuery("select * from " + tableName + " where recipe_id = " + id);
 

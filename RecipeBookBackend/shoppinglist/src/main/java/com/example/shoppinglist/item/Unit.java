@@ -1,6 +1,10 @@
 package com.example.shoppinglist.item;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 import static com.example.shoppinglist.item.Unit.UnitStandard.IMPERIAL;
 import static com.example.shoppinglist.item.Unit.UnitStandard.METRIC;

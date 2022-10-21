@@ -1,8 +1,11 @@
 package com.example.recipebook.recipe;
 
+import lombok.Data;
+
 import javax.persistence.AttributeConverter;
 import java.util.Objects;
 
+@Data
 public class CookingTime {
     private long prepTime;
     private long actualCookingTime;
@@ -27,18 +30,6 @@ public class CookingTime {
         this.totalCookingTime = prepTime + actualCookingTime;
     }
 
-    public long getTotalCookingTime() {
-        return totalCookingTime;
-    }
-
-    public long getPrepTime() {
-        return prepTime;
-    }
-
-    public long getActualCookingTime() {
-        return actualCookingTime;
-    }
-
     @Override
     public String toString() {
         return "%d,%d,%d".formatted(prepTime, actualCookingTime, totalCookingTime);
@@ -57,6 +48,7 @@ public class CookingTime {
         return Objects.hash(prepTime, actualCookingTime, totalCookingTime);
     }
 
+    @Deprecated(since = "RDBM connection is removed")
     public static class CookingTimeConverter implements AttributeConverter<CookingTime, String> {
         @Override
         public String convertToDatabaseColumn(CookingTime attribute) {

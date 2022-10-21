@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CookingTimeTest {
 
-    private CookingTime.CookingTimeConverter converter = new CookingTime.CookingTimeConverter();
+    private final CookingTime.CookingTimeConverter converter = new CookingTime.CookingTimeConverter();
 
     @Test
     public void setPrepAndActualCookingTimesGetProperTotalCookingTime() {

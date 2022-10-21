@@ -3,7 +3,15 @@ package com.example.shoppinglist.item;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static com.example.shoppinglist.item.Unit.*;
+import static com.example.shoppinglist.item.Unit.CUP;
+import static com.example.shoppinglist.item.Unit.GRAM;
+import static com.example.shoppinglist.item.Unit.LITER;
+import static com.example.shoppinglist.item.Unit.MILLILITER;
+import static com.example.shoppinglist.item.Unit.NONE;
+import static com.example.shoppinglist.item.Unit.OUNCE;
+import static com.example.shoppinglist.item.Unit.PINT;
+import static com.example.shoppinglist.item.Unit.POUND;
+import static com.example.shoppinglist.item.Unit.TABLESPOON;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MeasurementComparatorTest {

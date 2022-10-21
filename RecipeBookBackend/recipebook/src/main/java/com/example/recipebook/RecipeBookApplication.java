@@ -1,15 +1,15 @@
 package com.example.recipebook;
 
-import com.example.recipebook.recipe.SqlToMongoMigration;
+import com.example.recipebook.service.SqlToMongoMigration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 @SpringBootApplication
-@EnableJpaRepositories
+@EnableMongoRepositories(basePackages = "com.example.recipebook.service")
 public class RecipeBookApplication {
     private static final Logger LOGGER = LoggerFactory.getLogger(RecipeBookApplication.class);
 

@@ -1,6 +1,9 @@
-package com.example.recipebook.recipe;
+package com.example.recipebook.service;
 
 import com.example.recipebook.errors.RecipeNotFoundException;
+import com.example.recipebook.recipe.NutritionalInfo;
+import com.example.recipebook.recipe.Recipe;
+import com.example.recipebook.recipe.RecipePageElement;
 import com.example.utils.Page;
 import com.example.utils.QueryType;
 import com.google.gson.Gson;
@@ -20,7 +23,6 @@ import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 
@@ -38,10 +40,11 @@ public class RecipeService {
     private ImageService imageService;
 
     Page<RecipePageElement> getRecipePage(int page, int size, boolean chosenRecipes) {
-        var totalRecipes = recipeRepository.getTotalRecipes();
+        var totalRecipes = (int) recipeRepository.count();
         var pageAmount = Math.max(totalRecipes / size, 1);
-        var pageRequest = PageRequest.of(page-1, size);
-        var newList = chosenRecipes ? recipeRepository.findChosenRecipes(pageRequest) : recipeRepository.findAll(pageRequest).getContent();
+        var pageRequest = PageRequest.of(page - 1, size);
+        var newList = chosenRecipes ? recipeRepository.findByChosenTrue(pageRequest) :
+                recipeRepository.findAll(pageRequest).getContent();
         var recipePageDTOS = convertRecipesToPageDTO(newList);
 
         return new Page(recipePageDTOS, pageAmount, page, size);
@@ -50,8 +53,8 @@ public class RecipeService {
     Page<RecipePageElement> findRecipesByQuery(String name, QueryType queryType) {
         var recipes = switch (queryType) {
             case RECIPE -> recipeRepository.findByNameContainsIgnoreCase(name);
-            case CATEGORY -> recipeRepository.findByCategoriesContainsIgnoreCase(name);
-            case INGREDIENT -> recipeRepository.findByIngredientsContainsIgnoreCase(name);
+            case CATEGORY -> recipeRepository.findByCategories(name);
+            case INGREDIENT -> recipeRepository.findByIngredients(name);
         };
         var recipePageElements = convertRecipesToPageDTO(recipes);
 
@@ -60,12 +63,17 @@ public class RecipeService {
 
     Page<String> getCategoryPage(int page, int size) {
         var startPoint = (page - 1) * size;
-        var totalCategories = recipeRepository.getTotalCategories();
+        var totalCategories = recipeRepository.findAll()
+                .stream()
+                .flatMap(r -> r.getCategories().stream())
+                .distinct()
+                .collect(Collectors.toList())
+                .size();
         var pagesAmount = Math.max(totalCategories / size, 1);
         var categories = recipeRepository
                 .findAll()
                 .stream()
-                .flatMap(recipe -> recipe.categories.stream())
+                .flatMap(recipe -> recipe.getCategories().stream())
                 .sorted(String::compareTo)
                 .skip(startPoint)
                 .limit(size)
@@ -74,71 +82,56 @@ public class RecipeService {
         return new Page<>(categories, pagesAmount, page, size);
     }
 
-    RecipeDTO findRecipeById(UUID recipeId) throws SQLException {
-        return getByPublicId(recipeId)
-                .toRecipeDTO();
+    Recipe findRecipeById(String recipeId) throws SQLException {
+        return getById(recipeId);
     }
 
-    RecipeDTO addRecipe(RecipeDTO recipeDTO) {
-        recipeDTO.id = UUID.randomUUID();
-
-        var recipe = new Recipe(recipeDTO);
-
-        recipeRepository.save(recipe);
-
-        return new RecipeDTO(recipe);
+    Recipe addRecipe(Recipe recipe) {
+        return recipeRepository.insert(recipe);
     }
 
-    NutritionalInfo getNutritionalInfo(UUID id) throws IOException, InterruptedException {
+    NutritionalInfo getNutritionalInfo(String id) throws IOException, InterruptedException {
         var address = nutritionURL
                 .formatted(nutritionId, nutritionKey);
-        var url = getByPublicId(id)
+        var url = getById(id)
                 .getIngredients()
                 .stream()
                 .collect(Collectors.joining(" and ", address, ""));
 
-        return getNutritionalInfo(url);
+        return getNutritionalInfo(URI.create(url));
     }
 
-    void updateRecipe(RecipeDTO recipeDTO) {
-        var recipe = getByPublicId(recipeDTO.id);
-
-        recipe.mergeWithRecipeDTO(recipeDTO);
-
-        recipeRepository.save(recipe);
-    }
-
-    void delete(UUID recipeId) throws SQLException {
-        var recipe = getByPublicId(recipeId);
+    void delete(String recipeId) throws SQLException {
+        var recipe = getById(recipeId);
 
         recipeRepository.delete(recipe);
     }
 
-    void toggleChosen(UUID recipeId) throws SQLException {
-        var recipe = getByPublicId(recipeId);
+    void toggleChosen(String recipeId) throws SQLException {
+        var recipe = getById(recipeId);
 
-        recipe.chosen = !recipe.chosen;
+        recipe.switchChosen();
 
         recipeRepository.save(recipe);
     }
 
-    void saveImage(UUID id, MultipartFile image) throws IOException, URISyntaxException {
-        var recipe = getByPublicId(id);
-        var imageName = imageService.saveImage(image.getBytes(), recipe.id);
+    void saveImage(String id, MultipartFile image) throws IOException, URISyntaxException {
+        var recipe = getById(id);
+        var imageName = imageService.saveImage(image.getBytes(), recipe.getId());
 
-        recipe.imageLocation = imageName;
+        recipe.setImageLocation(imageName);
         recipeRepository.save(recipe);
     }
 
-    byte[] findImage(UUID id) throws IOException {
-        var fileLocation = getByPublicId(id)
-                .imageLocation;
+    byte[] findImage(String id) throws IOException {
+        var fileLocation = getById(id)
+                .getImageLocation();
 
         return imageService.loadImage(fileLocation);
     }
 
-    private Recipe getByPublicId(UUID id) {
-        return recipeRepository.findByPublicId(id)
+    private Recipe getById(String id) {
+        return recipeRepository.findById(id)
                 .orElseThrow(RecipeNotFoundException::new);
     }
 
@@ -152,14 +145,22 @@ public class RecipeService {
         Paths.get(imageLocation).toFile().delete();
     }
 
-    private NutritionalInfo getNutritionalInfo(String url) throws IOException, InterruptedException {
+    private NutritionalInfo getNutritionalInfo(URI url) throws IOException, InterruptedException {
         var client = HttpClient.newHttpClient();
         var request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
+                .uri(url)
                 .build();
 
         return new Gson().fromJson(
                 client.send(request, HttpResponse.BodyHandlers.ofString()).body(),
                 NutritionalInfo.class);
+    }
+
+    public void updateRecipe(Recipe recipe) {
+        if (recipeRepository.existsById(recipe.getId())) {
+            recipeRepository.save(recipe);
+        } else {
+            throw new RecipeNotFoundException();
+        }
     }
 }

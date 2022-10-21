@@ -5,19 +5,18 @@ import lombok.NoArgsConstructor;
 
 import java.util.Objects;
 import java.util.Set;
-import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 public class RecipePageElement {
-    private UUID id;
+    private String id;
     private String name;
     private String image;
     private boolean chosen;
     private Set<String> categories;
 
     public RecipePageElement(Recipe recipe) {
-        this.id = recipe.publicId;
+        this.id = recipe.id;
         this.name = recipe.name;
         this.image = recipe.imageLocation;
         this.chosen = recipe.chosen;

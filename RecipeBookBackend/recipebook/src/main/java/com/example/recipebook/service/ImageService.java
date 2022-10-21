@@ -1,4 +1,4 @@
-package com.example.recipebook.recipe;
+package com.example.recipebook.service;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ public class ImageService {
         projectAbsolutePath = Paths.get("").toAbsolutePath().toString();
     }
 
-    String saveImage(byte[] bytes, long id) throws IOException {
+    String saveImage(byte[] bytes, String id) throws IOException {
         var imageName = imagesSource + id + ".png";
         var path = Path.of(projectAbsolutePath + imageName);
 

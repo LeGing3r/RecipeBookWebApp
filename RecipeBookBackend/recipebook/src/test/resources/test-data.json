@@ -1,0 +1,103 @@
+[
+  {
+    "name": "Beet Soup",
+    "imageLocation": "1.png",
+    "chosen": false,
+    "cookingTime": {
+      "prepTime": 30,
+      "actualCookingTime": 45,
+      "totalCookingTime": 75
+    },
+    "nutritionalInfo": {
+      "calories": 180,
+      "totalWeight": 2.2,
+      "dietLabels": [
+        "FAT",
+        "GOOD"
+      ],
+      "healthLabels": [
+        "VEGAN"
+      ],
+      "cautions": [
+        "BIIIG",
+        "OILY"
+      ]
+    },
+    "portionSize": 8,
+    "instructions": "Stir the pot,Add the matoes,Youre done",
+    "ingredients": [
+      "2.0 TEASPOON Garlic",
+      "1.0 GRAM Tomato"
+    ],
+    "categories": [
+      "Vegetarian",
+      "Vegan"
+    ]
+  },
+  {
+    "name": "Corn Soup",
+    "imageLocation": "2.png",
+    "chosen": false,
+    "cookingTime": {
+      "prepTime": 30,
+      "actualCookingTime": 45,
+      "totalCookingTime": 75
+    },
+    "nutritionalInfo": {
+      "calories": 180,
+      "totalWeight": 2.2,
+      "dietLabels": [
+        "FAT",
+        "GOOD"
+      ],
+      "healthLabels": [
+        "VEGAN"
+      ],
+      "cautions": [
+        "BIIIG",
+        "OILY"
+      ]
+    },
+    "portionSize": 8,
+    "instructions": "Stir the pot,Add the matoes,Youre done",
+    "ingredients": [
+      "1.0 GRAM Tomato"
+    ],
+    "categories": [
+      "Vegetarian"
+    ]
+  },
+  {
+    "name": "Strawberry Something",
+    "imageLocation": "3.png",
+    "chosen": false,
+    "cookingTime": {
+      "prepTime": 30,
+      "actualCookingTime": 45,
+      "totalCookingTime": 75
+    },
+    "nutritionalInfo": {
+      "calories": 180,
+      "totalWeight": 2.2,
+      "dietLabels": [
+        "FAT",
+        "GOOD"
+      ],
+      "healthLabels": [
+        "VEGAN"
+      ],
+      "cautions": [
+        "BIIIG",
+        "OILY"
+      ]
+    },
+    "portionSize": 8,
+    "instructions": "Stir the pot,Add the matoes,Youre done",
+    "ingredients": [
+      "1.0 NONE Pineapple"
+    ],
+    "categories": [
+      "Moo"
+    ]
+  }
+]

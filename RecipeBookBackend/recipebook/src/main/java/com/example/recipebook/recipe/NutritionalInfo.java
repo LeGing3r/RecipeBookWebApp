@@ -1,25 +1,20 @@
 package com.example.recipebook.recipe;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
-@Getter
-@Setter
+@Data
 public class NutritionalInfo {
-    private String uri;
-    private int calories;
-    private double totalWeight;
-    private final List<String> dietLabels = new ArrayList<>();
-    private final List<String> healthLabels = new ArrayList<>();
-    private final List<String> cautions = new ArrayList<>();
+    private final String uri;
+    private final int calories;
+    private final double totalWeight;
+    private final List<String> dietLabels;
+    private final List<String> healthLabels;
+    private final List<String> cautions;
 
     public void addDietLabels(String s) {
         if (!dietLabels.contains(s)) {
@@ -36,83 +31,6 @@ public class NutritionalInfo {
     public void addHealthLabels(String s) {
         if (!healthLabels.contains(s)) {
             healthLabels.add(s);
-        }
-    }
-
-    public NutritionalInfo(String uri,
-                           int calories,
-                           double totalWeight,
-                           Collection<String> dietLabels,
-                           Collection<String> healthLabels,
-                           Collection<String> cautions) {
-        this.uri = uri;
-        this.calories = calories;
-        this.totalWeight = totalWeight;
-        this.dietLabels.addAll(dietLabels);
-        this.healthLabels.addAll(healthLabels);
-        this.cautions.addAll(cautions);
-    }
-
-    public NutritionalInfo() {
-    }
-
-    @Override
-    public String toString() {
-        return "%d,%f,%s,%s,%s".formatted(
-                calories,
-                totalWeight,
-                String.join(";", dietLabels),
-                String.join(";", healthLabels),
-                String.join(";", cautions)
-        );
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        NutritionalInfo that = (NutritionalInfo) o;
-        return calories == that.calories &&
-                Double.compare(that.totalWeight, totalWeight) == 0 &&
-                Objects.equals(uri, that.uri) &&
-                Objects.equals(dietLabels, that.dietLabels) &&
-                Objects.equals(healthLabels, that.healthLabels) &&
-                Objects.equals(cautions, that.cautions);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(uri, calories, totalWeight, dietLabels, healthLabels, cautions);
-    }
-
-    @Converter
-    public static class NutritionConverter implements AttributeConverter<NutritionalInfo, String> {
-
-        @Override
-        public String convertToDatabaseColumn(NutritionalInfo attribute) {
-            return attribute == null ? "0,0.0, , ," : attribute.toString();
-        }
-
-        @Override
-        public NutritionalInfo convertToEntityAttribute(String dbData) {
-            if (dbData == null) {
-                return new NutritionalInfo("", 0, 0.0, Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
-            }
-            var nutritionalInfo = new NutritionalInfo();
-            var nutritionStrings = dbData.split(",");
-
-            nutritionalInfo.calories = Integer.parseInt(nutritionStrings[0]);
-            nutritionalInfo.totalWeight = Double.parseDouble(nutritionStrings[1]);
-
-            var dietLabels = nutritionStrings[2].split(";");
-            var healthLabels = nutritionStrings[3].split(";");
-            var cautions = nutritionStrings[4].split(";");
-
-            nutritionalInfo.dietLabels.addAll(List.of(dietLabels));
-            nutritionalInfo.healthLabels.addAll(List.of(healthLabels));
-            nutritionalInfo.cautions.addAll(List.of(cautions));
-
-            return nutritionalInfo;
         }
     }
 
@@ -133,5 +51,42 @@ public class NutritionalInfo {
 //        DITB12,
 //        VIDD
 //    }
+
+    @Override
+    public String toString() {
+        return "%d,%f,%s,%s,%s".formatted(
+                calories,
+                totalWeight,
+                String.join(";", dietLabels),
+                String.join(";", healthLabels),
+                String.join(";", cautions)
+        );
+    }
+
+    @Deprecated(since = "RDBM connection is removed")
+    @Converter
+    public static class NutritionConverter implements AttributeConverter<NutritionalInfo, String> {
+
+        @Override
+        public String convertToDatabaseColumn(NutritionalInfo attribute) {
+            return attribute == null ? "0,0.0, , ," : attribute.toString();
+        }
+
+        @Override
+        public NutritionalInfo convertToEntityAttribute(String dbData) {
+            if (dbData == null) {
+                return new NutritionalInfo("", 0, 0.0, Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
+            }
+            var nutritionStrings = dbData.split(",");
+            var calories = Integer.parseInt(nutritionStrings[0]);
+            var totalWeight = Double.parseDouble(nutritionStrings[1]);
+            var dietLabels = nutritionStrings[2].split(";");
+            var healthLabels = nutritionStrings[3].split(";");
+            var cautions = nutritionStrings[4].split(";");
+
+            return new NutritionalInfo("", calories, totalWeight, List.of(dietLabels), List.of(healthLabels), List.of(cautions));
+        }
+    }
+
 
 }

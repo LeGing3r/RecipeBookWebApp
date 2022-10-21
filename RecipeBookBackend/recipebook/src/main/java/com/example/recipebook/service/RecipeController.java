@@ -1,20 +1,33 @@
-package com.example.recipebook.recipe;
+package com.example.recipebook.service;
 
 import com.example.recipebook.errors.RecipeNotFoundException;
+import com.example.recipebook.recipe.Recipe;
+import com.example.recipebook.recipe.RecipePageElement;
 import com.example.utils.Page;
 import com.example.utils.QueryType;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
-import java.util.UUID;
 
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NOT_ACCEPTABLE;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
+import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequestMapping(value = "/api")
@@ -27,7 +40,7 @@ public class RecipeController {
     }
 
     @GetMapping("/recipe")
-    public HttpEntity<RecipeDTO> getRecipe(@RequestParam UUID id) {
+    public HttpEntity<Recipe> getRecipe(@RequestParam String id) {
         try {
             return new ResponseEntity<>(recipeService.findRecipeById(id), OK);
         } catch (SQLException | RecipeNotFoundException e) {
@@ -36,20 +49,18 @@ public class RecipeController {
     }
 
     @PostMapping("/recipe")
-    public HttpEntity<RecipeDTO> addRecipe(@RequestBody RecipeDTO recipeDTO) {
-        var recipe = recipeService.addRecipe(recipeDTO);
-
-        return new ResponseEntity<>(recipe, OK);
+    public HttpEntity<Recipe> addRecipe(@RequestBody Recipe recipe) {
+        return new ResponseEntity<>(recipeService.addRecipe(recipe), OK);
     }
 
     @PutMapping("/recipe")
-    public HttpEntity<RecipeDTO> updateRecipe(@RequestBody RecipeDTO recipe) {
+    public HttpEntity<Recipe> updateRecipe(@RequestBody Recipe recipe) {
         recipeService.updateRecipe(recipe);
         return new ResponseEntity<>(recipe, OK);
     }
 
     @DeleteMapping("/recipe")
-    public HttpEntity<RecipeDTO> deleteRecipe(@RequestParam UUID id) {
+    public HttpEntity<Recipe> deleteRecipe(@RequestParam String id) {
         try {
             recipeService.delete(id);
             return new ResponseEntity<>(OK);
@@ -60,7 +71,7 @@ public class RecipeController {
     }
 
     @PutMapping("/recipe/choose")
-    public HttpEntity<RecipeDTO> chooseRecipe(@RequestParam UUID id) {
+    public HttpEntity<Recipe> chooseRecipe(@RequestParam String id) {
         try {
             recipeService.toggleChosen(id);
             return new ResponseEntity<>(OK);
@@ -70,8 +81,8 @@ public class RecipeController {
     }
 
     @GetMapping("/recipe/new")
-    public HttpEntity<RecipeDTO> getNewRecipe() {
-        return new ResponseEntity<>(new RecipeDTO(), OK);
+    public HttpEntity<Recipe> getNewRecipe() {
+        return new ResponseEntity<>(new Recipe(), OK);
     }
 
     @GetMapping("/recipes")
@@ -95,7 +106,7 @@ public class RecipeController {
 
     @GetMapping(value = "/recipe/image",
             produces = MediaType.IMAGE_PNG_VALUE)
-    public HttpEntity<byte[]> getRecipeImage(@RequestParam UUID id) {
+    public HttpEntity<byte[]> getRecipeImage(@RequestParam String id) {
         try {
             return new ResponseEntity<>(recipeService.findImage(id), OK);
         } catch (RecipeNotFoundException | IOException e) {
@@ -105,7 +116,7 @@ public class RecipeController {
     }
 
     @PostMapping(value = "/recipe/image", headers = {"content-type=multipart/form-data"})
-    public HttpEntity<byte[]> setRecipeImage(@RequestParam UUID id,
+    public HttpEntity<byte[]> setRecipeImage(@RequestParam String id,
                                              @RequestParam("image") MultipartFile image) throws IOException, URISyntaxException {
         recipeService.saveImage(id, image);
         return new ResponseEntity<>(OK);
