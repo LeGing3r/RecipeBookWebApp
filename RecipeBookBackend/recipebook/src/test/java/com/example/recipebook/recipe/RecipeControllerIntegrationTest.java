@@ -242,8 +242,8 @@ public class RecipeControllerIntegrationTest {
         assertEquals(OK, response.getStatusCode());
     }
 
-    private Page<RecipePageElement> getRecipePage(int pageNumber, int size) {
-        var response = (ResponseEntity<Page<RecipePageElement>>) controller.getRecipePage(pageNumber, size);
+    private Page<Recipe> getRecipePage(int pageNumber, int size) {
+        var response = (ResponseEntity<Page<Recipe>>) controller.getRecipePage(pageNumber, size);
 
         responseOK(response);
 
@@ -256,8 +256,8 @@ public class RecipeControllerIntegrationTest {
         return page;
     }
 
-    private Page<RecipePageElement> getRecipePageChosen(int pageNumber, int size) {
-        var response = (ResponseEntity<Page<RecipePageElement>>) controller.getRecipePageChosen(pageNumber, size);
+    private Page<Recipe> getRecipePageChosen(int pageNumber, int size) {
+        var response = (ResponseEntity<Page<Recipe>>) controller.getRecipePageChosen(pageNumber, size);
 
         responseOK(response);
 
@@ -308,8 +308,8 @@ public class RecipeControllerIntegrationTest {
         return recipe;
     }
 
-    private Set<RecipePageElement> filterQueries(String query, QueryType queryType) {
-        var response = (ResponseEntity<Page<RecipePageElement>>) controller.filterRecipes(query, queryType);
+    private Set<Recipe> filterQueries(String query, QueryType queryType) {
+        var response = (ResponseEntity<Page<Recipe  >>) controller.filterRecipes(query, queryType);
 
         responseOK(response);
 

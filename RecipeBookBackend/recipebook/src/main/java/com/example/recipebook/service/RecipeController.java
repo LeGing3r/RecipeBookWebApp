@@ -2,7 +2,6 @@ package com.example.recipebook.service;
 
 import com.example.recipebook.errors.RecipeNotFoundException;
 import com.example.recipebook.recipe.Recipe;
-import com.example.recipebook.recipe.RecipePageElement;
 import com.example.utils.Page;
 import com.example.utils.QueryType;
 import org.springframework.http.HttpEntity;
@@ -86,7 +85,7 @@ public class RecipeController {
     }
 
     @GetMapping("/recipes")
-    public HttpEntity<Page<RecipePageElement>> getRecipePage(@RequestParam int page,
+    public HttpEntity<Page<Recipe>> getRecipePage(@RequestParam int page,
                                                              @RequestParam int size) {
         var recipePage = recipeService.getRecipePage(page, size, false);
 
@@ -97,7 +96,7 @@ public class RecipeController {
     }
 
     @GetMapping("/recipes/chosen")
-    public HttpEntity<Page<RecipePageElement>> getRecipePageChosen(@RequestParam int page,
+    public HttpEntity<Page<Recipe>> getRecipePageChosen(@RequestParam int page,
                                                                    @RequestParam int size) {
         var recipePage = recipeService.getRecipePage(page, size, true);
 
@@ -123,8 +122,8 @@ public class RecipeController {
     }
 
     @GetMapping("/recipes/search")
-    public HttpEntity<Page<RecipePageElement>> filterRecipes(@RequestParam String query, @RequestParam QueryType searchType) {
-        Page<RecipePageElement> page = recipeService.findRecipesByQuery(query, searchType);
+    public HttpEntity<Page<Recipe>> filterRecipes(@RequestParam String query, @RequestParam QueryType searchType) {
+        Page<Recipe> page = recipeService.findRecipesByQuery(query, searchType);
         if (page == null) {
             return new ResponseEntity<>(NOT_FOUND);
         }

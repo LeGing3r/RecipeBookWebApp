@@ -3,13 +3,11 @@ package com.example.recipebook.service;
 import com.example.recipebook.errors.RecipeNotFoundException;
 import com.example.recipebook.recipe.NutritionalInfo;
 import com.example.recipebook.recipe.Recipe;
-import com.example.recipebook.recipe.RecipePageElement;
 import com.example.utils.Page;
 import com.example.utils.QueryType;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,26 +37,23 @@ public class RecipeService {
     @Autowired
     private ImageService imageService;
 
-    Page<RecipePageElement> getRecipePage(int page, int size, boolean chosenRecipes) {
+    Page<Recipe> getRecipePage(int page, int size, boolean chosenRecipes) {
         var totalRecipes = (int) recipeRepository.count();
-        var pageAmount = Math.max(totalRecipes / size, 1);
-        var pageRequest = PageRequest.of(page - 1, size);
-        var newList = chosenRecipes ? recipeRepository.findByChosenTrue(pageRequest) :
-                recipeRepository.findAll(pageRequest).getContent();
-        var recipePageDTOS = convertRecipesToPageDTO(newList);
+        var totalPages = Math.max(totalRecipes / size, 1);
+        var startPoint = (page - 1) * size;
+        var newList = recipeRepository.findPage(chosenRecipes, size, startPoint);
 
-        return new Page(recipePageDTOS, pageAmount, page, size);
+        return new Page(newList, totalPages, page, size);
     }
 
-    Page<RecipePageElement> findRecipesByQuery(String name, QueryType queryType) {
+    Page<Recipe> findRecipesByQuery(String name, QueryType queryType) {
         var recipes = switch (queryType) {
             case RECIPE -> recipeRepository.findByNameContainsIgnoreCase(name);
             case CATEGORY -> recipeRepository.findByCategories(name);
             case INGREDIENT -> recipeRepository.findByIngredients(name);
         };
-        var recipePageElements = convertRecipesToPageDTO(recipes);
 
-        return new Page(recipePageElements, 1, 1, recipes.size());
+        return new Page(recipes, 1, 1, recipes.size());
     }
 
     Page<String> getCategoryPage(int page, int size) {
@@ -133,12 +128,6 @@ public class RecipeService {
     private Recipe getById(String id) {
         return recipeRepository.findById(id)
                 .orElseThrow(RecipeNotFoundException::new);
-    }
-
-    private Set<RecipePageElement> convertRecipesToPageDTO(Collection<Recipe> recipes) {
-        return recipes.stream()
-                .map(RecipePageElement::new)
-                .collect(Collectors.toSet());
     }
 
     private void deleteRecipeImage(String imageLocation) {
